@@ -521,6 +521,7 @@ public class RDFWriter {
 		@SuppressWarnings("unchecked")
 		final LinkedList<Object> tmp_list = (LinkedList<Object>) o;
 		LinkedList<String> literals=new LinkedList<String>();		
+		LinkedList<Resource> listremembranceresources = new LinkedList<Resource>();
 		
 		//process list
 		for (int j = 0; j < tmp_list.size(); j++) {
@@ -564,16 +565,82 @@ public class RDFWriter {
 					}
 				}
 			}
-			if(LinkedList.class.isInstance(o1) && typeremembrance != null){
-				LinkedList<Object> tmp_list_inlist = (LinkedList<Object>) o1;
-				for(int jj = 0; jj<tmp_list_inlist.size(); jj++){
-					Object o2 = tmp_list_inlist.get(jj);
-					if(String.class.isInstance(o2)){
-						literals.add(filter_extras((String) o2));
+			if(LinkedList.class.isInstance(o1)){
+				if(typeremembrance!=null){
+					LinkedList<Object> tmp_list_inlist = (LinkedList<Object>) o1;
+					for(int jj = 0; jj<tmp_list_inlist.size(); jj++){
+						Object o2 = tmp_list_inlist.get(jj);
+						if(String.class.isInstance(o2)){
+							literals.add(filter_extras((String) o2));
+						}
+						else if(LinkedList.class.isInstance(o2)){
+							//this happens only for types that are equivalent to lists (e.g. IfcLineIndex in IFC4_ADD1)
+							// in this case, the elements of the list should be treated as new instances that are equivalent to the correct lists
+							LinkedList<Object> tmp_list_inlist_inlist = (LinkedList<Object>) o2;
+							LinkedList<String> newList = new LinkedList<String>();
+							for(int jjj = 0; jjj<tmp_list_inlist_inlist.size(); jjj++){
+								Object o3 = tmp_list_inlist_inlist.get(jjj);
+								if(String.class.isInstance(o3)){
+									literals.add(filter_extras((String) o3));
+								}
+							}
+							
+							//exception. when a list points to a number of linked lists, it could be that there are multiple different entities are referenced
+							//example: #308= IFCINDEXEDPOLYCURVE(#309,(IFCLINEINDEX((1,2)),IFCARCINDEX((2,3,4)),IFCLINEINDEX((4,5)),IFCARCINDEX((5,6,7))),.F.);
+							//in this case, it is better to immediately print all relevant entities and properties for each case (e.g. IFCLINEINDEX((1,2))),
+							//and reset typeremembrance for the next case (e.g. IFCARCINDEX((4,5))).								
+	
+							if ((evo != null)
+									&& (evo.getDerived_attribute_list() != null)
+									&& (evo.getDerived_attribute_list().size() > attribute_pointer)) {	
+	
+								OntClass cl = ontModel.getOntClass(ontNS + typeremembrance.getName());
+								Resource r1 = getResource(baseURI + typeremembrance.getName() + "_" + IDcounter, cl);
+								IDcounter++;
+								
+								String[] primtypeArr = typeremembrance.getPrimarytype().split(" ");
+								String primType = primtypeArr[primtypeArr.length-1].replace(";", "") + "_" + primtypeArr[0].substring(0,1).toUpperCase() + primtypeArr[0].substring(1).toLowerCase();
+								String typeURI = ontNS + primType;
+								OntResource range = ontModel.getOntResource(typeURI);	
+								addDirectRegularListProperty(r1, range, literals);	
+								
+								//put relevant top list items in a list, which can then be parsed at the end of this method
+								listremembranceresources.add(r1);				
+							}
+							
+							typeremembrance = null;
+							literals.clear();
+						}
 					}
-					else{
-						System.out.println("do something");
+				}
+				else{
+					LinkedList<Object> tmp_list_inlist = (LinkedList<Object>) o1;
+					for(int jj = 0; jj<tmp_list_inlist.size(); jj++){
+						Object o2 = tmp_list_inlist.get(jj);
+						if(String.class.isInstance(o2)){
+							literals.add(filter_extras((String) o2));
+						}
 					}
+					if ((evo != null)
+							&& (evo.getDerived_attribute_list() != null)
+							&& (evo.getDerived_attribute_list().size() > attribute_pointer)) {	
+						
+						String propURI = ontNS + evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+						OntProperty p = ontModel.getOntProperty(propURI);	
+						OntClass typerange = p.getRange().asClass();
+
+						if(typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))){
+							//Should always be the case
+							String listvaluepropURI = typerange.getLocalName().substring(0, typerange.getLocalName().length()-5);	
+							OntResource listrange = ontModel.getOntResource(ontNS + listvaluepropURI);
+							Resource r1 = getResource(baseURI + listvaluepropURI + "_" + IDcounter, listrange);
+							IDcounter++;
+							addDirectRegularListProperty(r1, listrange, literals);	
+							listremembranceresources.add(r1);		
+						}
+					}
+					
+					literals.clear();
 				}
 			}
 		}
@@ -600,6 +667,16 @@ public class RDFWriter {
 				addRegularListProperty(r, p, literals);
 			}
 		}
+		if(listremembranceresources.size() > 0){
+			if ((evo != null)
+					&& (evo.getDerived_attribute_list() != null)
+					&& (evo.getDerived_attribute_list().size() > attribute_pointer)) {						
+				String propURI = ontNS + evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+				OntProperty p = ontModel.getOntProperty(propURI);				
+				addListPropertyToGivenEntities(r, p, listremembranceresources);
+			}
+		}
+
 		attribute_pointer++;
 		return attribute_pointer;
 	}
@@ -693,21 +770,8 @@ public class RDFWriter {
 			}
 		}
 	}
-	
-	private void addSinglePropertyFromTypeRemembrance(Resource r, OntProperty p, String literalString, TypeVO typeremembrance) throws IOException{				
-		if(typeremembrance.getPrimarytype().startsWith("LIST")){
-			System.out.println("WARNING: the type is equivalent to a list!!!!!!!");
-			
-			//fillProperties_handleListObject(r,typeremembrance,typeremembrance);
-			
-//			String[] primtypeArr = typeremembrance.getPrimarytype().split(" ");
-//			String primType = primtypeArr[primtypeArr.length-1].replace(";", "") + "_" + primtypeArr[0].substring(0,1).toUpperCase() + primtypeArr[0].substring(1).toLowerCase();
-//			String typeURI = ontNS + primType; 
-//			OntResource range = ontModel.getOntResource(typeURI);				
-//			addDirectRegularListProperty(r, range, literals);	
-		}
-		else{
 		
+	private void addSinglePropertyFromTypeRemembrance(Resource r, OntProperty p, String literalString, TypeVO typeremembrance) throws IOException{				
 			OntResource range = ontModel.getOntResource(ontNS + typeremembrance.getName());
 			
 			if(range.isClass()){
@@ -745,7 +809,6 @@ public class RDFWriter {
 			else {
 				if(myIfcReaderStream.logToFile) myIfcReaderStream.bw.write("12 - WARNING: found other kind of property: " + p + " - " + range.getLocalName() + "\r\n");										
 			}
-		}
 	}
 		
 	private void addEnumProperty(Resource r, Property p, OntResource range, String literalString) throws IOException{
@@ -842,6 +905,38 @@ public class RDFWriter {
 				//bindtheproperties
 				addListInstanceProperties(reslist,el,listrange);	
 			}
+		}
+	}
+	
+	private void addListPropertyToGivenEntities(Resource r, OntProperty p, List<Resource> el) throws IOException{
+		OntResource range = p.getRange();
+		if(range.isClass()){
+			OntResource listrange = getListContentType(range.asClass());
+			
+			if(listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))){
+				System.out.println("handling list of list, but it is actually the same thing as usual");
+				listrange = range;
+			}
+				for(int i = 0; i<el.size();i++){	
+					Resource r1 = el.get(i);
+					Resource r2 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + IDcounter);
+					ttl_writer.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));	
+					if(myIfcReaderStream.logToFile) myIfcReaderStream.bw.write("added property: " + r2.getLocalName() + " - rdf:type - " + listrange.getLocalName() + "\r\n");					
+					IDcounter++;
+					Resource r3 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + IDcounter);
+
+					if(i==0){
+						ttl_writer.triple(new Triple(r.asNode(), p.asNode(), r2.asNode()));	
+						if(myIfcReaderStream.logToFile) myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r2.getLocalName() + "\r\n");
+					}
+					ttl_writer.triple(new Triple(r2.asNode(), listModel.getOntProperty(listNS + "hasContents").asNode(), r1.asNode()));
+					if(myIfcReaderStream.logToFile) myIfcReaderStream.bw.write("added property: " + r2.getLocalName() + " - " + "-hasContents-" + " - " + r1.getLocalName() + "\r\n");
+
+					if(i<el.size()-1){								
+						ttl_writer.triple(new Triple(r2.asNode(), listModel.getOntProperty(listNS + "hasNext").asNode(), r3.asNode()));
+						if(myIfcReaderStream.logToFile) myIfcReaderStream.bw.write("added property: " + r2.getLocalName() + " - " + "-hasNext-" + " - " + r3.getLocalName() + "\r\n");
+					}	
+				}
 		}
 	}
 	
