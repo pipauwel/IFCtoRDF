@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.pipauwel</groupId>
   <artifactId>IFCtoRDF</artifactId>
-  <name>IFCtoRDF Convertor</name>
+  <name>IFC to RDF</name>
   <packaging>jar</packaging>
   <version>0.1-SNAPSHOT</version>
   <licenses>

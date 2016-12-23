@@ -18,13 +18,29 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.buildingsmart.vo.EntityVO;
-import org.buildingsmart.vo.TypeVO;
+import org.openbimstandards.vo.EntityVO;
+import org.openbimstandards.vo.TypeVO;
+
+import com.google.gson.Gson;
+
+/*
+ * Copyright 2016 Pieter Pauwels, Ghent University; Jyrki Oraskari, Aalto University; Lewis John McGibbney, Apache
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 public class IfcSpfReader {
 
@@ -139,7 +155,7 @@ public class IfcSpfReader {
 
     public void convert(String jsonConfig) throws IOException {
       Gson gson = new Gson();
-      String json = gson.toJson(jsonConfig); 
+      //String json = gson.toJson(jsonConfig); 
 
         String ifcFile = gson.fromJson("\"ifc_file\"", String.class);
         String outputFile = gson.fromJson("\"output_file\"", String.class);
@@ -184,14 +200,15 @@ public class IfcSpfReader {
         return out.toString();
     }
 
-    public void convert(String ifc_file, String output_file, String baseURI) throws IOException {
-        long t0 = System.currentTimeMillis();
+    @SuppressWarnings("unchecked")
+	public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
+        //long t0 = System.currentTimeMillis();
 
-        if (!ifc_file.endsWith(".ifc")) {
-            ifc_file += ".ifc";
+        if (!ifcFile.endsWith(".ifc")) {
+            ifcFile += ".ifc";
         }
 
-        String exp = getExpressSchema(ifc_file);
+        String exp = getExpressSchema(ifcFile);
 
         // check if we are able to convert this: only four schemas are supported
         if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4")) {
@@ -257,9 +274,9 @@ public class IfcSpfReader {
 
             String ontURI = "http://ifcowl.openbimstandards.org/" + exp;
 
-            RDFWriter conv = new RDFWriter(om, expressModel, listModel, new FileInputStream(ifc_file), baseURI, ent, typ, ontURI);
+            RDFWriter conv = new RDFWriter(om, expressModel, listModel, new FileInputStream(ifcFile), baseURI, ent, typ, ontURI);
             conv.setIfcReader(this);
-            FileOutputStream out = new FileOutputStream(output_file);
+            FileOutputStream out = new FileOutputStream(outputFile);
             String s = "# baseURI: " + baseURI;
             s += "\r\n# imports: " + ontURI + "\r\n\r\n";
             out.write(s.getBytes());
@@ -289,7 +306,7 @@ public class IfcSpfReader {
         // if (om != null && model != null) {
         // boolean valid = validateGeneratedModel(om, model);
         // if (valid == true) {
-        // writeTTLRDFFiles(model, output_file);
+        // writeTTLRDFFiles(model, outputFile);
         // } else {
         // System.err.println("The generated RDF model is invalid");
         // System.exit(1);

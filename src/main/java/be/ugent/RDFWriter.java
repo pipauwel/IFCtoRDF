@@ -32,11 +32,27 @@ import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.openbimstandards.ifcowl.ExpressReader;
-import org.buildingsmart.vo.EntityVO;
-import org.buildingsmart.vo.IFCVO;
-import org.buildingsmart.vo.TypeVO;
+import org.openbimstandards.vo.EntityVO;
+import org.openbimstandards.vo.IFCVO;
+import org.openbimstandards.vo.TypeVO;
 
 import fi.ni.rdf.Namespace;
+
+/*
+ * Copyright 2016 Pieter Pauwels, Ghent University; Jyrki Oraskari, Aalto University; Lewis John McGibbney, Apache
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License atf
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 public class RDFWriter {
 
@@ -56,7 +72,7 @@ public class RDFWriter {
     private int IDcounter = 0;
     private Map<Long, IFCVO> linemap = new HashMap<Long, IFCVO>();
 
-    private StreamRDF ttl_writer;
+    private StreamRDF ttlWriter;
     private InputStream inputStream;
     private final OntModel ontModel;
     private final OntModel expressModel;
@@ -69,8 +85,8 @@ public class RDFWriter {
     private Map<Long, Long> listOfDuplicateLineEntries = new HashMap<Long, Long>();
 
     // Taking care of avoiding duplicate resources
-    private Map<String, Resource> property_resource_map = new HashMap<String, Resource>();
-    private Map<String, Resource> resource_map = new HashMap<String, Resource>();
+    private Map<String, Resource> propertyResourceMap = new HashMap<String, Resource>();
+    private Map<String, Resource> resourceMap = new HashMap<String, Resource>();
 
     public RDFWriter(OntModel ontModel, OntModel expressModel, OntModel listModel, InputStream inputStream, String baseURI, Map<String, EntityVO> ent, Map<String, TypeVO> typ, String ontURI) {
         this.ontModel = ontModel;
@@ -88,19 +104,19 @@ public class RDFWriter {
     }
 
     public void parseModel2Stream(OutputStream out) throws IOException {
-        ttl_writer = StreamRDFWriter.getWriterStream(out, RDFFormat.TURTLE_BLOCKS);
-        ttl_writer.base(baseURI);
-        ttl_writer.prefix("ifcowl", ontNS);
-        ttl_writer.prefix("inst", baseURI);
-        ttl_writer.prefix("list", listNS);
-        ttl_writer.prefix("express", expressNS);
-        ttl_writer.prefix("rdf", Namespace.RDF);
-        ttl_writer.prefix("xsd", Namespace.XSD);
-        ttl_writer.prefix("owl", Namespace.OWL);
-        ttl_writer.start();
+        ttlWriter = StreamRDFWriter.getWriterStream(out, RDFFormat.TURTLE_BLOCKS);
+        ttlWriter.base(baseURI);
+        ttlWriter.prefix("ifcowl", ontNS);
+        ttlWriter.prefix("inst", baseURI);
+        ttlWriter.prefix("list", listNS);
+        ttlWriter.prefix("express", expressNS);
+        ttlWriter.prefix("rdf", Namespace.RDF);
+        ttlWriter.prefix("xsd", Namespace.XSD);
+        ttlWriter.prefix("owl", Namespace.OWL);
+        ttlWriter.start();
 
-        ttl_writer.triple(new Triple(NodeFactory.createURI(baseURI), RDF.type.asNode(), OWL.Ontology.asNode()));
-        ttl_writer.triple(new Triple(NodeFactory.createURI(baseURI), OWL.imports.asNode(), NodeFactory.createURI(ontNS)));
+        ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), RDF.type.asNode(), OWL.Ontology.asNode()));
+        ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), OWL.imports.asNode(), NodeFactory.createURI(ontNS)));
 
         // Read the whole file into a linemap Map object
         readModel();
@@ -120,7 +136,7 @@ public class RDFWriter {
         linemap.clear();
         linemap = null;
 
-        ttl_writer.finish();
+        ttlWriter.finish();
     }
 
     private void readModel() {
@@ -144,7 +160,7 @@ public class RDFWriter {
                             // the whole IFC gets parsed, and everything ends up
                             // as IFCVO objects in the Map<Long, IFCVO> linemap
                             // variable
-                            parse_IFC_LineStatement(sb.toString().substring(1));
+                            parseIfcLineStatement(sb.toString().substring(1));
                         }
                     }
                 }
@@ -156,20 +172,20 @@ public class RDFWriter {
         }
     }
 
-    private void parse_IFC_LineStatement(String line) {
+    private void parseIfcLineStatement(String line) {
         IFCVO ifcvo = new IFCVO();
         ifcvo.setFullLineAfterNum(line.substring(line.indexOf("=") + 1));
         int state = 0;
         StringBuffer sb = new StringBuffer();
-        int cl_count = 0;
-        LinkedList<Object> current = ifcvo.getObjectList();
-        Stack<LinkedList<Object>> list_stack = new Stack<LinkedList<Object>>();
+        int clCount = 0;
+        LinkedList<Object> current = (LinkedList<Object>) ifcvo.getObjectList();
+        Stack<LinkedList<Object>> listStack = new Stack<LinkedList<Object>>();
         for (int i = 0; i < line.length(); i++) {
             char ch = line.charAt(i);
             switch (state) {
                 case 0:
                 if (ch == '=') {
-                    ifcvo.setLine_num(toLong(sb.toString()));
+                    ifcvo.setLineNum(toLong(sb.toString()));
                     sb.setLength(0);
                     state++;
                     continue;
@@ -194,17 +210,17 @@ public class RDFWriter {
                     state++;
                 }
                 if (ch == '(') {
-                    list_stack.push(current);
+                    listStack.push(current);
                     LinkedList<Object> tmp = new LinkedList<Object>();
                     if (sb.toString().trim().length() > 0)
                         current.add(sb.toString().trim());
                     sb.setLength(0);
                     current.add(tmp);
                     current = tmp;
-                    cl_count++;
+                    clCount++;
                     // sb.append(ch);
                 } else if (ch == ')') {
-                    if (cl_count == 0) {
+                    if (clCount == 0) {
                         if (sb.toString().trim().length() > 0)
                             current.add(sb.toString().trim());
                         sb.setLength(0);
@@ -214,8 +230,8 @@ public class RDFWriter {
                         if (sb.toString().trim().length() > 0)
                             current.add(sb.toString().trim());
                         sb.setLength(0);
-                        cl_count--;
-                        current = list_stack.pop();
+                        clCount--;
+                        current = listStack.pop();
                     }
                 } else if (ch == ',') {
                     if (sb.toString().trim().length() > 0)
@@ -238,7 +254,7 @@ public class RDFWriter {
                 // Do nothing
             }
         }
-        linemap.put(ifcvo.getLine_num(), ifcvo);
+        linemap.put(ifcvo.getLineNum(), ifcvo);
         IDcounter++;
     }
 
@@ -253,7 +269,7 @@ public class RDFWriter {
             else {
                 // found duplicate
                 entriesToRemove.add(entry.getKey());// linemap.remove(entry.getKey());
-                listOfDuplicateLineEntries.put(vo.getLine_num(), listOfUniqueResources.get(t).getLine_num());
+                listOfDuplicateLineEntries.put(vo.getLineNum(), listOfUniqueResources.get(t).getLineNum());
             }
         }
         if (myIfcReaderStream.logToFile)
@@ -285,10 +301,10 @@ public class RDFWriter {
                 }
                 if (LinkedList.class.isInstance(o)) {
                     @SuppressWarnings("unchecked")
-                    LinkedList<Object> tmp_list = (LinkedList<Object>) o;
+                    LinkedList<Object> tmpList = (LinkedList<Object>) o;
 
-                    for (int j = 0; j < tmp_list.size(); j++) {
-                        Object o1 = tmp_list.get(j);
+                    for (int j = 0; j < tmpList.size(); j++) {
+                        Object o1 = tmpList.get(j);
                         if (String.class.isInstance(o1)) {
                             String s = (String) o1;
                             if (s.length() < 1)
@@ -301,15 +317,15 @@ public class RDFWriter {
                                     or = linemap.get(toLong(s.substring(1)));
                                 if (or == null) {
                                     System.err.println("Reference to non-existing line in the IFC file.");
-                                    tmp_list.set(j, "-");
+                                    tmpList.set(j, "-");
                                 } else
-                                    tmp_list.set(j, or);
+                                    tmpList.set(j, or);
                             }
                         } else if (LinkedList.class.isInstance(o1)) {
                             @SuppressWarnings("unchecked")
-                            LinkedList<Object> tmp2_list = (LinkedList<Object>) o1;
-                            for (int j2 = 0; j2 < tmp2_list.size(); j2++) {
-                                Object o2 = tmp2_list.get(j2);
+                            LinkedList<Object> tmp2List = (LinkedList<Object>) o1;
+                            for (int j2 = 0; j2 < tmp2List.size(); j2++) {
+                                Object o2 = tmp2List.get(j2);
                                 if (String.class.isInstance(o2)) {
                                     String s = (String) o2;
                                     if (s.length() < 1)
@@ -322,9 +338,9 @@ public class RDFWriter {
                                             or = linemap.get(toLong(s.substring(1)));
                                         if (or == null) {
                                             System.err.println("Reference to non-existing line in the IFC file.");
-                                            tmp_list.set(j, "-");
+                                            tmpList.set(j, "-");
                                         } else
-                                            tmp_list.set(j, or);
+                                            tmpList.set(j, or);
                                     }
                                 }
                             }
@@ -336,19 +352,19 @@ public class RDFWriter {
     }
 
     private void createInstances() throws IOException {
-        int i = 0;
+        //int i = 0;
         for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
-            IFCVO ifc_lineEntry = entry.getValue();
+            IFCVO ifcLineEntry = entry.getValue();
             String typeName = "";
-            if (ent.containsKey(ifc_lineEntry.getName()))
-                typeName = ent.get(ifc_lineEntry.getName()).getName();
-            else if (typ.containsKey(ifc_lineEntry.getName()))
-                typeName = typ.get(ifc_lineEntry.getName()).getName();
+            if (ent.containsKey(ifcLineEntry.getName()))
+                typeName = ent.get(ifcLineEntry.getName()).getName();
+            else if (typ.containsKey(ifcLineEntry.getName()))
+                typeName = typ.get(ifcLineEntry.getName()).getName();
 
             OntClass cl = ontModel.getOntClass(ontNS + typeName);
 
-            Resource r = getResource(baseURI + typeName + "_" + ifc_lineEntry.getLine_num(), cl);
-            listOfUniqueResources.put(ifc_lineEntry.getFullLineAfterNum(), r);
+            Resource r = getResource(baseURI + typeName + "_" + ifcLineEntry.getLineNum(), cl);
+            listOfUniqueResources.put(ifcLineEntry.getFullLineAfterNum(), r);
 
             if (myIfcReaderStream.logToFile)
                 myIfcReaderStream.bw.write("-------------------------------" + "\r\n");
@@ -357,45 +373,45 @@ public class RDFWriter {
             if (myIfcReaderStream.logToFile)
                 myIfcReaderStream.bw.write("-------------------------------" + "\r\n");
 
-            fillProperties(ifc_lineEntry, r, cl);
-            i++;
+            fillProperties(ifcLineEntry, r, cl);
+            //i++;
         }
         // The map is used only to avoid duplicates.
         // So, it can be cleared here
-        property_resource_map.clear();
+        propertyResourceMap.clear();
     }
 
     TypeVO typeremembrance = null;
 
-    private void fillProperties(IFCVO ifc_lineEntry, Resource r, OntClass cl) throws IOException {
+    private void fillProperties(IFCVO ifcLineEntry, Resource r, OntClass cl) throws IOException {
 
-        EntityVO evo = ent.get(ExpressReader.formatClassName(ifc_lineEntry.getName()));
-        TypeVO tvo = typ.get(ExpressReader.formatClassName(ifc_lineEntry.getName()));
+        EntityVO evo = ent.get(ExpressReader.formatClassName(ifcLineEntry.getName()));
+        TypeVO tvo = typ.get(ExpressReader.formatClassName(ifcLineEntry.getName()));
 
         if (tvo == null && evo == null) {
-            System.err.println("Type nor entity exists: " + ifc_lineEntry.getName());
+            System.err.println("Type nor entity exists: " + ifcLineEntry.getName());
         }
 
         if (evo == null && tvo != null) {
             // System.err.println("Entity does not exist: " +
-            // ifc_lineEntry.getName());
-            final String subject = tvo.getName() + "_" + ifc_lineEntry.getLine_num();
+            // ifcLineEntry.getName());
+            //final String subject = tvo.getName() + "_" + ifcLineEntry.getLineNum();
 
             typeremembrance = null;
-            int attribute_pointer = 0;
-            for (Object o : ifc_lineEntry.getObjectList()) {
+            //int attributePointer = 0;
+            for (Object o : ifcLineEntry.getObjectList()) {
 
                 if (String.class.isInstance(o)) {
                     System.out.println("WARNING: unhandled type property found.");
-                    // attribute_pointer = fillProperties_handleStringObject(r,
+                    // attributePointer = fillPropertiesHandleStringObject(r,
                     // tvo,
-                    // subject, attribute_pointer, o);
+                    // subject, attributePointer, o);
                 } else if (IFCVO.class.isInstance(o)) {
                     System.out.println("WARNING: unhandled type property found.");
-                    // attribute_pointer = fillProperties_handleIFC_Object(r,
-                    // tvo, attribute_pointer, o);
+                    // attributePointer = fillPropertiesHandleIFC_Object(r,
+                    // tvo, attributePointer, o);
                 } else if (LinkedList.class.isInstance(o)) {
-                    fillProperties_handleListObject(r, tvo, o);
+                    fillPropertiesHandleListObject(r, tvo, o);
                 }
                 if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.flush();
@@ -404,19 +420,19 @@ public class RDFWriter {
 
         if (tvo == null && evo != null) {
             // System.err.println("Type does not exist: " +
-            // ifc_lineEntry.getName());
-            final String subject = evo.getName() + "_" + ifc_lineEntry.getLine_num();
+            // ifcLineEntry.getName());
+            final String subject = evo.getName() + "_" + ifcLineEntry.getLineNum();
 
             typeremembrance = null;
-            int attribute_pointer = 0;
-            for (Object o : ifc_lineEntry.getObjectList()) {
+            int attributePointer = 0;
+            for (Object o : ifcLineEntry.getObjectList()) {
 
                 if (String.class.isInstance(o)) {
-                    attribute_pointer = fillProperties_handleStringObject(r, evo, subject, attribute_pointer, o);
+                    attributePointer = fillPropertiesHandleStringObject(r, evo, subject, attributePointer, o);
                 } else if (IFCVO.class.isInstance(o)) {
-                    attribute_pointer = fillProperties_handleIFC_Object(r, evo, attribute_pointer, o);
+                    attributePointer = fillPropertiesHandleIfcObject(r, evo, attributePointer, o);
                 } else if (LinkedList.class.isInstance(o)) {
-                    attribute_pointer = fillProperties_handleListObject(r, evo, attribute_pointer, o);
+                    attributePointer = fillPropertiesHandleListObject(r, evo, attributePointer, o);
                 }
                 if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.flush();
@@ -427,14 +443,14 @@ public class RDFWriter {
             myIfcReaderStream.bw.flush();
     }
 
-    private int fillProperties_handleStringObject(Resource r, EntityVO evo, String subject, int attribute_pointer, Object o) throws IOException {
+    private int fillPropertiesHandleStringObject(Resource r, EntityVO evo, String subject, int attributePointer, Object o) throws IOException {
         if (!((String) o).equals("$") && !((String) o).equals("*")) {
 
             if (typ.get(ExpressReader.formatClassName((String) o)) == null) {
-                if ((evo != null) && (evo.getDerived_attribute_list() != null) && (evo.getDerived_attribute_list().size() > attribute_pointer)) {
+                if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
 
-                    final String propURI = ontNS + evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
-                    final String literalString = filter_extras((String) o);
+                    final String propURI = ontNS + evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
+                    final String literalString = filterExtras((String) o);
 
                     OntProperty p = ontModel.getOntProperty(propURI);
                     OntResource range = p.getRange();
@@ -468,17 +484,17 @@ public class RDFWriter {
 
                                 // Create only when needed...
                                 String key = valueProp.toString() + ":" + xsdType + ":" + literalString;
-                                Resource r1 = property_resource_map.get(key);
+                                Resource r1 = propertyResourceMap.get(key);
                                 if (r1 == null) {
                                     r1 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter);
-                                    ttl_writer.triple(new Triple(r1.asNode(), RDF.type.asNode(), range.asNode()));
+                                    ttlWriter.triple(new Triple(r1.asNode(), RDF.type.asNode(), range.asNode()));
                                     if (myIfcReaderStream.logToFile)
                                         myIfcReaderStream.bw.write("created resource: " + r1.getLocalName() + "\r\n");
                                     IDcounter++;
-                                    property_resource_map.put(key, r1);
+                                    propertyResourceMap.put(key, r1);
                                     addLiteralToResource(r1, valueProp, xsdType, literalString);
                                 }
-                                ttl_writer.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
+                                ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
                                 if (myIfcReaderStream.logToFile)
                                     myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
                             } else {
@@ -491,52 +507,52 @@ public class RDFWriter {
                             myIfcReaderStream.bw.write("5 - WARNING: found other kind of property: " + p + " - " + range.getLocalName() + "\r\n");
                     }
                 }
-                attribute_pointer++;
+                attributePointer++;
             } else {
                 typeremembrance = typ.get(ExpressReader.formatClassName((String) o));
             }
         } else
-            attribute_pointer++;
-        return attribute_pointer;
+            attributePointer++;
+        return attributePointer;
     }
 
-    private int fillProperties_handleIFC_Object(Resource r, EntityVO evo, int attribute_pointer, Object o) throws IOException {
-        if ((evo != null) && (evo.getDerived_attribute_list() != null) && (evo.getDerived_attribute_list().size() > attribute_pointer)) {
+    private int fillPropertiesHandleIfcObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
+        if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
 
-            final String propURI = ontNS + evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+            final String propURI = ontNS + evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
             EntityVO evorange = ent.get(ExpressReader.formatClassName(((IFCVO) o).getName()));
 
             OntProperty p = ontModel.getOntProperty(propURI);
             OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());
 
-            Resource r1 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) o).getLine_num(), rclass);
-            ttl_writer.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
+            Resource r1 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) o).getLineNum(), rclass);
+            ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
             if (myIfcReaderStream.logToFile)
                 myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
         }
-        attribute_pointer++;
-        return attribute_pointer;
+        attributePointer++;
+        return attributePointer;
     }
 
-    private int fillProperties_handleListObject(Resource r, EntityVO evo, int attribute_pointer, Object o) throws IOException {
+    @SuppressWarnings("unchecked")
+	private int fillPropertiesHandleListObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
 
-        @SuppressWarnings("unchecked")
-        final LinkedList<Object> tmp_list = (LinkedList<Object>) o;
+        final LinkedList<Object> tmpList = (LinkedList<Object>) o;
         LinkedList<String> literals = new LinkedList<String>();
 
         // process list
-        for (int j = 0; j < tmp_list.size(); j++) {
-            Object o1 = tmp_list.get(j);
+        for (int j = 0; j < tmpList.size(); j++) {
+            Object o1 = tmpList.get(j);
             if (String.class.isInstance(o1)) {
                 if (typ.get(ExpressReader.formatClassName((String) o1)) != null && typeremembrance == null)
                     typeremembrance = typ.get(ExpressReader.formatClassName((String) o1));
                 else
-                    literals.add(filter_extras((String) o1));
+                    literals.add(filterExtras((String) o1));
             }
             if (IFCVO.class.isInstance(o1)) {
-                if ((evo != null) && (evo.getDerived_attribute_list() != null) && (evo.getDerived_attribute_list().size() > attribute_pointer)) {
+                if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
 
-                    String propURI = evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+                    String propURI = evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
                     OntProperty p = ontModel.getOntProperty(ontNS + propURI);
                     OntResource typerange = p.getRange();
 
@@ -549,27 +565,27 @@ public class RDFWriter {
                             if (myIfcReaderStream.logToFile)
                                 myIfcReaderStream.bw.write("6 - WARNING: Found unhandled ListOfList" + "\r\n");
                         } else {
-                            fillClassInstanceList(tmp_list, typerange, p, r);
-                            j = tmp_list.size() - 1;
+                            fillClassInstanceList(tmpList, typerange, p, r);
+                            j = tmpList.size() - 1;
                         }
                     } else {
                         // EXPRESS SETs
                         EntityVO evorange = ent.get(ExpressReader.formatClassName(((IFCVO) o1).getName()));
                         OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());
 
-                        Resource r1 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) o1).getLine_num(), rclass);
-                        ttl_writer.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
+                        Resource r1 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) o1).getLineNum(), rclass);
+                        ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
                         if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
                     }
                 }
             }
             if (LinkedList.class.isInstance(o1) && typeremembrance != null) {
-                LinkedList<Object> tmp_list_inlist = (LinkedList<Object>) o1;
-                for (int jj = 0; jj < tmp_list_inlist.size(); jj++) {
-                    Object o2 = tmp_list_inlist.get(jj);
+                LinkedList<Object> tmpListInlist = (LinkedList<Object>) o1;
+                for (int jj = 0; jj < tmpListInlist.size(); jj++) {
+                    Object o2 = tmpListInlist.get(jj);
                     if (String.class.isInstance(o2)) {
-                        literals.add(filter_extras((String) o2));
+                        literals.add(filterExtras((String) o2));
                     } else {
                         System.out.println("do something");
                     }
@@ -580,38 +596,38 @@ public class RDFWriter {
         // interpret parse
         if (literals.size() > 0) {
             if (typeremembrance != null) {
-                if ((evo != null) && (evo.getDerived_attribute_list() != null) && (evo.getDerived_attribute_list().size() > attribute_pointer)) {
+                if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
 
-                    String propURI = ontNS + evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+                    String propURI = ontNS + evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
                     OntProperty p = ontModel.getOntProperty(propURI);
 
                     addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeremembrance);
                 }
                 typeremembrance = null;
-            } else if ((evo != null) && (evo.getDerived_attribute_list() != null) && (evo.getDerived_attribute_list().size() > attribute_pointer)) {
-                String propURI = ontNS + evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+            } else if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
+                String propURI = ontNS + evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
                 OntProperty p = ontModel.getOntProperty(propURI);
                 addRegularListProperty(r, p, literals);
             }
         }
-        attribute_pointer++;
-        return attribute_pointer;
+        attributePointer++;
+        return attributePointer;
     }
 
-    private void fillProperties_handleListObject(Resource r, TypeVO tvo, Object o) throws IOException {
+    @SuppressWarnings({ "unchecked" })
+	private void fillPropertiesHandleListObject(Resource r, TypeVO tvo, Object o) throws IOException {
 
-        @SuppressWarnings("unchecked")
-        final LinkedList<Object> tmp_list = (LinkedList<Object>) o;
+        final LinkedList<Object> tmpList = (LinkedList<Object>) o;
         LinkedList<String> literals = new LinkedList<String>();
 
         // process list
-        for (int j = 0; j < tmp_list.size(); j++) {
-            Object o1 = tmp_list.get(j);
+        for (int j = 0; j < tmpList.size(); j++) {
+            Object o1 = tmpList.get(j);
             if (String.class.isInstance(o1)) {
                 if (typ.get(ExpressReader.formatClassName((String) o1)) != null && typeremembrance == null)
                     typeremembrance = typ.get(ExpressReader.formatClassName((String) o1));
                 else
-                    literals.add(filter_extras((String) o1));
+                    literals.add(filterExtras((String) o1));
             }
             if (IFCVO.class.isInstance(o1)) {
                 if ((tvo != null)) {
@@ -620,7 +636,7 @@ public class RDFWriter {
                                         + "\r\n");
                     System.out.println("TODO 16: found TYPE that is equivalent to a list if IFC entities - below is the code used when this happens for ENTITIES with a list of ENTITIES");
                     // String propURI =
-                    // tvo.evo.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+                    // tvo.evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
                     // OntProperty p = ontModel.getOntProperty(ontNS + propURI);
                     // OntResource typerange = p.getRange();
                     //
@@ -640,8 +656,8 @@ public class RDFWriter {
                     // + "\r\n");
                     // }
                     // else{
-                    // fillClassInstanceList(tmp_list, typerange, p, r);
-                    // j = tmp_list.size()-1;
+                    // fillClassInstanceList(tmpList, typerange, p, r);
+                    // j = tmpList.size()-1;
                     // }
                     // }
                     // else{
@@ -652,8 +668,8 @@ public class RDFWriter {
                     // evorange.getName());
                     //
                     // Resource r1 = getResource(baseURI + evorange.getName() +
-                    // "_" + ((IFCVO) o1).getLine_num(),rclass);
-                    // ttl_writer.triple(new Triple(r.asNode(), p.asNode(),
+                    // "_" + ((IFCVO) o1).getLineNum(),rclass);
+                    // ttlWriter.triple(new Triple(r.asNode(), p.asNode(),
                     // r1.asNode()));
                     // if(myIfcReaderStream.logToFile)
                     // myIfcReaderStream.bw.write("added property: " +
@@ -663,11 +679,11 @@ public class RDFWriter {
                 }
             }
             if (LinkedList.class.isInstance(o1) && typeremembrance != null) {
-                LinkedList<Object> tmp_list_inlist = (LinkedList<Object>) o1;
-                for (int jj = 0; jj < tmp_list_inlist.size(); jj++) {
-                    Object o2 = tmp_list_inlist.get(jj);
+                LinkedList<Object> tmpListInlist = (LinkedList<Object>) o1;
+                for (int jj = 0; jj < tmpListInlist.size(); jj++) {
+                    Object o2 = tmpListInlist.get(jj);
                     if (String.class.isInstance(o2)) {
-                        literals.add(filter_extras((String) o2));
+                        literals.add(filterExtras((String) o2));
                     }
                 }
             }
@@ -677,9 +693,9 @@ public class RDFWriter {
         if (literals.size() > 0) {
             if (typeremembrance != null) {
                 if ((tvo != null)) {
-                    // && (tvo.getDerived_attribute_list() != null)
-                    // && (tvo.getDerived_attribute_list().size() >
-                    // attribute_pointer)) {
+                    // && (tvo.getDerivedAttributeList() != null)
+                    // && (tvo.getDerivedAttributeList().size() >
+                    // attributePointer)) {
                     if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("WARNING: this part of the code has not been checked - it can't be correct" + "\r\n");
                     System.out.println("WARNING: this part of the code has not been checked - it can't be correct");
@@ -691,7 +707,7 @@ public class RDFWriter {
                     addDirectRegularListProperty(r, range, literals);
 
                     // String propURI = ontNS +
-                    // tvo.getName();//.getDerived_attribute_list().get(attribute_pointer).getLowerCaseName();
+                    // tvo.getName();//.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
                     // OntProperty p = ontModel.getOntProperty(propURI);
                     // addSinglePropertyFromTypeRemembrance(r, p,
                     // literals.getFirst(), typeremembrance);
@@ -711,7 +727,7 @@ public class RDFWriter {
         if (typeremembrance.getPrimarytype().startsWith("LIST")) {
             System.out.println("WARNING: the type is equivalent to a list!!!!!!!");
 
-            // fillProperties_handleListObject(r,typeremembrance,typeremembrance);
+            // fillPropertiesHandleListObject(r,typeremembrance,typeremembrance);
 
             // String[] primtypeArr =
             // typeremembrance.getPrimarytype().split(" ");
@@ -743,15 +759,15 @@ public class RDFWriter {
                         OntProperty valueProp = expressModel.getOntProperty(expressNS + "has" + xsdTypeCAP);
                         String key = valueProp.toString() + ":" + xsdType + ":" + literalString;
 
-                        Resource r1 = property_resource_map.get(key);
+                        Resource r1 = propertyResourceMap.get(key);
                         if (r1 == null) {
                             r1 = ResourceFactory.createResource(baseURI + typeremembrance.getName() + "_" + IDcounter);
-                            ttl_writer.triple(new Triple(r1.asNode(), RDF.type.asNode(), range.asNode()));
+                            ttlWriter.triple(new Triple(r1.asNode(), RDF.type.asNode(), range.asNode()));
                             IDcounter++;
-                            property_resource_map.put(key, r1);
+                            propertyResourceMap.put(key, r1);
                             addLiteralToResource(r1, valueProp, xsdType, literalString);
                         }
-                        ttl_writer.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
+                        ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
                         if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
                     }
@@ -766,8 +782,8 @@ public class RDFWriter {
     private void addEnumProperty(Resource r, Property p, OntResource range, String literalString) throws IOException {
         for (ExtendedIterator<? extends OntResource> instances = range.asClass().listInstances(); instances.hasNext();) {
             OntResource rangeInstance = instances.next();
-            if (rangeInstance.getProperty(RDFS.label).getString().equalsIgnoreCase(filter_points(literalString))) {
-                ttl_writer.triple(new Triple(r.asNode(), p.asNode(), rangeInstance.asNode()));
+            if (rangeInstance.getProperty(RDFS.label).getString().equalsIgnoreCase(filterPoints(literalString))) {
+                ttlWriter.triple(new Triple(r.asNode(), p.asNode(), rangeInstance.asNode()));
                 if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("added ENUM statement " + r.getLocalName() + " - " + p.getLocalName() + " - " + rangeInstance.getLocalName() + "\r\n");
                 break;
@@ -850,7 +866,7 @@ public class RDFWriter {
                     reslist.add(r1);
                     IDcounter++;
                     if (ii == 0) {
-                        ttl_writer.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
+                        ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
                         if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
                     }
@@ -861,22 +877,22 @@ public class RDFWriter {
         }
     }
 
-    private List<String> getListElements(String literalString) throws IOException {
-        String[] elements = literalString.split("_, ");
-        List<String> el = new ArrayList<String>();
-        for (String element : elements) {
-            if (element.startsWith("_") && element.endsWith("_"))
-                if (myIfcReaderStream.logToFile)
-                    myIfcReaderStream.bw.write("WARNING getListElements(): Found list of enumerations" + "\r\n");
-            if (element.contains("_")) {
-                if (myIfcReaderStream.logToFile)
-                    myIfcReaderStream.bw.write("WARNING getListElements(): Found '_' in list elements" + "\r\n");
-                element = element.replaceAll("_", "");
-            }
-            el.add(element);
-        }
-        return el;
-    }
+//    private List<String> getListElements(String literalString) throws IOException {
+//        String[] elements = literalString.split("_, ");
+//        List<String> el = new ArrayList<String>();
+//        for (String element : elements) {
+//            if (element.startsWith("_") && element.endsWith("_"))
+//                if (myIfcReaderStream.logToFile)
+//                    myIfcReaderStream.bw.write("WARNING getListElements(): Found list of enumerations" + "\r\n");
+//            if (element.contains("_")) {
+//                if (myIfcReaderStream.logToFile)
+//                    myIfcReaderStream.bw.write("WARNING getListElements(): Found '_' in list elements" + "\r\n");
+//                element = element.replaceAll("_", "");
+//            }
+//            el.add(element);
+//        }
+//        return el;
+//    }
 
     private OntResource getListContentType(OntClass range) throws IOException {
         if (range.asClass().getURI().equalsIgnoreCase(expressNS + "STRING_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "STRING_List")))
@@ -904,19 +920,19 @@ public class RDFWriter {
         }
     }
 
-    private void fillClassInstanceList(LinkedList<Object> tmp_list, OntResource typerange, OntProperty p, Resource r) throws IOException {
+    private void fillClassInstanceList(LinkedList<Object> tmpList, OntResource typerange, OntProperty p, Resource r) throws IOException {
         List<Resource> reslist = new ArrayList<Resource>();
         List<IFCVO> entlist = new ArrayList<IFCVO>();
 
         // createrequirednumberofresources
-        for (int i = 0; i < tmp_list.size(); i++) {
-            if (IFCVO.class.isInstance(tmp_list.get(i))) {
+        for (int i = 0; i < tmpList.size(); i++) {
+            if (IFCVO.class.isInstance(tmpList.get(i))) {
                 Resource r1 = getResource(baseURI + typerange.getLocalName() + "_" + IDcounter, typerange);
                 reslist.add(r1);
                 IDcounter++;
-                entlist.add((IFCVO) tmp_list.get(i));
+                entlist.add((IFCVO) tmpList.get(i));
                 if (i == 0) {
-                    ttl_writer.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
+                    ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
                 }
             }
         }
@@ -940,20 +956,20 @@ public class RDFWriter {
             if (evorange == null) {
                 TypeVO typerange = typ.get(ExpressReader.formatClassName(entlist.get(i).getName()));
                 rclass = ontModel.getOntResource(ontNS + typerange.getName());
-                Resource r1 = getResource(baseURI + typerange.getName() + "_" + entlist.get(i).getLine_num(), rclass);
-                ttl_writer.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
+                Resource r1 = getResource(baseURI + typerange.getName() + "_" + entlist.get(i).getLineNum(), rclass);
+                ttlWriter.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
                 if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("created property: " + r.getLocalName() + " - " + listp.getLocalName() + " - " + r1.getLocalName() + "\r\n");
             } else {
                 rclass = ontModel.getOntResource(ontNS + evorange.getName());
-                Resource r1 = getResource(baseURI + evorange.getName() + "_" + entlist.get(i).getLine_num(), rclass);
-                ttl_writer.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
+                Resource r1 = getResource(baseURI + evorange.getName() + "_" + entlist.get(i).getLineNum(), rclass);
+                ttlWriter.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
                 if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("created property: " + r.getLocalName() + " - " + listp.getLocalName() + " - " + r1.getLocalName() + "\r\n");
             }
 
             if (i < reslist.size() - 1) {
-                ttl_writer.triple(new Triple(r.asNode(), isfollowed.asNode(), reslist.get(i + 1).asNode()));
+                ttlWriter.triple(new Triple(r.asNode(), isfollowed.asNode(), reslist.get(i + 1).asNode()));
                 if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("created property: " + r.getLocalName() + " - " + isfollowed.getLocalName() + " - " + reslist.get(i + 1).getLocalName() + "\r\n");
             }
@@ -974,20 +990,20 @@ public class RDFWriter {
                 Resource r = reslist.get(i);
                 String literalString = listelements.get(i);
                 String key = valueProp.toString() + ":" + xsdType + ":" + literalString;
-                Resource r2 = property_resource_map.get(key);
+                Resource r2 = propertyResourceMap.get(key);
                 if (r2 == null) {
                     r2 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + IDcounter);
-                    ttl_writer.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));
+                    ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));
                     IDcounter++;
-                    property_resource_map.put(key, r2);
+                    propertyResourceMap.put(key, r2);
                     addLiteralToResource(r2, valueProp, xsdType, literalString);
                 }
-                ttl_writer.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasContents").asNode(), r2.asNode()));
+                ttlWriter.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasContents").asNode(), r2.asNode()));
                 if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + "-hasContents-" + " - " + r2.getLocalName() + "\r\n");
 
                 if (i < listelements.size() - 1) {
-                    ttl_writer.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasNext").asNode(), reslist.get(i + 1).asNode()));
+                    ttlWriter.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasNext").asNode(), reslist.get(i + 1).asNode()));
                     if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("added property: " + r.getLocalName() + " - " + "-hasNext-" + " - " + reslist.get(i + 1).getLocalName() + "\r\n");
                 }
@@ -997,7 +1013,7 @@ public class RDFWriter {
     }
 
     // HELPER METHODS
-    private String filter_extras(String txt) {
+    private String filterExtras(String txt) {
         StringBuffer sb = new StringBuffer();
         for (int n = 0; n < txt.length(); n++) {
             char ch = txt.charAt(n);
@@ -1013,7 +1029,7 @@ public class RDFWriter {
         return sb.toString();
     }
 
-    private String filter_points(String txt) {
+    private String filterPoints(String txt) {
         StringBuffer sb = new StringBuffer();
         for (int n = 0; n < txt.length(); n++) {
             char ch = txt.charAt(n);
@@ -1036,11 +1052,11 @@ public class RDFWriter {
     }
 
     private void addLiteral(Resource r, OntProperty valueProp, Literal l) {
-        ttl_writer.triple(new Triple(r.asNode(), valueProp.asNode(), l.asNode()));
+        ttlWriter.triple(new Triple(r.asNode(), valueProp.asNode(), l.asNode()));
     }
 
     private void addProperty(Resource r, OntProperty valueProp, Resource r1) {
-        ttl_writer.triple(new Triple(r.asNode(), valueProp.asNode(), r1.asNode()));
+        ttlWriter.triple(new Triple(r.asNode(), valueProp.asNode(), r1.asNode()));
     }
 
     private String getXSDTypeFromRange(OntResource range) {
@@ -1076,12 +1092,12 @@ public class RDFWriter {
     }
 
     private Resource getResource(String uri, OntResource rclass) {
-        Resource r = resource_map.get(uri);
+        Resource r = resourceMap.get(uri);
         if (r == null) {
             r = ResourceFactory.createResource(uri);
-            resource_map.put(uri, r);
+            resourceMap.put(uri, r);
             try {
-                ttl_writer.triple(new Triple(r.asNode(), RDF.type.asNode(), rclass.asNode()));
+                ttlWriter.triple(new Triple(r.asNode(), RDF.type.asNode(), rclass.asNode()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
