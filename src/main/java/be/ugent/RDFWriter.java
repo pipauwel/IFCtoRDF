@@ -34,6 +34,7 @@ import org.apache.jena.vocabulary.RDFS;
 import org.openbimstandards.ifcowl.ExpressReader;
 import org.openbimstandards.vo.EntityVO;
 import org.openbimstandards.vo.IFCVO;
+import org.openbimstandards.vo.PropertyVO;
 import org.openbimstandards.vo.TypeVO;
 
 import fi.ni.rdf.Namespace;
@@ -451,9 +452,9 @@ public class RDFWriter {
         if (!((String) o).equals("$") && !((String) o).equals("*")) {
 
             if (typ.get(ExpressReader.formatClassName((String) o)) == null) {
-                if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
+                if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
 
-                    final String propURI = ontNS + evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
+                    final String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
                     final String literalString = filterExtras((String) o);
 
                     OntProperty p = ontModel.getOntProperty(propURI);
@@ -521,9 +522,9 @@ public class RDFWriter {
     }
 
     private int fillPropertiesHandleIfcObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
-        if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
-
-            final String propURI = ontNS + evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
+        if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
+        	
+            final String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
             EntityVO evorange = ent.get(ExpressReader.formatClassName(((IFCVO) o).getName()));
 
             OntProperty p = ontModel.getOntProperty(propURI);
@@ -554,9 +555,9 @@ public class RDFWriter {
                     literals.add(filterExtras((String) o1));
             }
             if (IFCVO.class.isInstance(o1)) {
-                if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
+                if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
 
-                    String propURI = evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
+                    String propURI = evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
                     OntProperty p = ontModel.getOntProperty(ontNS + propURI);
                     OntResource typerange = p.getRange();
 
@@ -600,9 +601,9 @@ public class RDFWriter {
         // interpret parse
         if (literals.size() > 0) {
             if (typeremembrance != null) {
-                if ((evo != null) && (evo.getDerivedInverseList() != null) && (evo.getDerivedInverseList().size() > attributePointer)) {
+                if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
 
-                    String propURI = ontNS + evo.getDerivedInverseList().get(attributePointer).getLowerCaseName();
+                    String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
                     OntProperty p = ontModel.getOntProperty(propURI);
 
                     addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeremembrance);
