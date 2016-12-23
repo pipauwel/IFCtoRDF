@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -54,73 +55,111 @@ public class IfcSpfReader {
     // public Logger logger;
     public boolean logToFile = false;
     public BufferedWriter bw;
+    
+    private boolean removeDuplicates = false;
+    private static final int FLAG_LOG = 0;
+    private static final int FLAG_DIR = 1;
+    private static final int FLAG_JSON = 2;
+    private static final int FLAG_JSON_STRING = 3;
+    private static final int FLAG_KEEP_DUPLICATES = 4;
 
     /**
      * @param args
      *            inputFilePath outputFilePath
      */
     public static void main(String[] args) throws IOException {
-        if (args[0].equalsIgnoreCase("LOG") && args[1].equalsIgnoreCase("DIR") && args.length == 3) {
-            // do not give too many files to the machine!!!!
-            List<String> files = showFiles(args[2]);
-            for (String f : files) {
-                if (f.endsWith(".ifc")) {
-                    IfcSpfReader r = new IfcSpfReader();
-                    r.logToFile = true;
-                    r.setupLogger(f);
-                    System.out.println("Converting file : " + f + "\r\n");
-                    if (r.logToFile)
-                        r.bw.write("Converting file : " + f + "\r\n");
-                    String path = f.substring(0, f.length() - 4);
-                    r.convert(path + ".ifc", path + ".ttl", r.DEFAULT_PATH);
-                    r.bw.flush();
-                    r.bw.close();
-                }
-            }
-        } else if (args[0].equalsIgnoreCase("DIR") && args.length == 2) {
-            // do not give too many files to the machine!!!!
-            List<String> files = showFiles(args[1]);
-            for (String f : files) {
-                if (f.endsWith(".ifc")) {
-                    IfcSpfReader r = new IfcSpfReader();
-                    System.out.println("Converting file : " + f + "\r\n");
-                    String path = f.substring(0, f.length() - 4);
-                    r.convert(path + ".ifc", path + ".ttl", r.DEFAULT_PATH);
-                }
-            }
-        } else if (args[0].equalsIgnoreCase("LOG") && args.length == 3) {
-            IfcSpfReader r = new IfcSpfReader();
-            r.logToFile = true;
-            r.setupLogger(args[2]);
-            r.convert(args[1], args[2], r.DEFAULT_PATH);
-            r.bw.flush();
-            r.bw.close();
-        } else if (args.length != 2) {
-            System.out.println("Usage: java IfcReader ifc_filename output_filename \nExample: java IfcReaderStream C:\\sample.ifc c:\\output.ttl (we only convert to TTL)");
-            for (int i = 0; i < args.length; i++) {
-                System.out.println("arg[" + i + "] : " + args[i]);
-            }
-        } else {
-            if (args.length == 2 && !args[0].startsWith("-json")) {
-                IfcSpfReader r = new IfcSpfReader();
-                r.convert(args[0], args[1], r.DEFAULT_PATH);
-            } else {
-                if (args[0].equals("-json")) {
-                    try {
-                        IfcSpfReader r = new IfcSpfReader();
-                        FileInputStream fis = new FileInputStream(args[1]);
-                        String jsonString = slurp(fis);
-                        fis.close();
-                        r.convert(jsonString);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (args[0].equals("-jsonString")) {
-                    IfcSpfReader r = new IfcSpfReader();
-                    r.convert(args[1]);
-                }
-            }
-        }
+    	String[] options = new String[] {"--log", "--dir", "--json", "--json-string", "--keep-duplicates"};
+    	Boolean[] optionValues = new Boolean[] { false, false, false, false, false };
+    	
+    	List<String> argsList = new ArrayList<String>(Arrays.asList(args));
+    	for(int i = 0; i < options.length; ++i) {
+    		optionValues[i] = argsList.contains(options[i]);
+    	}
+    	
+    	// State of flags has been stored in optionValues. Remove them from our option strings
+    	// in order to make testing the required amount of positional arguments easier.
+    	for (String flag : options) {
+    		argsList.remove(flag);
+    	}
+    	
+    	final int numRequiredOptions = (optionValues[FLAG_DIR] || optionValues[FLAG_JSON] || optionValues[FLAG_JSON_STRING]) ? 1 : 2;
+    	if (argsList.size() != numRequiredOptions) {
+    		 System.out.println("Usage:\n"
+    				 + "    IFC_Converter [--log] [--keep-duplicates] <input_file> <output_file>\n"
+    				 + "    IFC_Converter [--log] [--keep-duplicates] --dir <directory>\n"
+    				 + "    IFC_Converter --json|--json-string <configuration>\n");
+    		 return;
+    		 }
+    	
+    	if (optionValues[FLAG_JSON] || optionValues[FLAG_JSON_STRING]) {
+    		final String jsonString;
+    		
+    		if (optionValues[FLAG_JSON]) {
+    			try {
+    				FileInputStream fis = new FileInputStream(args[1]);
+    				jsonString = slurp(fis);
+    				fis.close();
+    			}
+    			catch (Exception e) {
+    				e.printStackTrace();
+    				return;
+    			}
+    		} else {
+    			jsonString = args[1];
+    		}
+    		
+    		IfcSpfReader r = new IfcSpfReader();
+    		r.convert(jsonString);
+    	}
+    	else{
+    		// Create arrays regardless of a directory or
+    		// single file is specified to reduce code paths.
+    		final List<String> inputFiles;
+    		final List<String> outputFiles;
+    		
+    		if (optionValues[FLAG_DIR]) {
+    			inputFiles = showFiles(argsList.get(0));
+    			outputFiles = null;
+    		} else {
+    			inputFiles = Arrays.asList(new String[] { argsList.get(0) });
+    			outputFiles = Arrays.asList(new String[] { argsList.get(1) });
+    		}
+    		
+    		for(int i = 0; i < inputFiles.size(); ++i) {
+    			final String inputFile = inputFiles.get(i);
+    			final String outputFile;
+    			if (outputFiles == null) {
+    				if (inputFile.endsWith(".ifc")) {
+    					outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+    				}
+    				else {
+    					outputFile = inputFile + ".ttl";
+    				}
+    			} else {
+    				outputFile = outputFiles.get(i);
+    			}
+    			
+    			IfcSpfReader r = new IfcSpfReader();
+    			
+    			r.removeDuplicates = !optionValues[FLAG_KEEP_DUPLICATES];
+    			
+    			r.logToFile = optionValues[FLAG_LOG];
+    			if (optionValues[FLAG_LOG]) {
+    				r.setupLogger(inputFile);
+    			}
+    			
+    			System.out.println("Converting file : " + inputFile + "\r\n");
+    			if(r.logToFile) {
+    				r.bw.write("Converting file : " + inputFile + "\r\n");
+    			}
+    			
+    			r.convert(inputFile, outputFile, r.DEFAULT_PATH);
+    			if(r.logToFile) {
+    				r.bw.flush();
+    				r.bw.close();
+    			}
+    		}
+    	}
     }
 
     public static List<String> showFiles(String dir) {
@@ -275,6 +314,7 @@ public class IfcSpfReader {
             String ontURI = "http://ifcowl.openbimstandards.org/" + exp;
 
             RDFWriter conv = new RDFWriter(om, expressModel, listModel, new FileInputStream(ifcFile), baseURI, ent, typ, ontURI);
+            conv.setRemoveDuplicates(removeDuplicates);
             conv.setIfcReader(this);
             FileOutputStream out = new FileOutputStream(outputFile);
             String s = "# baseURI: " + baseURI;

@@ -87,6 +87,8 @@ public class RDFWriter {
     // Taking care of avoiding duplicate resources
     private Map<String, Resource> propertyResourceMap = new HashMap<String, Resource>();
     private Map<String, Resource> resourceMap = new HashMap<String, Resource>();
+    
+    private boolean removeDuplicates = true;
 
     public RDFWriter(OntModel ontModel, OntModel expressModel, OntModel listModel, InputStream inputStream, String baseURI, Map<String, EntityVO> ent, Map<String, TypeVO> typ, String ontURI) {
         this.ontModel = ontModel;
@@ -123,7 +125,9 @@ public class RDFWriter {
 
         System.out.println("model parsed");
 
-        resolveDuplicates();
+        if (removeDuplicates) {
+        	resolveDuplicates();
+        }
 
         // map entries of the linemap Map object to the ontology Model and make
         // new instances in the model
@@ -1104,5 +1108,13 @@ public class RDFWriter {
         }
         return r;
     }
+    
+	public boolean isRemoveDuplicates() {
+		return removeDuplicates;
+	}
+
+	public void setRemoveDuplicates(boolean removeDuplicates) {
+		this.removeDuplicates = removeDuplicates;
+	}
 
 }
