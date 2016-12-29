@@ -112,8 +112,6 @@ public class IfcSpfReader {
     		r.convert(jsonString);
     	}
     	else{
-    		// Create arrays regardless of a directory or
-    		// single file is specified to reduce code paths.
     		final List<String> inputFiles;
     		final List<String> outputFiles;
     		
@@ -128,35 +126,32 @@ public class IfcSpfReader {
     		for(int i = 0; i < inputFiles.size(); ++i) {
     			final String inputFile = inputFiles.get(i);
     			final String outputFile;
-    			if (outputFiles == null) {
-    				if (inputFile.endsWith(".ifc")) {
-    					outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
-    				}
-    				else {
-    					outputFile = inputFile + ".ttl";
-    				}
-    			} else {
-    				outputFile = outputFiles.get(i);
-    			}
-    			
-    			IfcSpfReader r = new IfcSpfReader();
-    			
-    			r.removeDuplicates = !optionValues[FLAG_KEEP_DUPLICATES];
-    			
-    			r.logToFile = optionValues[FLAG_LOG];
-    			if (optionValues[FLAG_LOG]) {
-    				r.setupLogger(inputFile);
-    			}
-    			
-    			System.out.println("Converting file : " + inputFile + "\r\n");
-    			if(r.logToFile) {
-    				r.bw.write("Converting file : " + inputFile + "\r\n");
-    			}
-    			
-    			r.convert(inputFile, outputFile, r.DEFAULT_PATH);
-    			if(r.logToFile) {
-    				r.bw.flush();
-    				r.bw.close();
+    			if(inputFile.endsWith(".ifc")){
+	    			if (outputFiles == null) {
+	    					outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+	    			} else {
+	    				outputFile = outputFiles.get(i);
+	    			}
+	    			
+	    			IfcSpfReader r = new IfcSpfReader();
+	    			
+	    			r.removeDuplicates = !optionValues[FLAG_KEEP_DUPLICATES];
+	    			
+	    			r.logToFile = optionValues[FLAG_LOG];
+	    			if (optionValues[FLAG_LOG]) {
+	    				r.setupLogger(inputFile);
+	    			}
+	    			
+	    			System.out.println("Converting file : " + inputFile + "\r\n");
+	    			if(r.logToFile) {
+	    				r.bw.write("Converting file : " + inputFile + "\r\n");
+	    			}
+	    			
+	    			r.convert(inputFile, outputFile, r.DEFAULT_PATH);
+	    			if(r.logToFile) {
+	    				r.bw.flush();
+	    				r.bw.close();
+	    			}
     			}
     		}
     	}
