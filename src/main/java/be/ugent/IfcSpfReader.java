@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.openbimstandards.vo.EntityVO;
 import org.openbimstandards.vo.TypeVO;
@@ -245,7 +247,7 @@ public class IfcSpfReader {
         String exp = getExpressSchema(ifcFile);
 
         // check if we are able to convert this: only four schemas are supported
-        if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4")) {
+        if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2") && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4")) {
             if (logToFile)
                 bw.write("ERROR: Unrecognised EXPRESS schema: " + exp + ". File should be in IFC4 or IFC2X3 schema. Stopping conversion." + "\r\n");
             return;
@@ -256,19 +258,23 @@ public class IfcSpfReader {
 
         InputStream in = null;
         try {
-            om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+            om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
             in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
             om.read(in, null, "TTL");
 
-            String expresTtl = "/express.ttl";
-            InputStream expresTtlStream = IfcSpfReader.class.getResourceAsStream(expresTtl);
-            OntModel expressModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-            expressModel.read(expresTtlStream, null, "TTL");
+            String expressTtl = "/express.ttl";
+            InputStream expressTtlStream = IfcSpfReader.class.getResourceAsStream(expressTtl);
+            OntModel expressModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
+            expressModel.read(expressTtlStream, null, "TTL");
 
             String rdfList = "/list.ttl";
             InputStream rdfListStream = IfcSpfReader.class.getResourceAsStream(rdfList);
-            OntModel listModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+            OntModel listModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
             listModel.read(rdfListStream, null, "TTL");
+            
+            om.add(expressModel);
+            om.add(listModel);
+            //Model im = om.getDeductionsModel();
 
             InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
             ObjectInputStream ois = new ObjectInputStream(fis);

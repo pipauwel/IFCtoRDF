@@ -437,10 +437,8 @@ public class RDFWriter {
         }
 
         if (evo == null && tvo != null) {
-            //final String subject = tvo.getName() + "_" + ifcLineEntry.getLineNum();
 
             typeRemembrance = null;
-            //int attributePointer = 0;
             for (Object o : ifcLineEntry.getObjectList()) {
 
             	if(Character.class.isInstance(o)){
@@ -453,15 +451,10 @@ public class RDFWriter {
 	               	if (myIfcReaderStream.logToFile)
 	                     myIfcReaderStream.bw.write("*WARNING 1*: fillProperties 2 - WARNING: unhandled type property found." + "\r\n");
                     System.out.println("*WARNING 1*: unhandled type property found.");
-                    // attributePointer = fillPropertiesHandleStringObject(r,
-                    // tvo,
-                    // subject, attributePointer, o);
                 } else if (IFCVO.class.isInstance(o)) {
                   	if (myIfcReaderStream.logToFile)
                          myIfcReaderStream.bw.write("*WARNING 2*: fillProperties 2 - WARNING: unhandled type property found." + "\r\n");
                     System.out.println("*WARNING 2*: unhandled type property found.");
-                    // attributePointer = fillPropertiesHandleIFC_Object(r,
-                    // tvo, attributePointer, o);
                 } else if (LinkedList.class.isInstance(o)) {
                   	if (myIfcReaderStream.logToFile)
                          myIfcReaderStream.bw.write("fillProperties 3 - fillPropertiesHandleListObject(tvo)" + "\r\n");
@@ -542,13 +535,13 @@ public class RDFWriter {
                         else if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "SELECT"))) {
                             // Check for SELECT
                             if (myIfcReaderStream.logToFile)
-                                myIfcReaderStream.bw.write("*WARNING 4*: found SELECT property (but doing nothing with it, that is okay, don't worry): " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
+                                myIfcReaderStream.bw.write("*OK 25*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
+                        	createLiteralProperty(r, p, range, literalString);
                         } else if (range.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
                             // Check for LIST
                             if (myIfcReaderStream.logToFile)
                                 myIfcReaderStream.bw.write("*WARNING 5*: found LIST property (but doing nothing with it): " + subject + " -- " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
                         } else {
-                            //
                         	createLiteralProperty(r, p, range, literalString);
                         }
                     } else {
@@ -619,16 +612,30 @@ public class RDFWriter {
             	}
             }
             else if (String.class.isInstance(o1)) {
-                if (typ.get(ExpressReader.formatClassName((String) o1)) != null && typeRemembrance == null){
-                	typeRemembrance = typ.get(ExpressReader.formatClassName((String) o1));
-//                    if(typeRemembrance == null){
-//                    	if (myIfcReaderStream.logToFile)
-//							myIfcReaderStream.bw.write("*ERROR 10*: The following TYPE is not found: " + ExpressReader.formatClassName((String) o1) + "\r\nQuitting the application without output!\r\n ");
-//                    	System.err.println("*ERROR 10*: The following TYPE is not found: " + ExpressReader.formatClassName((String) o1) + "\r\nQuitting the application without output!");
-//                    }
+            	TypeVO t = typ.get(ExpressReader.formatClassName((String) o1));
+            	if(typeRemembrance == null){
+            		if (t != null){
+            			typeRemembrance = t;
+            		}
+            		else{
+            			literals.add(filterExtras((String) o1));
+            		}
+            	}
+                else{
+            		if (t != null){
+            			if(t==typeRemembrance){
+            				//Ignore and continue with life
+            			}
+            			else{
+            				//Panic
+            				if (myIfcReaderStream.logToFile)
+    							myIfcReaderStream.bw.write("*WARNING 37*: Found two different types in one list. This is worth checking.\r\n ");
+            			}
+            		}
+            		else{
+            			literals.add(filterExtras((String) o1));
+            		}
                 }
-                else
-                    literals.add(filterExtras((String) o1));
             }
             else if (IFCVO.class.isInstance(o1)) {
                 if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
@@ -690,10 +697,16 @@ public class RDFWriter {
 							LinkedList<Object> tmpListInListInList = (LinkedList<Object>) o2;
 							for(int jjj = 0; jjj<tmpListInListInList.size(); jjj++){
 								Object o3 = tmpListInListInList.get(jjj);
-								if(String.class.isInstance(o3)){
+								if(Character.class.isInstance(o3)){
+				                	if((Character)o3!=','){
+				                		if (myIfcReaderStream.logToFile)
+				                            myIfcReaderStream.bw.write("*ERROR 24*: We found a character that is not a comma. That should not be possible" + "\r\n");
+				                	}
+				                }
+				                else if(String.class.isInstance(o3)){
 									literals.add(filterExtras((String) o3));
 								}
-								else{
+								else {
 				                	if (myIfcReaderStream.logToFile)
 				                        myIfcReaderStream.bw.write("*WARNING 31*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
 									System.out.println("*WARNING 31: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");		
@@ -716,8 +729,10 @@ public class RDFWriter {
 								String[] primTypeArr = typeRemembrance.getPrimarytype().split(" ");
 								String primType = primTypeArr[primTypeArr.length-1].replace(";", "") + "_" + primTypeArr[0].substring(0,1).toUpperCase() + primTypeArr[0].substring(1).toLowerCase();
 								String typeURI = ontNS + primType;
-								OntResource range = ontModel.getOntResource(typeURI);	
-								addDirectRegularListProperty(r1, range, literals);	
+								OntResource range = ontModel.getOntResource(typeURI);
+								List<Object> literalObjects = new ArrayList<Object>();
+								literalObjects.addAll(literals);
+								addDirectRegularListProperty(r1, range, literalObjects, 0);	
 								
 								//put relevant top list items in a list, which can then be parsed at the end of this method
 								listRemembranceResources.add(r1);				
@@ -725,6 +740,11 @@ public class RDFWriter {
 							
 							typeRemembrance = null;
 							literals.clear();
+						}
+						else {
+		                	if (myIfcReaderStream.logToFile)
+		                        myIfcReaderStream.bw.write("*WARNING 35*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+							System.out.println("*WARNING 35: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");		
 						}
 					}
 				}
@@ -769,9 +789,7 @@ public class RDFWriter {
 							Resource r1 = getResource(baseURI + listvaluepropURI + "_" + IDcounter, listrange);
 							IDcounter++;
 							List<Object> objects = new ArrayList<Object>();
-							//int mySwitch = 0;
 					        if(IFCVOs.size() > 0){
-					        	//mySwitch = 1;
 					        	objects.addAll(IFCVOs);
 					        	addDirectRegularListProperty(r1, listrange, objects, 1);	
 					        }
@@ -801,13 +819,20 @@ public class RDFWriter {
 
         // interpret parse
         if (literals.size() > 0) {
+        	String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
+            OntProperty p = ontModel.getOntProperty(propURI);
+            OntResource typerange = p.getRange();
             if (typeRemembrance != null) {
-                if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
-
-                    String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
-                    OntProperty p = ontModel.getOntProperty(propURI);
-
-                    addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeRemembrance);
+                if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {                    
+                    if (typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList")))                
+                    	addRegularListProperty(r, p, literals, typeRemembrance);
+                    else{
+                    	addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeRemembrance);
+                    	if(literals.size()>1){
+                        	if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*WARNING 37*: We are ignoring a number of literal values here." + "\r\n");
+                    	}                    		
+                    }
                 }
                 else{
                 	if (myIfcReaderStream.logToFile)
@@ -815,11 +840,8 @@ public class RDFWriter {
                 }
                 typeRemembrance = null;
             } else if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
-                String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
-                OntProperty p = ontModel.getOntProperty(propURI);
-                OntResource typerange = p.getRange();
                 if (typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList")))                
-                	addRegularListProperty(r, p, literals);
+                	addRegularListProperty(r, p, literals, null);
                 else         		
             		for (int i = 0; i < literals.size(); i++)
             			createLiteralProperty(r,p,typerange,literals.get(i));
@@ -958,7 +980,9 @@ public class RDFWriter {
                     String primType = primtypeArr[primtypeArr.length - 1].replace(";", "") + "_" + primtypeArr[0].substring(0, 1).toUpperCase() + primtypeArr[0].substring(1).toLowerCase();
                     String typeURI = ontNS + primType;
                     OntResource range = ontModel.getOntResource(typeURI);
-                    addDirectRegularListProperty(r, range, literals);
+					List<Object> literalObjects = new ArrayList<Object>();
+					literalObjects.addAll(literals);
+                    addDirectRegularListProperty(r, range, literalObjects, 0);
 
                     // String propURI = ontNS +
                     // tvo.getName();//.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
@@ -976,7 +1000,9 @@ public class RDFWriter {
                 String primType = primTypeArr[primTypeArr.length - 1].replace(";", "") + "_" + primTypeArr[0].substring(0, 1).toUpperCase() + primTypeArr[0].substring(1).toLowerCase();
                 String typeURI = ontNS + primType;
                 OntResource range = ontModel.getOntResource(typeURI);
-                addDirectRegularListProperty(r, range, literals);
+				List<Object> literalObjects = new ArrayList<Object>();
+				literalObjects.addAll(literals);
+                addDirectRegularListProperty(r, range, literalObjects, 0);
             }
         }
     }
@@ -1001,7 +1027,8 @@ public class RDFWriter {
                 } else if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "SELECT"))) {
                     // Check for SELECT
                     if (myIfcReaderStream.logToFile)
-                        myIfcReaderStream.bw.write("*WARNING 23*: found SELECT property (but doing nothing with it): " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
+                        myIfcReaderStream.bw.write("*OK 24*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
+                	createLiteralProperty(r,p,range,literalString);
                 } else if (range.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
                     // Check for LIST
                     if (myIfcReaderStream.logToFile)
@@ -1062,34 +1089,7 @@ public class RDFWriter {
             myIfcReaderStream.bw.write("*OK 4*: added literal: " + r1.getLocalName() + " - " + valueProp + " - " + literalString + "\r\n");
     }
 
-    // LIST HANDLING
-    private void addDirectRegularListProperty(Resource r, OntResource range, List<String> el) throws IOException {
-        // OntResource range = p.getRange();
-        if (range.isClass()) {
-            OntResource listrange = getListContentType(range.asClass());
-
-            if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
-                if (myIfcReaderStream.logToFile)
-                    myIfcReaderStream.bw.write("*WARNING 27*: Found unhandled ListOfList" + "\r\n");
-            } else {
-                List<Resource> reslist = new ArrayList<Resource>();
-                // createrequirednumberofresources
-                for (int ii = 0; ii < el.size(); ii++) {
-                    if (ii == 0)
-                        reslist.add(r);
-                    else {
-                        Resource r1 = getResource(baseURI + range.getLocalName() + "_" + IDcounter, range);
-                        reslist.add(r1);
-                        IDcounter++;
-                    }
-                }
-                
-                // bindtheproperties
-                addListInstanceProperties(reslist, el, listrange);
-            }
-        }
-    }
-    
+    // LIST HANDLING    
     private void addDirectRegularListProperty(Resource r, OntResource range, List<Object> el, int mySwitch) throws IOException {    	
         // OntResource range = p.getRange();
         if (range.isClass()) {
@@ -1144,11 +1144,14 @@ public class RDFWriter {
         }
     }
     
-//
-    private void addRegularListProperty(Resource r, OntProperty p, List<String> el) throws IOException {
+    private void addRegularListProperty(Resource r, OntProperty p, List<String> el, TypeVO typeRemembranceOverride) throws IOException {
         OntResource range = p.getRange();
         if (range.isClass()) {
             OntResource listrange = getListContentType(range.asClass());
+            if(typeRemembranceOverride!=null){
+        		OntClass cla = ontModel.getOntClass(ontNS + typeRemembranceOverride.getName());
+        		listrange = cla;
+        	}
             
             if(listrange==null){
             	if (myIfcReaderStream.logToFile)
@@ -1216,7 +1219,6 @@ public class RDFWriter {
 			if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
 				if (myIfcReaderStream.logToFile)
 					myIfcReaderStream.bw.write("*OK 20*: Handling list of list" + "\r\n");
-				System.out.println("*OK 20*: Handling list of list");
 				listrange = range;
 			}
 			for (int i = 0; i < el.size(); i++) {
@@ -1251,32 +1253,6 @@ public class RDFWriter {
 			}
 		}
 	}
-
-    private OntResource getListContentType(OntClass range) throws IOException {
-        if (range.asClass().getURI().equalsIgnoreCase(expressNS + "STRING_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "STRING_List")))
-            return expressModel.getOntResource(expressNS + "STRING");
-        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "REAL_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "REAL_List")))
-            return expressModel.getOntResource(expressNS + "REAL");
-        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "INTEGER_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "INTEGER_List")))
-            return expressModel.getOntResource(expressNS + "INTEGER");
-        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "BINARY_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "BINARY_List")))
-            return expressModel.getOntResource(expressNS + "BINARY");
-        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "BOOLEAN_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "BOOLEAN_List")))
-            return expressModel.getOntResource(expressNS + "BOOLEAN");
-        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "LOGICAL_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "LOGICAL_List")))
-            return expressModel.getOntResource(expressNS + "LOGICAL");
-        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "NUMBER_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "NUMBER_List")))
-            return expressModel.getOntResource(expressNS + "NUMBER");
-        else if (range.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
-            String listvaluepropURI = ontNS + range.getLocalName().substring(0, range.getLocalName().length() - 5);
-            return ontModel.getOntResource(listvaluepropURI);
-        } else {
-            if (myIfcReaderStream.logToFile) {
-                myIfcReaderStream.bw.write("*WARNING 29*: did not find listcontenttype for : " + range.getLocalName() + "\r\n");
-            }
-            return null;
-        }
-    }
 
     private void fillClassInstanceList(LinkedList<Object> tmpList, OntResource typerange, OntProperty p, Resource r) throws IOException {
         List<Resource> reslist = new ArrayList<Resource>();
@@ -1423,6 +1399,32 @@ public class RDFWriter {
         ttlWriter.triple(new Triple(r.asNode(), valueProp.asNode(), r1.asNode()));
     }
 
+    private OntResource getListContentType(OntClass range) throws IOException {
+        if (range.asClass().getURI().equalsIgnoreCase(expressNS + "STRING_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "STRING_List")))
+            return expressModel.getOntResource(expressNS + "STRING");
+        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "REAL_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "REAL_List")))
+            return expressModel.getOntResource(expressNS + "REAL");
+        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "INTEGER_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "INTEGER_List")))
+            return expressModel.getOntResource(expressNS + "INTEGER");
+        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "BINARY_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "BINARY_List")))
+            return expressModel.getOntResource(expressNS + "BINARY");
+        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "BOOLEAN_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "BOOLEAN_List")))
+            return expressModel.getOntResource(expressNS + "BOOLEAN");
+        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "LOGICAL_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "LOGICAL_List")))
+            return expressModel.getOntResource(expressNS + "LOGICAL");
+        else if (range.asClass().getURI().equalsIgnoreCase(expressNS + "NUMBER_List") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "NUMBER_List")))
+            return expressModel.getOntResource(expressNS + "NUMBER");
+        else if (range.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
+            String listvaluepropURI = ontNS + range.getLocalName().substring(0, range.getLocalName().length() - 5);
+            return ontModel.getOntResource(listvaluepropURI);
+        } else {
+            if (myIfcReaderStream.logToFile) {
+                myIfcReaderStream.bw.write("*WARNING 29*: did not find listcontenttype for : " + range.getLocalName() + "\r\n");
+            }
+            return null;
+        }
+    }
+
     private String getXSDTypeFromRange(OntResource range) {
         if (range.asClass().getURI().equalsIgnoreCase(expressNS + "STRING") || range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "STRING")))
             return "string";
@@ -1468,10 +1470,9 @@ public class RDFWriter {
 						myIfcReaderStream.bw.write("*ERROR 2*: getResource failed for " + uri + "\r\n");
 						System.err.println("*ERROR 2*: getResource failed for " + uri);
 					} catch (IOException e1) {
-						//near to impossible to happen. This point would not have been reached if it were impossible.
+						//near to impossible to happen. This point would not have been reached if it were possible.
 						e1.printStackTrace();
 					}
-                //e.printStackTrace();
                 return null;
             }
         }
