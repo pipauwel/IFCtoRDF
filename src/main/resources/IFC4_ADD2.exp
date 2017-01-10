@@ -19,7 +19,7 @@ for incidental consequential damages in connection with the furnishing, performa
 of the material. The information contained in this document is subject to change without notice.
 
 Issue date:
-Tuesday, July 12, 2016
+Montag, 11. Juli 2016
 
 *)
 
@@ -2787,7 +2787,8 @@ END_TYPE;
 
 TYPE IfcCurveOnSurface = SELECT
 	(IfcCompositeCurveOnSurface
-	,IfcPcurve);
+	,IfcPcurve
+	,IfcSurfaceCurve);
 END_TYPE;
 
 TYPE IfcCurveOrEdgeCurve = SELECT
