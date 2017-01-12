@@ -725,14 +725,18 @@ public class RDFWriter {
 								OntClass cl = ontModel.getOntClass(ontNS + typeRemembrance.getName());
 								Resource r1 = getResource(baseURI + typeRemembrance.getName() + "_" + IDcounter, cl);
 								IDcounter++;
+								OntResource range = ontModel.getOntResource(ontNS + typeRemembrance.getName());
 								
+								//finding listrange
 								String[] primTypeArr = typeRemembrance.getPrimarytype().split(" ");
-								String primType = primTypeArr[primTypeArr.length-1].replace(";", "") + "_" + primTypeArr[0].substring(0,1).toUpperCase() + primTypeArr[0].substring(1).toLowerCase();
-								String typeURI = ontNS + primType;
-								OntResource range = ontModel.getOntResource(typeURI);
+//								String primType = primTypeArr[primTypeArr.length-1].replace(";", "") + "_" + primTypeArr[0].substring(0,1).toUpperCase() + primTypeArr[0].substring(1).toLowerCase();
+//								String typeURI = ontNS + primType;
+								String primType = ontNS + primTypeArr[primTypeArr.length-1].replace(";", "");
+								OntResource listrange = ontModel.getOntResource(primType);
+								
 								List<Object> literalObjects = new ArrayList<Object>();
 								literalObjects.addAll(literals);
-								addDirectRegularListProperty(r1, range, literalObjects, 0);	
+								addDirectRegularListProperty(r1, range, listrange, literalObjects, 0);	
 								
 								//put relevant top list items in a list, which can then be parsed at the end of this method
 								listRemembranceResources.add(r1);				
@@ -791,11 +795,13 @@ public class RDFWriter {
 							List<Object> objects = new ArrayList<Object>();
 					        if(IFCVOs.size() > 0){
 					        	objects.addAll(IFCVOs);
-					        	addDirectRegularListProperty(r1, listrange, objects, 1);	
+					        	OntResource listcontentrange = getListContentType(listrange.asClass());
+					        	addDirectRegularListProperty(r1, listrange, listcontentrange, objects, 1);	
 					        }
 					        else if(literals.size() > 0){	
 					        	objects.addAll(literals);
-					        	addDirectRegularListProperty(r1, listrange, objects, 0);						        	
+					        	OntResource listcontentrange = getListContentType(listrange.asClass());
+					        	addDirectRegularListProperty(r1, listrange, listcontentrange, objects, 0);						        	
 					        }
 							listRemembranceResources.add(r1);		
 						}
@@ -980,9 +986,10 @@ public class RDFWriter {
                     String primType = primtypeArr[primtypeArr.length - 1].replace(";", "") + "_" + primtypeArr[0].substring(0, 1).toUpperCase() + primtypeArr[0].substring(1).toLowerCase();
                     String typeURI = ontNS + primType;
                     OntResource range = ontModel.getOntResource(typeURI);
+    	        	OntResource listrange = getListContentType(range.asClass());
 					List<Object> literalObjects = new ArrayList<Object>();
 					literalObjects.addAll(literals);
-                    addDirectRegularListProperty(r, range, literalObjects, 0);
+                    addDirectRegularListProperty(r, range, listrange, literalObjects, 0);
 
                     // String propURI = ontNS +
                     // tvo.getName();//.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
@@ -1002,7 +1009,8 @@ public class RDFWriter {
                 OntResource range = ontModel.getOntResource(typeURI);
 				List<Object> literalObjects = new ArrayList<Object>();
 				literalObjects.addAll(literals);
-                addDirectRegularListProperty(r, range, literalObjects, 0);
+	        	OntResource listrange = getListContentType(range.asClass());
+                addDirectRegularListProperty(r, range, listrange, literalObjects, 0);
             }
         }
     }
@@ -1090,10 +1098,11 @@ public class RDFWriter {
     }
 
     // LIST HANDLING    
-    private void addDirectRegularListProperty(Resource r, OntResource range, List<Object> el, int mySwitch) throws IOException {    	
+    private void addDirectRegularListProperty(Resource r, OntResource range, OntResource listrange, List<Object> el, int mySwitch) throws IOException {    	
         // OntResource range = p.getRange();
+    	
         if (range.isClass()) {
-            OntResource listrange = getListContentType(range.asClass());
+            //OntResource listrange = getListContentType(range.asClass());
 
             if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
                 if (myIfcReaderStream.logToFile)
@@ -1223,13 +1232,13 @@ public class RDFWriter {
 			}
 			for (int i = 0; i < el.size(); i++) {
 				Resource r1 = el.get(i);
-				Resource r2 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + IDcounter);
-				ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));
+				Resource r2 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter); //was listrange
+				ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), range.asNode()));
 				if (myIfcReaderStream.logToFile)
 					myIfcReaderStream.bw.write("*OK 14*: added property: " + r2.getLocalName() + " - rdf:type - "
-							+ listrange.getLocalName() + "\r\n");
+							+ range.getLocalName() + "\r\n");
 				IDcounter++;
-				Resource r3 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + IDcounter);
+				Resource r3 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter);
 
 				if (i == 0) {
 					ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r2.asNode()));
