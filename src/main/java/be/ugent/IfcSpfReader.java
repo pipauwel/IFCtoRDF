@@ -57,7 +57,7 @@ public class IfcSpfReader {
     // public Logger logger;
     public boolean logToFile = false;
     public BufferedWriter bw;
-    
+
     private boolean removeDuplicates = false;
     private static final int FLAG_LOG = 0;
     private static final int FLAG_DIR = 1;
@@ -70,93 +70,91 @@ public class IfcSpfReader {
      *            inputFilePath outputFilePath
      */
     public static void main(String[] args) throws IOException {
-    	String[] options = new String[] {"--log", "--dir", "--json", "--json-string", "--keep-duplicates"};
-    	Boolean[] optionValues = new Boolean[] { false, false, false, false, false };
-    	
-    	List<String> argsList = new ArrayList<String>(Arrays.asList(args));
-    	for(int i = 0; i < options.length; ++i) {
-    		optionValues[i] = argsList.contains(options[i]);
-    	}
-    	
-    	// State of flags has been stored in optionValues. Remove them from our option strings
-    	// in order to make testing the required amount of positional arguments easier.
-    	for (String flag : options) {
-    		argsList.remove(flag);
-    	}
-    	
-    	final int numRequiredOptions = (optionValues[FLAG_DIR] || optionValues[FLAG_JSON] || optionValues[FLAG_JSON_STRING]) ? 1 : 2;
-    	if (argsList.size() != numRequiredOptions) {
-    		 System.out.println("Usage:\n"
-    				 + "    IFC_Converter [--log] [--keep-duplicates] <input_file> <output_file>\n"
-    				 + "    IFC_Converter [--log] [--keep-duplicates] --dir <directory>\n"
-    				 + "    IFC_Converter --json|--json-string <configuration>\n");
-    		 return;
-    		 }
-    	
-    	if (optionValues[FLAG_JSON] || optionValues[FLAG_JSON_STRING]) {
-    		final String jsonString;
-    		
-    		if (optionValues[FLAG_JSON]) {
-    			try {
-    				FileInputStream fis = new FileInputStream(args[1]);
-    				jsonString = slurp(fis);
-    				fis.close();
-    			}
-    			catch (Exception e) {
-    				e.printStackTrace();
-    				return;
-    			}
-    		} else {
-    			jsonString = args[1];
-    		}
-    		
-    		IfcSpfReader r = new IfcSpfReader();
-    		r.convert(jsonString);
-    	}
-    	else{
-    		final List<String> inputFiles;
-    		final List<String> outputFiles;
-    		
-    		if (optionValues[FLAG_DIR]) {
-    			inputFiles = showFiles(argsList.get(0));
-    			outputFiles = null;
-    		} else {
-    			inputFiles = Arrays.asList(new String[] { argsList.get(0) });
-    			outputFiles = Arrays.asList(new String[] { argsList.get(1) });
-    		}
-    		
-    		for(int i = 0; i < inputFiles.size(); ++i) {
-    			final String inputFile = inputFiles.get(i);
-    			final String outputFile;
-    			if(inputFile.endsWith(".ifc")){
-	    			if (outputFiles == null) {
-	    					outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
-	    			} else {
-	    				outputFile = outputFiles.get(i);
-	    			}
-	    			
-	    			IfcSpfReader r = new IfcSpfReader();
-	    			
-	    			r.removeDuplicates = !optionValues[FLAG_KEEP_DUPLICATES];
-	    			
-	    			r.logToFile = optionValues[FLAG_LOG];
-	    			if (optionValues[FLAG_LOG]) {
-	    				r.setupLogger(inputFile);
-	    			}
-	    			
-	    			System.out.println("Converting file : " + inputFile + "\r\n");
-	    			if(r.logToFile) {
-	    				r.bw.write("Converting file : " + inputFile + "\r\n");
-	    			}
-	    			
-	    			r.convert(inputFile, outputFile, r.DEFAULT_PATH);
-	    			if(r.logToFile) {
-	    				r.bw.flush();
-	    				r.bw.close();
-	    			}
-    			}
-    		}
-    	}
+        String[] options = new String[] { "--log", "--dir", "--json", "--json-string", "--keep-duplicates" };
+        Boolean[] optionValues = new Boolean[] { false, false, false, false, false };
+
+        List<String> argsList = new ArrayList<String>(Arrays.asList(args));
+        for (int i = 0; i < options.length; ++i) {
+            optionValues[i] = argsList.contains(options[i]);
+        }
+
+        // State of flags has been stored in optionValues. Remove them from our
+        // option strings
+        // in order to make testing the required amount of positional arguments
+        // easier.
+        for (String flag : options) {
+            argsList.remove(flag);
+        }
+
+        final int numRequiredOptions = (optionValues[FLAG_DIR] || optionValues[FLAG_JSON] || optionValues[FLAG_JSON_STRING]) ? 1 : 2;
+        if (argsList.size() != numRequiredOptions) {
+            System.out.println("Usage:\n" + "    IFC_Converter [--log] [--keep-duplicates] <input_file> <output_file>\n" + "    IFC_Converter [--log] [--keep-duplicates] --dir <directory>\n"
+                            + "    IFC_Converter --json|--json-string <configuration>\n");
+            return;
+        }
+
+        if (optionValues[FLAG_JSON] || optionValues[FLAG_JSON_STRING]) {
+            final String jsonString;
+
+            if (optionValues[FLAG_JSON]) {
+                try {
+                    FileInputStream fis = new FileInputStream(args[1]);
+                    jsonString = slurp(fis);
+                    fis.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+            } else {
+                jsonString = args[1];
+            }
+
+            IfcSpfReader r = new IfcSpfReader();
+            r.convert(jsonString);
+        } else {
+            final List<String> inputFiles;
+            final List<String> outputFiles;
+
+            if (optionValues[FLAG_DIR]) {
+                inputFiles = showFiles(argsList.get(0));
+                outputFiles = null;
+            } else {
+                inputFiles = Arrays.asList(new String[] { argsList.get(0) });
+                outputFiles = Arrays.asList(new String[] { argsList.get(1) });
+            }
+
+            for (int i = 0; i < inputFiles.size(); ++i) {
+                final String inputFile = inputFiles.get(i);
+                final String outputFile;
+                if (inputFile.endsWith(".ifc")) {
+                    if (outputFiles == null) {
+                        outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+                    } else {
+                        outputFile = outputFiles.get(i);
+                    }
+
+                    IfcSpfReader r = new IfcSpfReader();
+
+                    r.removeDuplicates = !optionValues[FLAG_KEEP_DUPLICATES];
+
+                    r.logToFile = optionValues[FLAG_LOG];
+                    if (optionValues[FLAG_LOG]) {
+                        r.setupLogger(inputFile);
+                    }
+
+                    System.out.println("Converting file : " + inputFile + "\r\n");
+                    if (r.logToFile) {
+                        r.bw.write("Converting file : " + inputFile + "\r\n");
+                    }
+
+                    r.convert(inputFile, outputFile, r.DEFAULT_PATH);
+                    if (r.logToFile) {
+                        r.bw.flush();
+                        r.bw.close();
+                    }
+                }
+            }
+        }
     }
 
     public static List<String> showFiles(String dir) {
@@ -190,8 +188,8 @@ public class IfcSpfReader {
     }
 
     public void convert(String jsonConfig) throws IOException {
-      Gson gson = new Gson();
-      //String json = gson.toJson(jsonConfig); 
+        Gson gson = new Gson();
+        // String json = gson.toJson(jsonConfig);
 
         String ifcFile = gson.fromJson("\"ifc_file\"", String.class);
         String outputFile = gson.fromJson("\"output_file\"", String.class);
@@ -237,8 +235,8 @@ public class IfcSpfReader {
     }
 
     @SuppressWarnings("unchecked")
-	public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
-        //long t0 = System.currentTimeMillis();
+    public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
+        // long t0 = System.currentTimeMillis();
 
         if (!ifcFile.endsWith(".ifc")) {
             ifcFile += ".ifc";
@@ -271,10 +269,10 @@ public class IfcSpfReader {
             InputStream rdfListStream = IfcSpfReader.class.getResourceAsStream(rdfList);
             OntModel listModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
             listModel.read(rdfListStream, null, "TTL");
-            
+
             om.add(expressModel);
             om.add(listModel);
-            //Model im = om.getDeductionsModel();
+            // Model im = om.getDeductionsModel();
 
             InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
             ObjectInputStream ois = new ObjectInputStream(fis);

@@ -87,7 +87,7 @@ public class RDFWriter {
     // Taking care of avoiding duplicate resources
     private Map<String, Resource> propertyResourceMap = new HashMap<String, Resource>();
     private Map<String, Resource> resourceMap = new HashMap<String, Resource>();
-    
+
     private boolean removeDuplicates = true;
 
     public RDFWriter(OntModel ontModel, OntModel expressModel, OntModel listModel, InputStream inputStream, String baseURI, Map<String, EntityVO> ent, Map<String, TypeVO> typ, String ontURI) {
@@ -126,16 +126,16 @@ public class RDFWriter {
         System.out.println("model parsed");
 
         if (removeDuplicates) {
-        	resolveDuplicates();
+            resolveDuplicates();
         }
 
         // map entries of the linemap Map object to the ontology Model and make
         // new instances in the model
         boolean parsedSuccessfully = mapEntries();
 
-        if(!parsedSuccessfully)
-        	return;
-        
+        if (!parsedSuccessfully)
+            return;
+
         System.out.println("entries mapped, now creating instances");
         createInstances();
 
@@ -293,13 +293,12 @@ public class RDFWriter {
             // mapping properties to IFCVOs
             for (int i = 0; i < vo.getObjectList().size(); i++) {
                 Object o = vo.getObjectList().get(i);
-                if(Character.class.isInstance(o)){
-                	if((Character)o!=','){
-                		if (myIfcReaderStream.logToFile)
+                if (Character.class.isInstance(o)) {
+                    if ((Character) o != ',') {
+                        if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*ERROR 15*: We found a character that is not a comma. That should not be possible" + "\r\n");
-                	}
-                }
-                else if (String.class.isInstance(o)) {
+                    }
+                } else if (String.class.isInstance(o)) {
                     String s = (String) o;
                     if (s.length() < 1)
                         continue;
@@ -309,29 +308,29 @@ public class RDFWriter {
                             or = linemap.get(listOfDuplicateLineEntries.get(toLong(s.substring(1))));
                         else
                             or = linemap.get(toLong(s.substring(1)));
-                        
-                        if(or==null){
-                        	if (myIfcReaderStream.logToFile)
-								myIfcReaderStream.bw.write("*ERROR 6*: Reference to non-existing line number in line: #" + vo.getLineNum() + "=" + vo.getFullLineAfterNum() + "\r\nQuitting the application without output!\r\n ");
-                        	System.err.println("*ERROR 6*: Reference to non-existing line number in line: #" + vo.getLineNum() + " - " + vo.getFullLineAfterNum() + "\r\nQuitting the application without output!");
-                        	return false;
+
+                        if (or == null) {
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*ERROR 6*: Reference to non-existing line number in line: #" + vo.getLineNum() + "=" + vo.getFullLineAfterNum()
+                                                + "\r\nQuitting the application without output!\r\n ");
+                            System.err.println("*ERROR 6*: Reference to non-existing line number in line: #" + vo.getLineNum() + " - " + vo.getFullLineAfterNum()
+                                            + "\r\nQuitting the application without output!");
+                            return false;
                         }
                         vo.getObjectList().set(i, or);
                     }
-                }
-                else if (LinkedList.class.isInstance(o)) {
+                } else if (LinkedList.class.isInstance(o)) {
                     @SuppressWarnings("unchecked")
-					LinkedList<Object> tmpList = (LinkedList<Object>) o;
+                    LinkedList<Object> tmpList = (LinkedList<Object>) o;
 
                     for (int j = 0; j < tmpList.size(); j++) {
                         Object o1 = tmpList.get(j);
-                        if(Character.class.isInstance(o)){
-                        	if((Character)o!=','){
-                        		if (myIfcReaderStream.logToFile)
+                        if (Character.class.isInstance(o)) {
+                            if ((Character) o != ',') {
+                                if (myIfcReaderStream.logToFile)
                                     myIfcReaderStream.bw.write("*ERROR 16*: We found a character that is not a comma. That should not be possible!" + "\r\n");
-                        	}
-                        }
-                        else if (String.class.isInstance(o1)) {
+                            }
+                        } else if (String.class.isInstance(o1)) {
                             String s = (String) o1;
                             if (s.length() < 1)
                                 continue;
@@ -342,16 +341,17 @@ public class RDFWriter {
                                 else
                                     or = linemap.get(toLong(s.substring(1)));
                                 if (or == null) {
-                                	if (myIfcReaderStream.logToFile)
-        								myIfcReaderStream.bw.write("*ERROR 7*: Reference to non-existing line number in line: #" + vo.getLineNum() + "=" + vo.getFullLineAfterNum() + "\r\nQuitting the application without output!\r\n ");
-                                	System.err.println("*ERROR 7*: Reference to non-existing line number in line: #" + vo.getLineNum() + " - " + vo.getFullLineAfterNum() + "\r\nQuitting the application without output!");
+                                    if (myIfcReaderStream.logToFile)
+                                        myIfcReaderStream.bw.write("*ERROR 7*: Reference to non-existing line number in line: #" + vo.getLineNum() + "=" + vo.getFullLineAfterNum()
+                                                        + "\r\nQuitting the application without output!\r\n ");
+                                    System.err.println("*ERROR 7*: Reference to non-existing line number in line: #" + vo.getLineNum() + " - " + vo.getFullLineAfterNum()
+                                                    + "\r\nQuitting the application without output!");
                                     tmpList.set(j, "-");
-                                	return false;
+                                    return false;
                                 } else
                                     tmpList.set(j, or);
-                            }
-                            else {
-                            	//list/set of values
+                            } else {
+                                // list/set of values
                                 tmpList.set(j, s);
                             }
                         } else if (LinkedList.class.isInstance(o1)) {
@@ -370,13 +370,15 @@ public class RDFWriter {
                                         else
                                             or = linemap.get(toLong(s.substring(1)));
                                         if (or == null) {
-                                        	if (myIfcReaderStream.logToFile)
-                								myIfcReaderStream.bw.write("*ERROR 8*: Reference to non-existing line number in line: #" + vo.getLineNum() + "=" + vo.getFullLineAfterNum() + "\r\nQuitting the application without output!\r\n ");
-                                        	System.err.println("*ERROR 8*: Reference to non-existing line number in line: #" + vo.getLineNum() + " - " + vo.getFullLineAfterNum() + "\r\nQuitting the application without output!");
-                                        	tmp2List.set(j2, "-");
+                                            if (myIfcReaderStream.logToFile)
+                                                myIfcReaderStream.bw.write("*ERROR 8*: Reference to non-existing line number in line: #" + vo.getLineNum() + "=" + vo.getFullLineAfterNum()
+                                                                + "\r\nQuitting the application without output!\r\n ");
+                                            System.err.println("*ERROR 8*: Reference to non-existing line number in line: #" + vo.getLineNum() + " - " + vo.getFullLineAfterNum()
+                                                            + "\r\nQuitting the application without output!");
+                                            tmp2List.set(j2, "-");
                                             return false;
                                         } else
-                                        	tmp2List.set(j2, or);
+                                            tmp2List.set(j2, or);
                                     }
                                 }
                             }
@@ -390,7 +392,7 @@ public class RDFWriter {
     }
 
     private void createInstances() throws IOException {
-         for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
+        for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
             IFCVO ifcLineEntry = entry.getValue();
             String typeName = "";
             if (ent.containsKey(ifcLineEntry.getName()))
@@ -401,9 +403,9 @@ public class RDFWriter {
             OntClass cl = ontModel.getOntClass(ontNS + typeName);
 
             Resource r = getResource(baseURI + typeName + "_" + ifcLineEntry.getLineNum(), cl);
-            if(r==null){
-            	//*ERROR 2 already hit: we can safely stop
-            	return;
+            if (r == null) {
+                // *ERROR 2 already hit: we can safely stop
+                return;
             }
             listOfUniqueResources.put(ifcLineEntry.getFullLineAfterNum(), r);
 
@@ -429,10 +431,11 @@ public class RDFWriter {
         TypeVO tvo = typ.get(ExpressReader.formatClassName(ifcLineEntry.getName()));
 
         if (tvo == null && evo == null) {
-            //This can actually never happen
-        	//Namely, if this is the case, then ERROR 2 should fire first, after which the program stops 
-        	if (myIfcReaderStream.logToFile)
-                 myIfcReaderStream.bw.write("*ERROR 3*: fillProperties 1 - Type nor entity exists: " + ifcLineEntry.getName() + "\r\n");
+            // This can actually never happen
+            // Namely, if this is the case, then ERROR 2 should fire first,
+            // after which the program stops
+            if (myIfcReaderStream.logToFile)
+                myIfcReaderStream.bw.write("*ERROR 3*: fillProperties 1 - Type nor entity exists: " + ifcLineEntry.getName() + "\r\n");
             System.err.println("ERROR 3*: fillProperties 1 - Type nor entity exists: " + ifcLineEntry.getName());
         }
 
@@ -441,23 +444,22 @@ public class RDFWriter {
             typeRemembrance = null;
             for (Object o : ifcLineEntry.getObjectList()) {
 
-            	if(Character.class.isInstance(o)){
-                	if((Character)o!=','){
-                		if (myIfcReaderStream.logToFile)
+                if (Character.class.isInstance(o)) {
+                    if ((Character) o != ',') {
+                        if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*ERROR 17*: We found a character that is not a comma. That should not be possible!" + "\r\n");
-                	}
-                }
-            	else if (String.class.isInstance(o)) {
-	               	if (myIfcReaderStream.logToFile)
-	                     myIfcReaderStream.bw.write("*WARNING 1*: fillProperties 2 - WARNING: unhandled type property found." + "\r\n");
+                    }
+                } else if (String.class.isInstance(o)) {
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("*WARNING 1*: fillProperties 2 - WARNING: unhandled type property found." + "\r\n");
                     System.out.println("*WARNING 1*: unhandled type property found.");
                 } else if (IFCVO.class.isInstance(o)) {
-                  	if (myIfcReaderStream.logToFile)
-                         myIfcReaderStream.bw.write("*WARNING 2*: fillProperties 2 - WARNING: unhandled type property found." + "\r\n");
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("*WARNING 2*: fillProperties 2 - WARNING: unhandled type property found." + "\r\n");
                     System.out.println("*WARNING 2*: unhandled type property found.");
                 } else if (LinkedList.class.isInstance(o)) {
-                  	if (myIfcReaderStream.logToFile)
-                         myIfcReaderStream.bw.write("fillProperties 3 - fillPropertiesHandleListObject(tvo)" + "\r\n");
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("fillProperties 3 - fillPropertiesHandleListObject(tvo)" + "\r\n");
                     fillPropertiesHandleListObject(r, tvo, o);
                 }
                 if (myIfcReaderStream.logToFile)
@@ -472,23 +474,22 @@ public class RDFWriter {
             int attributePointer = 0;
             for (Object o : ifcLineEntry.getObjectList()) {
 
-            	if(Character.class.isInstance(o)){
-                	if((Character)o!=','){
-                		if (myIfcReaderStream.logToFile)
+                if (Character.class.isInstance(o)) {
+                    if ((Character) o != ',') {
+                        if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*ERROR 18*: We found a character that is not a comma. That should not be possible!" + "\r\n");
-                	}
-                }
-            	else if (String.class.isInstance(o)) {
-                  	if (myIfcReaderStream.logToFile)
-                         myIfcReaderStream.bw.write("fillProperties 4 - fillPropertiesHandleStringObject(evo)" + "\r\n");
+                    }
+                } else if (String.class.isInstance(o)) {
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("fillProperties 4 - fillPropertiesHandleStringObject(evo)" + "\r\n");
                     attributePointer = fillPropertiesHandleStringObject(r, evo, subject, attributePointer, o);
                 } else if (IFCVO.class.isInstance(o)) {
-                  	if (myIfcReaderStream.logToFile)
-                         myIfcReaderStream.bw.write("fillProperties 5 - fillPropertiesHandleIfcObject(evo)" + "\r\n");
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("fillProperties 5 - fillPropertiesHandleIfcObject(evo)" + "\r\n");
                     attributePointer = fillPropertiesHandleIfcObject(r, evo, attributePointer, o);
                 } else if (LinkedList.class.isInstance(o)) {
-                  	if (myIfcReaderStream.logToFile)
-                         myIfcReaderStream.bw.write("fillProperties 6 - fillPropertiesHandleListObject(evo)" + "\r\n");
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("fillProperties 6 - fillPropertiesHandleListObject(evo)" + "\r\n");
                     attributePointer = fillPropertiesHandleListObject(r, evo, attributePointer, o);
                 }
                 if (myIfcReaderStream.logToFile)
@@ -500,71 +501,66 @@ public class RDFWriter {
             myIfcReaderStream.bw.flush();
     }
 
-    
-    
-    
-    
-    
-    //--------------------------------------
+    // --------------------------------------
     // 6 MAIN FILLPROPERTIES METHODS
-    //--------------------------------------
-       
+    // --------------------------------------
+
     private int fillPropertiesHandleStringObject(Resource r, EntityVO evo, String subject, int attributePointer, Object o) throws IOException {
         if (!((String) o).equals("$") && !((String) o).equals("*")) {
 
             if (typ.get(ExpressReader.formatClassName((String) o)) == null) {
                 if ((evo != null) && (evo.getDerivedAttributeList() != null)) {
-                	if(evo.getDerivedAttributeList().size() <= attributePointer){
-                		if (myIfcReaderStream.logToFile)
+                    if (evo.getDerivedAttributeList().size() <= attributePointer) {
+                        if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*ERROR 4*: Entity in IFC files has more attributes than it is allowed have: " + subject + "\r\n");
-                		System.err.println("*ERROR 4*: Entity in IFC files has more attributes than it is allowed have: " + subject);
+                        System.err.println("*ERROR 4*: Entity in IFC files has more attributes than it is allowed have: " + subject);
                         attributePointer++;
                         return attributePointer;
-                	}
+                    }
 
                     final String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
                     final String literalString = filterExtras((String) o);
 
                     OntProperty p = ontModel.getOntProperty(propURI);
                     OntResource range = p.getRange();
-                    if (range.isClass()) {                 
+                    if (range.isClass()) {
                         if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "ENUMERATION"))) {
-                            // Check for ENUM       
+                            // Check for ENUM
                             addEnumProperty(r, p, range, literalString);
-                        }
-                        else if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "SELECT"))) {
+                        } else if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "SELECT"))) {
                             // Check for SELECT
                             if (myIfcReaderStream.logToFile)
                                 myIfcReaderStream.bw.write("*OK 25*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
-                        	createLiteralProperty(r, p, range, literalString);
+                            createLiteralProperty(r, p, range, literalString);
                         } else if (range.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
                             // Check for LIST
                             if (myIfcReaderStream.logToFile)
-                                myIfcReaderStream.bw.write("*WARNING 5*: found LIST property (but doing nothing with it): " + subject + " -- " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
+                                myIfcReaderStream.bw.write("*WARNING 5*: found LIST property (but doing nothing with it): " + subject + " -- " + p + " - " + range.getLocalName() + " - "
+                                                + literalString + "\r\n");
                         } else {
-                        	createLiteralProperty(r, p, range, literalString);
+                            createLiteralProperty(r, p, range, literalString);
                         }
                     } else {
                         if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*WARNING 7*: found other kind of property: " + p + " - " + range.getLocalName() + "\r\n");
                     }
-                }
-                else{
-                	if (myIfcReaderStream.logToFile)
+                } else {
+                    if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*WARNING 8*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
                 }
                 attributePointer++;
             } else {
-            	typeRemembrance = typ.get(ExpressReader.formatClassName((String) o));
-//				if (typeRemembrance == null) {
-//					if (myIfcReaderStream.logToFile)
-//						myIfcReaderStream.bw.write("*ERROR 11*: The following TYPE is not found: "
-//								+ ExpressReader.formatClassName((String) o)
-//								+ "\r\nQuitting the application without output!\r\n ");
-//					System.err.println(
-//							"*ERROR 11*: The following TYPE is not found: " + ExpressReader.formatClassName((String) o)
-//									+ "\r\nQuitting the application without output!\r\n ");
-//				}
+                typeRemembrance = typ.get(ExpressReader.formatClassName((String) o));
+                // if (typeRemembrance == null) {
+                // if (myIfcReaderStream.logToFile)
+                // myIfcReaderStream.bw.write("*ERROR 11*: The following TYPE is not found: "
+                // + ExpressReader.formatClassName((String) o)
+                // + "\r\nQuitting the application without output!\r\n ");
+                // System.err.println(
+                // "*ERROR 11*: The following TYPE is not found: " +
+                // ExpressReader.formatClassName((String) o)
+                // + "\r\nQuitting the application without output!\r\n ");
+                // }
             }
         } else
             attributePointer++;
@@ -573,7 +569,7 @@ public class RDFWriter {
 
     private int fillPropertiesHandleIfcObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
         if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
-        	
+
             final String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
             EntityVO evorange = ent.get(ExpressReader.formatClassName(((IFCVO) o).getName()));
 
@@ -584,17 +580,16 @@ public class RDFWriter {
             ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
             if (myIfcReaderStream.logToFile)
                 myIfcReaderStream.bw.write("*OK 1*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
-        }
-        else{        	
-        	if (myIfcReaderStream.logToFile)
+        } else {
+            if (myIfcReaderStream.logToFile)
                 myIfcReaderStream.bw.write("*WARNING 3*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
         }
         attributePointer++;
         return attributePointer;
     }
-    
+
     @SuppressWarnings("unchecked")
-	private int fillPropertiesHandleListObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
+    private int fillPropertiesHandleListObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
 
         final LinkedList<Object> tmpList = (LinkedList<Object>) o;
         LinkedList<String> literals = new LinkedList<String>();
@@ -604,40 +599,34 @@ public class RDFWriter {
         // process list
         for (int j = 0; j < tmpList.size(); j++) {
             Object o1 = tmpList.get(j);
-            if(Character.class.isInstance(o1)){
-            	Character c = (Character)o1;
-            	if(c!=','){
-            		if (myIfcReaderStream.logToFile)
+            if (Character.class.isInstance(o1)) {
+                Character c = (Character) o1;
+                if (c != ',') {
+                    if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*ERROR 12*: We found a character that is not a comma. That is odd. Check!" + "\r\n");
-            	}
-            }
-            else if (String.class.isInstance(o1)) {
-            	TypeVO t = typ.get(ExpressReader.formatClassName((String) o1));
-            	if(typeRemembrance == null){
-            		if (t != null){
-            			typeRemembrance = t;
-            		}
-            		else{
-            			literals.add(filterExtras((String) o1));
-            		}
-            	}
-                else{
-            		if (t != null){
-            			if(t==typeRemembrance){
-            				//Ignore and continue with life
-            			}
-            			else{
-            				//Panic
-            				if (myIfcReaderStream.logToFile)
-    							myIfcReaderStream.bw.write("*WARNING 37*: Found two different types in one list. This is worth checking.\r\n ");
-            			}
-            		}
-            		else{
-            			literals.add(filterExtras((String) o1));
-            		}
                 }
-            }
-            else if (IFCVO.class.isInstance(o1)) {
+            } else if (String.class.isInstance(o1)) {
+                TypeVO t = typ.get(ExpressReader.formatClassName((String) o1));
+                if (typeRemembrance == null) {
+                    if (t != null) {
+                        typeRemembrance = t;
+                    } else {
+                        literals.add(filterExtras((String) o1));
+                    }
+                } else {
+                    if (t != null) {
+                        if (t == typeRemembrance) {
+                            // Ignore and continue with life
+                        } else {
+                            // Panic
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*WARNING 37*: Found two different types in one list. This is worth checking.\r\n ");
+                        }
+                    } else {
+                        literals.add(filterExtras((String) o1));
+                    }
+                }
+            } else if (IFCVO.class.isInstance(o1)) {
                 if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
 
                     String propURI = evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
@@ -651,7 +640,7 @@ public class RDFWriter {
 
                         if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
                             if (myIfcReaderStream.logToFile)
-                                myIfcReaderStream.bw.write("*ERROR 22*: Found supposedly unhandled ListOfList, but this should not be possible." + "\r\n"); 
+                                myIfcReaderStream.bw.write("*ERROR 22*: Found supposedly unhandled ListOfList, but this should not be possible." + "\r\n");
                         } else {
                             fillClassInstanceList(tmpList, typerange, p, r);
                             j = tmpList.size() - 1;
@@ -666,158 +655,153 @@ public class RDFWriter {
                         if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*OK 5*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
                     }
-                }
-                else{
-                	if (myIfcReaderStream.logToFile)
+                } else {
+                    if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*WARNING 13*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
                 }
-            } else if(LinkedList.class.isInstance(o1)){
-				if(typeRemembrance!=null){
-					LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
-					for(int jj = 0; jj<tmpListInList.size(); jj++){
-						Object o2 = tmpListInList.get(jj);
-						if(Character.class.isInstance(o2)){
-		                	if((Character)o2!=','){
-		                		if (myIfcReaderStream.logToFile)
-		                            myIfcReaderStream.bw.write("*ERROR 20*: We found a character that is not a comma. That should not be possible" + "\r\n");
-		                	}
-		                }
-		                else if(String.class.isInstance(o2)){
-							literals.add(filterExtras((String) o2));
-						}
-						else if(IFCVO.class.isInstance(o2)){
-							//Lists of IFC entities
-		                	if (myIfcReaderStream.logToFile)
-		                        myIfcReaderStream.bw.write("*WARNING 30*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
-							System.out.println("*WARNING 30: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");							
-						}
-						else if(LinkedList.class.isInstance(o2)){
-							//this happens only for types that are equivalent to lists (e.g. IfcLineIndex in IFC4_ADD1)
-							// in this case, the elements of the list should be treated as new instances that are equivalent to the correct lists
-							LinkedList<Object> tmpListInListInList = (LinkedList<Object>) o2;
-							for(int jjj = 0; jjj<tmpListInListInList.size(); jjj++){
-								Object o3 = tmpListInListInList.get(jjj);
-								if(Character.class.isInstance(o3)){
-				                	if((Character)o3!=','){
-				                		if (myIfcReaderStream.logToFile)
-				                            myIfcReaderStream.bw.write("*ERROR 24*: We found a character that is not a comma. That should not be possible" + "\r\n");
-				                	}
-				                }
-				                else if(String.class.isInstance(o3)){
-									literals.add(filterExtras((String) o3));
-								}
-								else {
-				                	if (myIfcReaderStream.logToFile)
-				                        myIfcReaderStream.bw.write("*WARNING 31*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
-									System.out.println("*WARNING 31: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");		
-								}
-							}
-							
-							//exception. when a list points to a number of linked lists, it could be that there are multiple different entities are referenced
-							//example: #308= IFCINDEXEDPOLYCURVE(#309,(IFCLINEINDEX((1,2)),IFCARCINDEX((2,3,4)),IFCLINEINDEX((4,5)),IFCARCINDEX((5,6,7))),.F.);
-							//in this case, it is better to immediately print all relevant entities and properties for each case (e.g. IFCLINEINDEX((1,2))),
-							//and reset typeremembrance for the next case (e.g. IFCARCINDEX((4,5))).								
-	
-							if ((evo != null)
-									&& (evo.getDerivedAttributeList() != null)
-									&& (evo.getDerivedAttributeList().size() > attributePointer)) {	
-	
-								OntClass cl = ontModel.getOntClass(ontNS + typeRemembrance.getName());
-								Resource r1 = getResource(baseURI + typeRemembrance.getName() + "_" + IDcounter, cl);
-								IDcounter++;
-								OntResource range = ontModel.getOntResource(ontNS + typeRemembrance.getName());
-								
-								//finding listrange
-								String[] primTypeArr = typeRemembrance.getPrimarytype().split(" ");
-//								String primType = primTypeArr[primTypeArr.length-1].replace(";", "") + "_" + primTypeArr[0].substring(0,1).toUpperCase() + primTypeArr[0].substring(1).toLowerCase();
-//								String typeURI = ontNS + primType;
-								String primType = ontNS + primTypeArr[primTypeArr.length-1].replace(";", "");
-								OntResource listrange = ontModel.getOntResource(primType);
-								
-								List<Object> literalObjects = new ArrayList<Object>();
-								literalObjects.addAll(literals);
-								addDirectRegularListProperty(r1, range, listrange, literalObjects, 0);	
-								
-								//put relevant top list items in a list, which can then be parsed at the end of this method
-								listRemembranceResources.add(r1);				
-							}
-							
-							typeRemembrance = null;
-							literals.clear();
-						}
-						else {
-		                	if (myIfcReaderStream.logToFile)
-		                        myIfcReaderStream.bw.write("*WARNING 35*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
-							System.out.println("*WARNING 35: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");		
-						}
-					}
-				}
-				else{
-					LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
-					for(int jj = 0; jj<tmpListInList.size(); jj++){
-						Object o2 = tmpListInList.get(jj);
-						if(Character.class.isInstance(o2)){
-		                	if((Character)o2!=','){
-		                		if (myIfcReaderStream.logToFile)
-		                            myIfcReaderStream.bw.write("*ERROR 21*: We found a character that is not a comma. That should not be possible" + "\r\n");
-		                	}
-		                }
-		                else if(String.class.isInstance(o2)){
-							literals.add(filterExtras((String) o2));
-						}
-						else if (IFCVO.class.isInstance(o2)){	                        
-							IFCVOs.add((IFCVO)o2);
-						}
-						else if(LinkedList.class.isInstance(o2)){
-							if (myIfcReaderStream.logToFile)
-		                        myIfcReaderStream.bw.write("*ERROR 19*: Found List of List of List. Code cannot handle that." + "\r\n");
-							System.err.println("*ERROR 19*: Found List of List of List. Code cannot handle that.");		
-						}
-						else{
-		                	if (myIfcReaderStream.logToFile)
-		                        myIfcReaderStream.bw.write("*WARNING 32*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
-							System.out.println("*WARNING 32: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");		
-						}
-					}
-					if ((evo != null)
-							&& (evo.getDerivedAttributeList() != null)
-							&& (evo.getDerivedAttributeList().size() > attributePointer)) {	
+            } else if (LinkedList.class.isInstance(o1)) {
+                if (typeRemembrance != null) {
+                    LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
+                    for (int jj = 0; jj < tmpListInList.size(); jj++) {
+                        Object o2 = tmpListInList.get(jj);
+                        if (Character.class.isInstance(o2)) {
+                            if ((Character) o2 != ',') {
+                                if (myIfcReaderStream.logToFile)
+                                    myIfcReaderStream.bw.write("*ERROR 20*: We found a character that is not a comma. That should not be possible" + "\r\n");
+                            }
+                        } else if (String.class.isInstance(o2)) {
+                            literals.add(filterExtras((String) o2));
+                        } else if (IFCVO.class.isInstance(o2)) {
+                            // Lists of IFC entities
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*WARNING 30*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                            System.out.println("*WARNING 30: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                        } else if (LinkedList.class.isInstance(o2)) {
+                            // this happens only for types that are equivalent
+                            // to lists (e.g. IfcLineIndex in IFC4_ADD1)
+                            // in this case, the elements of the list should be
+                            // treated as new instances that are equivalent to
+                            // the correct lists
+                            LinkedList<Object> tmpListInListInList = (LinkedList<Object>) o2;
+                            for (int jjj = 0; jjj < tmpListInListInList.size(); jjj++) {
+                                Object o3 = tmpListInListInList.get(jjj);
+                                if (Character.class.isInstance(o3)) {
+                                    if ((Character) o3 != ',') {
+                                        if (myIfcReaderStream.logToFile)
+                                            myIfcReaderStream.bw.write("*ERROR 24*: We found a character that is not a comma. That should not be possible" + "\r\n");
+                                    }
+                                } else if (String.class.isInstance(o3)) {
+                                    literals.add(filterExtras((String) o3));
+                                } else {
+                                    if (myIfcReaderStream.logToFile)
+                                        myIfcReaderStream.bw.write("*WARNING 31*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                                    System.out.println("*WARNING 31: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                                }
+                            }
 
-			        	String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
-						OntProperty p = ontModel.getOntProperty(propURI);	
-						OntClass typerange = p.getRange().asClass();
+                            // exception. when a list points to a number of
+                            // linked lists, it could be that there are multiple
+                            // different entities are referenced
+                            // example: #308=
+                            // IFCINDEXEDPOLYCURVE(#309,(IFCLINEINDEX((1,2)),IFCARCINDEX((2,3,4)),IFCLINEINDEX((4,5)),IFCARCINDEX((5,6,7))),.F.);
+                            // in this case, it is better to immediately print
+                            // all relevant entities and properties for each
+                            // case (e.g. IFCLINEINDEX((1,2))),
+                            // and reset typeremembrance for the next case (e.g.
+                            // IFCARCINDEX((4,5))).
 
-						if(typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))){
-							String listvaluepropURI = typerange.getLocalName().substring(0, typerange.getLocalName().length()-5);	
-							OntResource listrange = ontModel.getOntResource(ontNS + listvaluepropURI);
-							Resource r1 = getResource(baseURI + listvaluepropURI + "_" + IDcounter, listrange);
-							IDcounter++;
-							List<Object> objects = new ArrayList<Object>();
-					        if(IFCVOs.size() > 0){
-					        	objects.addAll(IFCVOs);
-					        	OntResource listcontentrange = getListContentType(listrange.asClass());
-					        	addDirectRegularListProperty(r1, listrange, listcontentrange, objects, 1);	
-					        }
-					        else if(literals.size() > 0){	
-					        	objects.addAll(literals);
-					        	OntResource listcontentrange = getListContentType(listrange.asClass());
-					        	addDirectRegularListProperty(r1, listrange, listcontentrange, objects, 0);						        	
-					        }
-							listRemembranceResources.add(r1);		
-						}
-						else{
-							if (myIfcReaderStream.logToFile)
-		                        myIfcReaderStream.bw.write("*ERROR 23*: Impossible: found a list that is actually not a list." + "\r\n");
-							System.err.println("*ERROR 23: Impossible: found a list that is actually not a list." + "\r\n");		
-						}
-					}
-					
-					literals.clear();
-					IFCVOs.clear();
-				}
-			}
-            else {
-            	if (myIfcReaderStream.logToFile)
+                            if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
+
+                                OntClass cl = ontModel.getOntClass(ontNS + typeRemembrance.getName());
+                                Resource r1 = getResource(baseURI + typeRemembrance.getName() + "_" + IDcounter, cl);
+                                IDcounter++;
+                                OntResource range = ontModel.getOntResource(ontNS + typeRemembrance.getName());
+
+                                // finding listrange
+                                String[] primTypeArr = typeRemembrance.getPrimarytype().split(" ");
+                                // String primType =
+                                // primTypeArr[primTypeArr.length-1].replace(";",
+                                // "") + "_" +
+                                // primTypeArr[0].substring(0,1).toUpperCase() +
+                                // primTypeArr[0].substring(1).toLowerCase();
+                                // String typeURI = ontNS + primType;
+                                String primType = ontNS + primTypeArr[primTypeArr.length - 1].replace(";", "");
+                                OntResource listrange = ontModel.getOntResource(primType);
+
+                                List<Object> literalObjects = new ArrayList<Object>();
+                                literalObjects.addAll(literals);
+                                addDirectRegularListProperty(r1, range, listrange, literalObjects, 0);
+
+                                // put relevant top list items in a list, which
+                                // can then be parsed at the end of this method
+                                listRemembranceResources.add(r1);
+                            }
+
+                            typeRemembrance = null;
+                            literals.clear();
+                        } else {
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*WARNING 35*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                            System.out.println("*WARNING 35: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                        }
+                    }
+                } else {
+                    LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
+                    for (int jj = 0; jj < tmpListInList.size(); jj++) {
+                        Object o2 = tmpListInList.get(jj);
+                        if (Character.class.isInstance(o2)) {
+                            if ((Character) o2 != ',') {
+                                if (myIfcReaderStream.logToFile)
+                                    myIfcReaderStream.bw.write("*ERROR 21*: We found a character that is not a comma. That should not be possible" + "\r\n");
+                            }
+                        } else if (String.class.isInstance(o2)) {
+                            literals.add(filterExtras((String) o2));
+                        } else if (IFCVO.class.isInstance(o2)) {
+                            IFCVOs.add((IFCVO) o2);
+                        } else if (LinkedList.class.isInstance(o2)) {
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*ERROR 19*: Found List of List of List. Code cannot handle that." + "\r\n");
+                            System.err.println("*ERROR 19*: Found List of List of List. Code cannot handle that.");
+                        } else {
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*WARNING 32*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                            System.out.println("*WARNING 32: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
+                        }
+                    }
+                    if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
+
+                        String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
+                        OntProperty p = ontModel.getOntProperty(propURI);
+                        OntClass typerange = p.getRange().asClass();
+
+                        if (typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
+                            String listvaluepropURI = typerange.getLocalName().substring(0, typerange.getLocalName().length() - 5);
+                            OntResource listrange = ontModel.getOntResource(ontNS + listvaluepropURI);
+                            Resource r1 = getResource(baseURI + listvaluepropURI + "_" + IDcounter, listrange);
+                            IDcounter++;
+                            List<Object> objects = new ArrayList<Object>();
+                            if (IFCVOs.size() > 0) {
+                                objects.addAll(IFCVOs);
+                                OntResource listcontentrange = getListContentType(listrange.asClass());
+                                addDirectRegularListProperty(r1, listrange, listcontentrange, objects, 1);
+                            } else if (literals.size() > 0) {
+                                objects.addAll(literals);
+                                OntResource listcontentrange = getListContentType(listrange.asClass());
+                                addDirectRegularListProperty(r1, listrange, listcontentrange, objects, 0);
+                            }
+                            listRemembranceResources.add(r1);
+                        } else {
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*ERROR 23*: Impossible: found a list that is actually not a list." + "\r\n");
+                            System.err.println("*ERROR 23: Impossible: found a list that is actually not a list." + "\r\n");
+                        }
+                    }
+
+                    literals.clear();
+                    IFCVOs.clear();
+                }
+            } else {
+                if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("*ERROR 11*: We found something that is not an IFC entity, not a list, not a string, and not a character. Check!" + "\r\n");
                 System.out.println("*ERROR 11*: We found something that is not an IFC entity, not a list, not a string, and not a character. Check!");
             }
@@ -825,54 +809,50 @@ public class RDFWriter {
 
         // interpret parse
         if (literals.size() > 0) {
-        	String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
+            String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
             OntProperty p = ontModel.getOntProperty(propURI);
             OntResource typerange = p.getRange();
             if (typeRemembrance != null) {
-                if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {                    
-                    if (typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList")))                
-                    	addRegularListProperty(r, p, literals, typeRemembrance);
-                    else{
-                    	addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeRemembrance);
-                    	if(literals.size()>1){
-                        	if (myIfcReaderStream.logToFile)
+                if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
+                    if (typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList")))
+                        addRegularListProperty(r, p, literals, typeRemembrance);
+                    else {
+                        addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeRemembrance);
+                        if (literals.size() > 1) {
+                            if (myIfcReaderStream.logToFile)
                                 myIfcReaderStream.bw.write("*WARNING 37*: We are ignoring a number of literal values here." + "\r\n");
-                    	}                    		
+                        }
                     }
-                }
-                else{
-                	if (myIfcReaderStream.logToFile)
+                } else {
+                    if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*WARNING 15*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
                 }
                 typeRemembrance = null;
             } else if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
-                if (typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList")))                
-                	addRegularListProperty(r, p, literals, null);
-                else         		
-            		for (int i = 0; i < literals.size(); i++)
-            			createLiteralProperty(r,p,typerange,literals.get(i));
-            }
-            else{
-            	if (myIfcReaderStream.logToFile)
+                if (typerange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList")))
+                    addRegularListProperty(r, p, literals, null);
+                else
+                    for (int i = 0; i < literals.size(); i++)
+                        createLiteralProperty(r, p, typerange, literals.get(i));
+            } else {
+                if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("*WARNING 14*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
             }
         }
-        if(listRemembranceResources.size() > 0){
-			if ((evo != null)
-					&& (evo.getDerivedAttributeList() != null)
-					&& (evo.getDerivedAttributeList().size() > attributePointer)) {						
-				String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
-				OntProperty p = ontModel.getOntProperty(propURI);				
-				addListPropertyToGivenEntities(r, p, listRemembranceResources);
-			}
-		}
+        if (listRemembranceResources.size() > 0) {
+            if ((evo != null) && (evo.getDerivedAttributeList() != null) && (evo.getDerivedAttributeList().size() > attributePointer)) {
+                String propURI = ontNS + evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
+                OntProperty p = ontModel.getOntProperty(propURI);
+                addListPropertyToGivenEntities(r, p, listRemembranceResources);
+            }
+        }
 
         attributePointer++;
         return attributePointer;
     }
 
     @SuppressWarnings({ "unchecked" })
-	private void fillPropertiesHandleListObject(Resource r, TypeVO tvo, Object o) throws IOException {
+    private void fillPropertiesHandleListObject(Resource r, TypeVO tvo, Object o) throws IOException {
 
         final LinkedList<Object> tmpList = (LinkedList<Object>) o;
         LinkedList<String> literals = new LinkedList<String>();
@@ -880,31 +860,33 @@ public class RDFWriter {
         // process list
         for (int j = 0; j < tmpList.size(); j++) {
             Object o1 = tmpList.get(j);
-            if(Character.class.isInstance(o1)){
-            	Character c = (Character)o1;
-            	if(c!=','){
-            		if (myIfcReaderStream.logToFile)
+            if (Character.class.isInstance(o1)) {
+                Character c = (Character) o1;
+                if (c != ',') {
+                    if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*ERROR 13*: We found a character that is not a comma. That is odd. Check!" + "\r\n");
-            	}
-            }
-            else if (String.class.isInstance(o1)) {
-                if (typ.get(ExpressReader.formatClassName((String) o1)) != null && typeRemembrance == null){
-                	typeRemembrance = typ.get(ExpressReader.formatClassName((String) o1));
-//                    if(typeRemembrance == null){
-//                    	if (myIfcReaderStream.logToFile)
-//							myIfcReaderStream.bw.write("*ERROR 12*: The following TYPE is not found: " + ExpressReader.formatClassName((String) o1) + "\r\nQuitting the application without output!\r\n ");
-//                    	System.err.println("*ERROR 12*: The following TYPE is not found: " + ExpressReader.formatClassName((String) o1) + "\r\nQuitting the application without output!");
-//                    }
                 }
-                else
+            } else if (String.class.isInstance(o1)) {
+                if (typ.get(ExpressReader.formatClassName((String) o1)) != null && typeRemembrance == null) {
+                    typeRemembrance = typ.get(ExpressReader.formatClassName((String) o1));
+                    // if(typeRemembrance == null){
+                    // if (myIfcReaderStream.logToFile)
+                    // myIfcReaderStream.bw.write("*ERROR 12*: The following TYPE is not found: "
+                    // + ExpressReader.formatClassName((String) o1) +
+                    // "\r\nQuitting the application without output!\r\n ");
+                    // System.err.println("*ERROR 12*: The following TYPE is not found: "
+                    // + ExpressReader.formatClassName((String) o1) +
+                    // "\r\nQuitting the application without output!");
+                    // }
+                } else
                     literals.add(filterExtras((String) o1));
-            }
-            else if (IFCVO.class.isInstance(o1)) {
+            } else if (IFCVO.class.isInstance(o1)) {
                 if ((tvo != null)) {
                     if (myIfcReaderStream.logToFile)
-                        myIfcReaderStream.bw.write("*WARNING 16*: found TYPE that is equivalent to a list if IFC entities - below is the code used when this happens for ENTITIES with a list of ENTITIES"
-                                        + "\r\n");
-                    
+                        myIfcReaderStream.bw
+                                        .write("*WARNING 16*: found TYPE that is equivalent to a list if IFC entities - below is the code used when this happens for ENTITIES with a list of ENTITIES"
+                                                        + "\r\n");
+
                     // String propURI =
                     // tvo.evo.getDerivedAttributeList().get(attributePointer).getLowerCaseName();
                     // OntProperty p = ontModel.getOntProperty(ontNS + propURI);
@@ -946,27 +928,23 @@ public class RDFWriter {
                     // r.getLocalName() + " - " + p.getLocalName() + " - " +
                     // r1.getLocalName() + "\r\n");
                     // }
-                }
-                else{
-                	if (myIfcReaderStream.logToFile)
+                } else {
+                    if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*WARNING 19*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
                 }
-            }
-            else if (LinkedList.class.isInstance(o1) && typeRemembrance != null) {
+            } else if (LinkedList.class.isInstance(o1) && typeRemembrance != null) {
                 LinkedList<Object> tmpListInlist = (LinkedList<Object>) o1;
                 for (int jj = 0; jj < tmpListInlist.size(); jj++) {
                     Object o2 = tmpListInlist.get(jj);
                     if (String.class.isInstance(o2)) {
                         literals.add(filterExtras((String) o2));
-                    }
-                    else{
-                    	if (myIfcReaderStream.logToFile)
+                    } else {
+                        if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*WARNING 18*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
                     }
                 }
-            }
-            else {
-            	if (myIfcReaderStream.logToFile)
+            } else {
+                if (myIfcReaderStream.logToFile)
                     myIfcReaderStream.bw.write("*ERROR 10*: We found something that is not an IFC entity, not a list, not a string, and not a character. Check!" + "\r\n");
                 System.out.println("*ERROR 10*: We found something that is not an IFC entity, not a list, not a string, and not a character. Check!");
             }
@@ -981,14 +959,14 @@ public class RDFWriter {
                     // attributePointer)) {
                     if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*WARNING 20*: this part of the code has not been checked - it can't be correct" + "\r\n");
-                    
+
                     String[] primtypeArr = tvo.getPrimarytype().split(" ");
                     String primType = primtypeArr[primtypeArr.length - 1].replace(";", "") + "_" + primtypeArr[0].substring(0, 1).toUpperCase() + primtypeArr[0].substring(1).toLowerCase();
                     String typeURI = ontNS + primType;
                     OntResource range = ontModel.getOntResource(typeURI);
-    	        	OntResource listrange = getListContentType(range.asClass());
-					List<Object> literalObjects = new ArrayList<Object>();
-					literalObjects.addAll(literals);
+                    OntResource listrange = getListContentType(range.asClass());
+                    List<Object> literalObjects = new ArrayList<Object>();
+                    literalObjects.addAll(literals);
                     addDirectRegularListProperty(r, range, listrange, literalObjects, 0);
 
                     // String propURI = ontNS +
@@ -996,9 +974,8 @@ public class RDFWriter {
                     // OntProperty p = ontModel.getOntProperty(propURI);
                     // addSinglePropertyFromTypeRemembrance(r, p,
                     // literals.getFirst(), typeremembrance);
-                }
-                else{
-                	if (myIfcReaderStream.logToFile)
+                } else {
+                    if (myIfcReaderStream.logToFile)
                         myIfcReaderStream.bw.write("*WARNING 21*: Nothing happened. Not sure if this is good or bad, possible or not." + "\r\n");
                 }
                 typeRemembrance = null;
@@ -1007,47 +984,41 @@ public class RDFWriter {
                 String primType = primTypeArr[primTypeArr.length - 1].replace(";", "") + "_" + primTypeArr[0].substring(0, 1).toUpperCase() + primTypeArr[0].substring(1).toLowerCase();
                 String typeURI = ontNS + primType;
                 OntResource range = ontModel.getOntResource(typeURI);
-				List<Object> literalObjects = new ArrayList<Object>();
-				literalObjects.addAll(literals);
-	        	OntResource listrange = getListContentType(range.asClass());
+                List<Object> literalObjects = new ArrayList<Object>();
+                literalObjects.addAll(literals);
+                OntResource listrange = getListContentType(range.asClass());
                 addDirectRegularListProperty(r, range, listrange, literalObjects, 0);
             }
         }
     }
 
-    
-    
-    
-    
-    
-    
-    //--------------------------------------
+    // --------------------------------------
     // EVERYTHING TO DO WITH LISTS
-    //--------------------------------------    
-    
-    private void addSinglePropertyFromTypeRemembrance(Resource r, OntProperty p, String literalString, TypeVO typeremembrance) throws IOException {
-            OntResource range = ontModel.getOntResource(ontNS + typeremembrance.getName());
+    // --------------------------------------
 
-            if (range.isClass()) {
-                if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "ENUMERATION"))) {
-                    // Check for ENUM
-                    addEnumProperty(r, p, range, literalString);
-                } else if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "SELECT"))) {
-                    // Check for SELECT
-                    if (myIfcReaderStream.logToFile)
-                        myIfcReaderStream.bw.write("*OK 24*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
-                	createLiteralProperty(r,p,range,literalString);
-                } else if (range.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
-                    // Check for LIST
-                    if (myIfcReaderStream.logToFile)
-                        myIfcReaderStream.bw.write("*WARNING 24*: found LIST property (but doing nothing with it): " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
-                } else {
-                	createLiteralProperty(r,p,range,literalString);
-                }
-            } else {
+    private void addSinglePropertyFromTypeRemembrance(Resource r, OntProperty p, String literalString, TypeVO typeremembrance) throws IOException {
+        OntResource range = ontModel.getOntResource(ontNS + typeremembrance.getName());
+
+        if (range.isClass()) {
+            if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "ENUMERATION"))) {
+                // Check for ENUM
+                addEnumProperty(r, p, range, literalString);
+            } else if (range.asClass().hasSuperClass(expressModel.getOntClass(expressNS + "SELECT"))) {
+                // Check for SELECT
                 if (myIfcReaderStream.logToFile)
-                    myIfcReaderStream.bw.write("*WARNING 26*: found other kind of property: " + p + " - " + range.getLocalName() + "\r\n");
+                    myIfcReaderStream.bw.write("*OK 24*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
+                createLiteralProperty(r, p, range, literalString);
+            } else if (range.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
+                // Check for LIST
+                if (myIfcReaderStream.logToFile)
+                    myIfcReaderStream.bw.write("*WARNING 24*: found LIST property (but doing nothing with it): " + p + " - " + range.getLocalName() + " - " + literalString + "\r\n");
+            } else {
+                createLiteralProperty(r, p, range, literalString);
             }
+        } else {
+            if (myIfcReaderStream.logToFile)
+                myIfcReaderStream.bw.write("*WARNING 26*: found other kind of property: " + p + " - " + range.getLocalName() + "\r\n");
+        }
     }
 
     private void addEnumProperty(Resource r, Property p, OntResource range, String literalString) throws IOException {
@@ -1097,12 +1068,12 @@ public class RDFWriter {
             myIfcReaderStream.bw.write("*OK 4*: added literal: " + r1.getLocalName() + " - " + valueProp + " - " + literalString + "\r\n");
     }
 
-    // LIST HANDLING    
-    private void addDirectRegularListProperty(Resource r, OntResource range, OntResource listrange, List<Object> el, int mySwitch) throws IOException {    	
+    // LIST HANDLING
+    private void addDirectRegularListProperty(Resource r, OntResource range, OntResource listrange, List<Object> el, int mySwitch) throws IOException {
         // OntResource range = p.getRange();
-    	
+
         if (range.isClass()) {
-            //OntResource listrange = getListContentType(range.asClass());
+            // OntResource listrange = getListContentType(range.asClass());
 
             if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
                 if (myIfcReaderStream.logToFile)
@@ -1119,22 +1090,22 @@ public class RDFWriter {
                         IDcounter++;
                     }
                 }
-                
-                if(mySwitch==0){
-	                // bind the properties with literal values only if we are actually dealing with literals
-                	List<String> literals = new ArrayList<String>();
-                	for(int i=0;i<el.size();i++){
-                    	literals.add((String)el.get(i));
-                	}
-	                addListInstanceProperties(reslist, literals, listrange);
-                }
-                else{
-                	for (int i = 0; i < reslist.size(); i++) {
+
+                if (mySwitch == 0) {
+                    // bind the properties with literal values only if we are
+                    // actually dealing with literals
+                    List<String> literals = new ArrayList<String>();
+                    for (int i = 0; i < el.size(); i++) {
+                        literals.add((String) el.get(i));
+                    }
+                    addListInstanceProperties(reslist, literals, listrange);
+                } else {
+                    for (int i = 0; i < reslist.size(); i++) {
                         Resource r1 = reslist.get(i);
                         IFCVO vo = (IFCVO) el.get(i);
                         EntityVO evorange = ent.get(ExpressReader.formatClassName(((IFCVO) vo).getName()));
-                        OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());                        
-                        Resource r2 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) vo).getLineNum(), rclass);                        
+                        OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());
+                        Resource r2 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) vo).getLineNum(), rclass);
                         if (myIfcReaderStream.logToFile)
                             myIfcReaderStream.bw.write("*OK 21*: created resource: " + r2.getLocalName() + "\r\n");
                         IDcounter++;
@@ -1152,55 +1123,53 @@ public class RDFWriter {
             }
         }
     }
-    
+
     private void addRegularListProperty(Resource r, OntProperty p, List<String> el, TypeVO typeRemembranceOverride) throws IOException {
         OntResource range = p.getRange();
         if (range.isClass()) {
             OntResource listrange = getListContentType(range.asClass());
-            if(typeRemembranceOverride!=null){
-        		OntClass cla = ontModel.getOntClass(ontNS + typeRemembranceOverride.getName());
-        		listrange = cla;
-        	}
-            
-            if(listrange==null){
-            	if (myIfcReaderStream.logToFile)
-                    myIfcReaderStream.bw.write("*ERROR 14*: We could not find what kind of content is expected in the LIST." + "\r\n");
+            if (typeRemembranceOverride != null) {
+                OntClass cla = ontModel.getOntClass(ontNS + typeRemembranceOverride.getName());
+                listrange = cla;
             }
-            else{
-	            if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
-	                if (myIfcReaderStream.logToFile)
-	                    myIfcReaderStream.bw.write("*WARNING 28*: Found unhandled ListOfList" + "\r\n");
-	            } else {
-	                List<Resource> reslist = new ArrayList<Resource>();
-	                // createrequirednumberofresources
-	                for (int ii = 0; ii < el.size(); ii++) {
-	                    Resource r1 = getResource(baseURI + range.getLocalName() + "_" + IDcounter, range);
-	                    reslist.add(r1);
-	                    IDcounter++;
-	                    if (ii == 0) {
-	                        ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
-	                        if (myIfcReaderStream.logToFile)
-	                            myIfcReaderStream.bw.write("*OK 7*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
-	                    }
-	                }
-	                // bindtheproperties
-	                addListInstanceProperties(reslist, el, listrange);
-	            }
+
+            if (listrange == null) {
+                if (myIfcReaderStream.logToFile)
+                    myIfcReaderStream.bw.write("*ERROR 14*: We could not find what kind of content is expected in the LIST." + "\r\n");
+            } else {
+                if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("*WARNING 28*: Found unhandled ListOfList" + "\r\n");
+                } else {
+                    List<Resource> reslist = new ArrayList<Resource>();
+                    // createrequirednumberofresources
+                    for (int ii = 0; ii < el.size(); ii++) {
+                        Resource r1 = getResource(baseURI + range.getLocalName() + "_" + IDcounter, range);
+                        reslist.add(r1);
+                        IDcounter++;
+                        if (ii == 0) {
+                            ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
+                            if (myIfcReaderStream.logToFile)
+                                myIfcReaderStream.bw.write("*OK 7*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName() + "\r\n");
+                        }
+                    }
+                    // bindtheproperties
+                    addListInstanceProperties(reslist, el, listrange);
+                }
             }
         }
     }
-    
-        
-    private void createLiteralProperty(Resource r, OntResource p, OntResource range, String literalString) throws IOException{
-    	String xsdType = getXSDTypeFromRange(range);
-        if (xsdType == null) {                            	
+
+    private void createLiteralProperty(Resource r, OntResource p, OntResource range, String literalString) throws IOException {
+        String xsdType = getXSDTypeFromRange(range);
+        if (xsdType == null) {
             xsdType = getXSDTypeFromRangeExpensiveMethod(range);
         }
         if (xsdType != null) {
             String xsdTypeCAP = Character.toUpperCase(xsdType.charAt(0)) + xsdType.substring(1);
             OntProperty valueProp = expressModel.getOntProperty(expressNS + "has" + xsdTypeCAP);
             String key = valueProp.toString() + ":" + xsdType + ":" + literalString;
-            
+
             Resource r1 = propertyResourceMap.get(key);
             if (r1 == null) {
                 r1 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter);
@@ -1219,49 +1188,44 @@ public class RDFWriter {
                 myIfcReaderStream.bw.write("*ERROR 1*: XSD type not found for: " + p + " - " + range.getURI() + " - " + literalString + "\r\n");
         }
     }
-    
-	private void addListPropertyToGivenEntities(Resource r, OntProperty p, List<Resource> el) throws IOException {
-		OntResource range = p.getRange();
-		if (range.isClass()) {
-			OntResource listrange = getListContentType(range.asClass());
 
-			if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
-				if (myIfcReaderStream.logToFile)
-					myIfcReaderStream.bw.write("*OK 20*: Handling list of list" + "\r\n");
-				listrange = range;
-			}
-			for (int i = 0; i < el.size(); i++) {
-				Resource r1 = el.get(i);
-				Resource r2 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter); //was listrange
-				ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), range.asNode()));
-				if (myIfcReaderStream.logToFile)
-					myIfcReaderStream.bw.write("*OK 14*: added property: " + r2.getLocalName() + " - rdf:type - "
-							+ range.getLocalName() + "\r\n");
-				IDcounter++;
-				Resource r3 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter);
+    private void addListPropertyToGivenEntities(Resource r, OntProperty p, List<Resource> el) throws IOException {
+        OntResource range = p.getRange();
+        if (range.isClass()) {
+            OntResource listrange = getListContentType(range.asClass());
 
-				if (i == 0) {
-					ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r2.asNode()));
-					if (myIfcReaderStream.logToFile)
-						myIfcReaderStream.bw.write("*OK 15*: added property: " + r.getLocalName() + " - "
-								+ p.getLocalName() + " - " + r2.getLocalName() + "\r\n");
-				}
-				ttlWriter.triple(new Triple(r2.asNode(), listModel.getOntProperty(listNS + "hasContents").asNode(),
-						r1.asNode()));
-				if (myIfcReaderStream.logToFile)
-					myIfcReaderStream.bw.write("*OK 16*: added property: " + r2.getLocalName() + " - " + "-hasContents-"
-							+ " - " + r1.getLocalName() + "\r\n");
+            if (listrange.asClass().hasSuperClass(listModel.getOntClass(listNS + "OWLList"))) {
+                if (myIfcReaderStream.logToFile)
+                    myIfcReaderStream.bw.write("*OK 20*: Handling list of list" + "\r\n");
+                listrange = range;
+            }
+            for (int i = 0; i < el.size(); i++) {
+                Resource r1 = el.get(i);
+                Resource r2 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter); // was
+                                                                                                                // listrange
+                ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), range.asNode()));
+                if (myIfcReaderStream.logToFile)
+                    myIfcReaderStream.bw.write("*OK 14*: added property: " + r2.getLocalName() + " - rdf:type - " + range.getLocalName() + "\r\n");
+                IDcounter++;
+                Resource r3 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + IDcounter);
 
-				if (i < el.size() - 1) {
-					ttlWriter.triple(new Triple(r2.asNode(), listModel.getOntProperty(listNS + "hasNext").asNode(),
-							r3.asNode()));
-					if (myIfcReaderStream.logToFile)
-						myIfcReaderStream.bw.write("*OK 17*: added property: " + r2.getLocalName() + " - " + "-hasNext-"
-								+ " - " + r3.getLocalName() + "\r\n");
-				}
-			}
-		}
-	}
+                if (i == 0) {
+                    ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r2.asNode()));
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("*OK 15*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r2.getLocalName() + "\r\n");
+                }
+                ttlWriter.triple(new Triple(r2.asNode(), listModel.getOntProperty(listNS + "hasContents").asNode(), r1.asNode()));
+                if (myIfcReaderStream.logToFile)
+                    myIfcReaderStream.bw.write("*OK 16*: added property: " + r2.getLocalName() + " - " + "-hasContents-" + " - " + r1.getLocalName() + "\r\n");
+
+                if (i < el.size() - 1) {
+                    ttlWriter.triple(new Triple(r2.asNode(), listModel.getOntProperty(listNS + "hasNext").asNode(), r3.asNode()));
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("*OK 17*: added property: " + r2.getLocalName() + " - " + "-hasNext-" + " - " + r3.getLocalName() + "\r\n");
+                }
+            }
+        }
+    }
 
     private void fillClassInstanceList(LinkedList<Object> tmpList, OntResource typerange, OntProperty p, Resource r) throws IOException {
         List<Resource> reslist = new ArrayList<Resource>();
@@ -1321,44 +1285,44 @@ public class RDFWriter {
         }
     }
 
-    private void addListInstanceProperties(List<Resource> reslist, List<String> listelements, OntResource listrange) throws IOException {    	
-    		// GetListType
-            String xsdType = getXSDTypeFromRange(listrange);
-            if (xsdType == null)
-                xsdType = getXSDTypeFromRangeExpensiveMethod(listrange);
-            if (xsdType != null) {
-                String xsdTypeCAP = Character.toUpperCase(xsdType.charAt(0)) + xsdType.substring(1);
-                OntProperty valueProp = expressModel.getOntProperty(expressNS + "has" + xsdTypeCAP);
+    private void addListInstanceProperties(List<Resource> reslist, List<String> listelements, OntResource listrange) throws IOException {
+        // GetListType
+        String xsdType = getXSDTypeFromRange(listrange);
+        if (xsdType == null)
+            xsdType = getXSDTypeFromRangeExpensiveMethod(listrange);
+        if (xsdType != null) {
+            String xsdTypeCAP = Character.toUpperCase(xsdType.charAt(0)) + xsdType.substring(1);
+            OntProperty valueProp = expressModel.getOntProperty(expressNS + "has" + xsdTypeCAP);
 
-                // Adding Content only if found
-                for (int i = 0; i < reslist.size(); i++) {
-                    Resource r = reslist.get(i);
-                    String literalString = listelements.get(i);
-                    String key = valueProp.toString() + ":" + xsdType + ":" + literalString;
-                    Resource r2 = propertyResourceMap.get(key);
-                    if (r2 == null) {
-                        r2 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + IDcounter);
-                        ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));
-                        if (myIfcReaderStream.logToFile)
-                            myIfcReaderStream.bw.write("*OK 19*: created resource: " + r2.getLocalName() + "\r\n");
-                        IDcounter++;
-                        propertyResourceMap.put(key, r2);
-                        addLiteralToResource(r2, valueProp, xsdType, literalString);
-                    }
-                    ttlWriter.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasContents").asNode(), r2.asNode()));
+            // Adding Content only if found
+            for (int i = 0; i < reslist.size(); i++) {
+                Resource r = reslist.get(i);
+                String literalString = listelements.get(i);
+                String key = valueProp.toString() + ":" + xsdType + ":" + literalString;
+                Resource r2 = propertyResourceMap.get(key);
+                if (r2 == null) {
+                    r2 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + IDcounter);
+                    ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));
                     if (myIfcReaderStream.logToFile)
-                        myIfcReaderStream.bw.write("*OK 11*: added property: " + r.getLocalName() + " - " + "-hasContents-" + " - " + r2.getLocalName() + "\r\n");
-
-                    if (i < listelements.size() - 1) {
-                        ttlWriter.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasNext").asNode(), reslist.get(i + 1).asNode()));
-                        if (myIfcReaderStream.logToFile)
-                            myIfcReaderStream.bw.write("*OK 12*: added property: " + r.getLocalName() + " - " + "-hasNext-" + " - " + reslist.get(i + 1).getLocalName() + "\r\n");
-                    }
+                        myIfcReaderStream.bw.write("*OK 19*: created resource: " + r2.getLocalName() + "\r\n");
+                    IDcounter++;
+                    propertyResourceMap.put(key, r2);
+                    addLiteralToResource(r2, valueProp, xsdType, literalString);
                 }
-            } else {
+                ttlWriter.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasContents").asNode(), r2.asNode()));
                 if (myIfcReaderStream.logToFile)
-                    myIfcReaderStream.bw.write("*ERROR 5*: XSD type not found for: " + listrange.getLocalName() + "\r\n");
+                    myIfcReaderStream.bw.write("*OK 11*: added property: " + r.getLocalName() + " - " + "-hasContents-" + " - " + r2.getLocalName() + "\r\n");
+
+                if (i < listelements.size() - 1) {
+                    ttlWriter.triple(new Triple(r.asNode(), listModel.getOntProperty(listNS + "hasNext").asNode(), reslist.get(i + 1).asNode()));
+                    if (myIfcReaderStream.logToFile)
+                        myIfcReaderStream.bw.write("*OK 12*: added property: " + r.getLocalName() + " - " + "-hasNext-" + " - " + reslist.get(i + 1).getLocalName() + "\r\n");
+                }
             }
+        } else {
+            if (myIfcReaderStream.logToFile)
+                myIfcReaderStream.bw.write("*ERROR 5*: XSD type not found for: " + listrange.getLocalName() + "\r\n");
+        }
     }
 
     // HELPER METHODS
@@ -1474,26 +1438,27 @@ public class RDFWriter {
             try {
                 ttlWriter.triple(new Triple(r.asNode(), RDF.type.asNode(), rclass.asNode()));
             } catch (Exception e) {
-            	if (myIfcReaderStream.logToFile)
-					try {
-						myIfcReaderStream.bw.write("*ERROR 2*: getResource failed for " + uri + "\r\n");
-						System.err.println("*ERROR 2*: getResource failed for " + uri);
-					} catch (IOException e1) {
-						//near to impossible to happen. This point would not have been reached if it were possible.
-						e1.printStackTrace();
-					}
+                if (myIfcReaderStream.logToFile)
+                    try {
+                        myIfcReaderStream.bw.write("*ERROR 2*: getResource failed for " + uri + "\r\n");
+                        System.err.println("*ERROR 2*: getResource failed for " + uri);
+                    } catch (IOException e1) {
+                        // near to impossible to happen. This point would not
+                        // have been reached if it were possible.
+                        e1.printStackTrace();
+                    }
                 return null;
             }
         }
         return r;
     }
-    
-	public boolean isRemoveDuplicates() {
-		return removeDuplicates;
-	}
 
-	public void setRemoveDuplicates(boolean removeDuplicates) {
-		this.removeDuplicates = removeDuplicates;
-	}
+    public boolean isRemoveDuplicates() {
+        return removeDuplicates;
+    }
+
+    public void setRemoveDuplicates(boolean removeDuplicates) {
+        this.removeDuplicates = removeDuplicates;
+    }
 
 }
