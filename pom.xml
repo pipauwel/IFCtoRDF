@@ -26,7 +26,7 @@
   <artifactId>IFCtoRDF</artifactId>
   <name>IFC to RDF</name>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
