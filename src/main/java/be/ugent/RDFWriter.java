@@ -31,10 +31,10 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.openbimstandards.ifcowl.ExpressReader;
-import org.openbimstandards.vo.EntityVO;
-import org.openbimstandards.vo.IFCVO;
-import org.openbimstandards.vo.TypeVO;
+import com.buildingsmart.tech.ifcowl.ExpressReader;
+import com.buildingsmart.tech.ifcowl.vo.EntityVO;
+import com.buildingsmart.tech.ifcowl.vo.IFCVO;
+import com.buildingsmart.tech.ifcowl.vo.TypeVO;
 
 import fi.ni.rdf.Namespace;
 

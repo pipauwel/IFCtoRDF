@@ -21,11 +21,9 @@ import java.util.Map;
 
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.rdf.model.InfModel;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.openbimstandards.vo.EntityVO;
-import org.openbimstandards.vo.TypeVO;
+import com.buildingsmart.tech.ifcowl.vo.EntityVO;
+import com.buildingsmart.tech.ifcowl.vo.TypeVO;
 
 import com.google.gson.Gson;
 
@@ -310,7 +308,7 @@ public class IfcSpfReader {
                 ois.close();
             }
 
-            String ontURI = "http://ifcowl.openbimstandards.org/" + exp;
+            String ontURI = "http://www.buildingsmart-tech.org/ifcOWL/" + exp;
 
             RDFWriter conv = new RDFWriter(om, expressModel, listModel, new FileInputStream(ifcFile), baseURI, ent, typ, ontURI);
             conv.setRemoveDuplicates(removeDuplicates);
