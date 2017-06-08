@@ -41,7 +41,7 @@
 
   <scm>
     <url>https://github.com/pipauwel/IFCtoRDF</url>
-    <connection>scm:git:git://github.com/pipauwel/IFCtoRDF.git</connection>
+    <connection>scm:git:git@github.com/pipauwel/IFCtoRDF.git</connection>
     <developerConnection>scm:git:git@github.com:pipauwel/IFCtoRDF.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
@@ -344,7 +344,7 @@
     <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
     <jena.version>3.1.1</jena.version>
     <gson.version>2.8.0</gson.version>
-    <expresstoowl.version>0.1-SNAPSHOT</expresstoowl.version>
+    <expresstoowl.version>0.1</expresstoowl.version>
 
     <!-- Maven Plugin Dependencies -->
     <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
