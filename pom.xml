@@ -23,7 +23,7 @@
   <artifactId>IFCtoRDF</artifactId>
   <name>IFC to RDF</name>
   <packaging>jar</packaging>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2</version>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -36,7 +36,7 @@
     <url>https://github.com/pipauwel/IFCtoRDF</url>
     <connection>scm:git:git@github.com/pipauwel/IFCtoRDF.git</connection>
     <developerConnection>scm:git:git@github.com:pipauwel/IFCtoRDF.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>IFCtoRDF-0.2</tag>
   </scm>
   <distributionManagement>
     <repository>
