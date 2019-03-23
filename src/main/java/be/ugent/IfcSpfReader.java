@@ -237,7 +237,7 @@ public class IfcSpfReader {
 				inAlt = "IFC4/ADD2/";
 			if (exp.equalsIgnoreCase("IFC4_ADD2_TC1"))
 				inAlt = "IFC4/ADD2_TC1/";
-			if (exp.equalsIgnoreCase("IFC4x1_RC3"))
+			if (exp.equalsIgnoreCase("IFC4x1"))
 				inAlt = "IFC4_1/";
 			if (exp.equalsIgnoreCase("IFC4"))
 				inAlt = "IFC4/FINAL/";
