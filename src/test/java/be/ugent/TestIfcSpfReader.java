@@ -19,13 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
@@ -42,7 +36,7 @@ public class TestIfcSpfReader {
   private IfcSpfReader reader;
 
   private static final String testInputTTL = "showfiles/Barcelona_Pavilion.ttl";
-  private static final String testOutputTTL = "test_Barcelona_Pavilion.ttl";
+  private static final String testOutputTTL = "target/test_Barcelona_Pavilion.ttl";
 
   /**
    * @throws java.lang.Exception
@@ -56,19 +50,8 @@ public class TestIfcSpfReader {
    * @throws java.lang.Exception
    */
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     reader = null;
-    Path testFilePath = FileSystems.getDefault().getPath(testOutputTTL);
-    try {
-      Files.deleteIfExists(testFilePath);
-    } catch (NoSuchFileException x) {
-      System.err.format("%s: no such" + " file or directory%n", testFilePath);
-    } catch (DirectoryNotEmptyException x) {
-      System.err.format("%s not empty%n", testFilePath);
-    } catch (IOException x) {
-      // File permission problems are caught here.
-      System.err.println(x);
-    }
   }
 
   /**
@@ -81,12 +64,16 @@ public class TestIfcSpfReader {
     for (String file : fileList) {
       files.add(file.substring(file.lastIndexOf("/")+1));
     }
-    Assert.assertEquals(Arrays.asList(
-            "Barcelona_Pavilion.ifc",
-            "Barcelona_Pavilion.ttl",
-            "20160414office_model_CV2_fordesign.ifc",
-            "20160414office_model_CV2_fordesign.ttl",
-            "ootest.txt"), files);
+    java.util.Collections.sort(files);
+    StringBuilder sb = new StringBuilder();
+    for (String s : files)
+    {
+      sb.append(s);
+      sb.append(", ");
+    }
+    Assert.assertEquals(
+            "20160414office_model_CV2_fordesign.ifc, 20160414office_model_CV2_fordesign.ttl, Barcelona_Pavilion.ifc, Barcelona_Pavilion.ttl, ootest.txt, ",
+            sb.toString());
   }
 
   /**
@@ -99,9 +86,10 @@ public class TestIfcSpfReader {
 
   /**
    * Test method for {@link be.ugent.IfcSpfReader#convert(java.lang.String, java.lang.String, java.lang.String)}.
+   * @throws IOException if there is an error executing {@link TestIfcSpfReader#compareFileContents(String, String)}
    */
   @Test
-  public final void testConvertIFCFileToOutputTTL() {
+  public final void testConvertIFCFileToOutputTTL() throws IOException {
     String ifcFile = null;
     try {
       ifcFile = getClass().getClassLoader().getResource("showfiles/Barcelona_Pavilion.ifc").getFile();
@@ -109,11 +97,7 @@ public class TestIfcSpfReader {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    try {
-      Assert.assertTrue(compareFileContents(testInputTTL, testOutputTTL));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    Assert.assertTrue(compareFileContents(testInputTTL, testOutputTTL));
   }
 
   /**
