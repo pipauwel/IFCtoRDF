@@ -36,7 +36,7 @@ https://pipauwel.github.io/IFCtoRDF/0.2/apidocs/
 This code relies on two other libraries, namely an [EXPRESStoOWL library](https://github.com/pipauwel/EXPRESStoOWL) and [IFCParserLib library](https://github.com/pipauwel/ifcParserLib).
 
 ## Test files
-This repository also contains the test files used for this code, including the expected logs. These files are in the [testfiles folder](https://github.com/pipauwel/IFCtoRDF/tree/master/testfiles). These are small samples, but they cover most of the code and most of the most common cases in IFC-SPFF files used in the construction industry.
+This repository also contains the test files used for this code, including the expected logs. These files are used for the maven unit testing and can hence be found in the [src/test folder](https://github.com/pipauwel/IFCtoRDF/tree/master/src/test). These are small samples, but they cover most of the code and most of the most common cases in IFC-SPFF files used in the construction industry.
 
 ## Bugs and contact
-Please report bugs and errors (pipauwel.pauwels@ugent.be) - your input in making this code better is heavily appreciated.
+Please report bugs and errors (pipauwel.pauwels@ugent.be) - your input in making this code better is highly appreciated.

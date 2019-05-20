@@ -1,6 +1,8 @@
 # IFCtoRDF Change Log
 
 ## Current Development 0.3-SNAPSHOT
+- added support for IFC4x1 - conversion of instance data
+- mvn unit testing with sample files covering most of IFC's peculiarities
 - changed namespace and output to http://standards.buildingsmart.org/IFC/DEV/
 - added conversion and files for IFC4_ADD2 and IFC4_ADD2_TC1
 - resolved bug in loading imported ontologies, inherent to the later version of Jena
