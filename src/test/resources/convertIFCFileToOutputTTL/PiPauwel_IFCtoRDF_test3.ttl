@@ -1,8 +1,8 @@
-# baseURI: http://linkedbuildingdata.net/ifc/resources20190323_112631/
+# baseURI: http://linkedbuildingdata.net/ifc/resources/
 # imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL
 
 @prefix ifcowl:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
-@prefix inst:  <http://linkedbuildingdata.net/ifc/resources20190323_112631/> .
+@prefix inst:  <http://linkedbuildingdata.net/ifc/resources/> .
 @prefix list:  <https://w3id.org/list#> .
 @prefix express:  <https://w3id.org/express#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -12,6 +12,12 @@
 inst:   rdf:type     owl:Ontology ;
         owl:imports  ifcowl: .
 
-inst:IfcSIUnit_28  rdf:type           ifcowl:IfcSIUnit ;
-        ifcowl:unitType_IfcNamedUnit  ifcowl:LENGTHUNIT ;
-        ifcowl:name_IfcSIUnit         ifcowl:METRE .
+inst:IfcMeasureWithUnit_29
+        rdf:type  ifcowl:IfcMeasureWithUnit .
+
+inst:IfcLengthMeasure_1
+        rdf:type           ifcowl:IfcLengthMeasure ;
+        express:hasDouble  "0.0254"^^xsd:double .
+
+inst:IfcMeasureWithUnit_29
+        ifcowl:valueComponent_IfcMeasureWithUnit  inst:IfcLengthMeasure_1 .
