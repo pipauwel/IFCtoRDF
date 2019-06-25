@@ -152,10 +152,12 @@ public class IfcSpfReader {
 						if (strLine.startsWith("FILE_SCHEMA")) {
 							if (strLine.indexOf("IFC2X3") != -1)
 								return "IFC2X3_TC1";
-							if (strLine.indexOf("IFC4") != -1)
-								return "IFC4_ADD1";
 							if (strLine.indexOf("IFC4X1") != -1)
 								return "IFC4x1";
+							if (strLine.indexOf("IFC4x1") != -1)
+								return "IFC4x1";
+							if (strLine.indexOf("IFC4") != -1)
+								return "IFC4_ADD1";
 							else
 								return "";
 						}
