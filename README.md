@@ -6,12 +6,12 @@ This code does not have a Graphical User Interface (GUI). It relies on maven, so
 
 To convert an input file (IFC-SPFF) to an output file (TTL):
 ``
-java -jar IfcSpfReader.jar [--keep-duplicates] <input_file> <output_file>
+java -jar IFCtoRDF-0.3-SNAPSHOT.jar [--keep-duplicates] <input_file> <output_file>
 ``
 
 or to convert all the IFC-SPFF files in an entire directory:
 ``
-java -jar IfcSpfReader.jar [--keep-duplicates] --dir <directory>"
+java -jar IFCtoRDF-0.3-SNAPSHOT.jar [--keep-duplicates] --dir <directory>"
 ``
 
 ## ifcOWL compatibility
@@ -30,10 +30,20 @@ Each of these ontologies rely on the EXPRESS and LIST ontologies:
 - https://w3id.org/list/
 
 ## Javadoc
-https://pipauwel.github.io/IFCtoRDF/0.2/apidocs/
+https://pipauwel.github.io/IFCtoRDF/0.3/apidocs/
 
 ## Dependencies
 This code relies on two other libraries, namely an [EXPRESStoOWL library](https://github.com/pipauwel/EXPRESStoOWL) and [IFCParserLib library](https://github.com/pipauwel/ifcParserLib).
+
+Include the IFCtoRDF in your Java / Maven project using the POM file:
+```
+<!-- https://mvnrepository.com/artifact/com.github.pipauwel/IFCtoRDF -->
+<dependency>
+    <groupId>com.github.pipauwel</groupId>
+    <artifactId>IFCtoRDF</artifactId>
+    <version>0.2</version>
+</dependency>
+```
 
 ## Test files
 This repository also contains the test files used for this code, including the expected logs. These files are used for the maven unit testing and can hence be found in the [src/test folder](https://github.com/pipauwel/IFCtoRDF/tree/master/src/test). These are small samples, but they cover most of the code and most of the most common cases in IFC-SPFF files used in the construction industry.
