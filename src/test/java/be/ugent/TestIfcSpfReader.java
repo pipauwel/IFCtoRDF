@@ -15,11 +15,13 @@
 package be.ugent;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
@@ -35,8 +37,8 @@ public class TestIfcSpfReader {
 
   private IfcSpfReader reader;
 
-  private static final String testInputTTL = "showfiles/Barcelona_Pavilion.ttl";
-  private static final String testOutputTTL = "target/test_Barcelona_Pavilion.ttl";
+  //private static final String testInputTTL = "showfiles/Barcelona_Pavilion.ttl";
+  //private static final String testOutputTTL = "target/test_Barcelona_Pavilion.ttl";
 
   /**
    * @throws java.lang.Exception
@@ -62,7 +64,7 @@ public class TestIfcSpfReader {
     List<String> fileList = IfcSpfReader.showFiles(getClass().getClassLoader().getResource("showfiles").getFile());
     List<String> files = new ArrayList<>();
     for (String file : fileList) {
-      files.add(file.substring(file.lastIndexOf("/")+1));
+      files.add(file.substring(file.lastIndexOf("\\")+1));
     }
     java.util.Collections.sort(files);
     StringBuilder sb = new StringBuilder();
@@ -84,21 +86,31 @@ public class TestIfcSpfReader {
     //reader.slurp(in)
   }
 
-  /**
-   * Test method for {@link be.ugent.IfcSpfReader#convert(java.lang.String, java.lang.String, java.lang.String)}.
-   * @throws IOException if there is an error executing {@link TestIfcSpfReader#compareFileContents(String, String)}
-   */
-  @Test
-  public final void testConvertIFCFileToOutputTTL() throws IOException {
-    String ifcFile = null;
-    try {
-      ifcFile = getClass().getClassLoader().getResource("showfiles/Barcelona_Pavilion.ifc").getFile();
-      reader.convert(ifcFile, testOutputTTL, "https://w3id.org/express");
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    Assert.assertTrue(compareFileContents(testInputTTL, testOutputTTL));
-  }
+	/**
+	 * Test method for
+	 * {@link be.ugent.IfcSpfReader#convert(java.lang.String, java.lang.String, java.lang.String)}.
+	 * 
+	 * @throws IOException
+	 *             if there is an error executing
+	 *             {@link TestIfcSpfReader#compareFileContents(String, String)}
+	 */
+	@Test
+	public final void testConvertIFCFileToOutputTTL() throws IOException {
+		final List<String> inputFiles;
+		inputFiles = showAllFiles(getClass().getClassLoader().getResource("convertIFCFileToOutputTTL").getFile());
+
+		for (int i = 0; i < inputFiles.size(); ++i) {
+			final String inputFile = inputFiles.get(i);
+			final String outputFileBase;
+			final String outputFileNew;
+			if (inputFile.endsWith(".ifc")) {
+				outputFileBase = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+				outputFileNew = "target" + outputFileBase.split("convertIFCFileToOutputTTL")[1];
+				reader.convert(inputFile, outputFileNew, "http://linkedbuildingdata.net/ifc/resources/");
+				Assert.assertTrue(compareFileContents(outputFileBase, outputFileNew));
+			}
+		}
+	}
 
   /**
    * Method to read the string contents of two files and compare 
@@ -109,8 +121,8 @@ public class TestIfcSpfReader {
    * @throws IOException if there is an error loading method parameters
    * @throws URISyntaxException 
    */
-  private boolean compareFileContents(String testInputTTL, String testOutputTTL) throws IOException {
-    FileInputStream finInput =  new FileInputStream(getClass().getClassLoader().getResource(testInputTTL).getFile());
+  private boolean compareFileContents(String testInputTTL, String testOutputTTL) throws IOException {		
+	    FileInputStream finInput =  new FileInputStream(testInputTTL);
     @SuppressWarnings("resource")
     BufferedReader brInput = new BufferedReader(new InputStreamReader(finInput));
     StringBuilder sbInput = new StringBuilder();
@@ -124,7 +136,7 @@ public class TestIfcSpfReader {
     BufferedReader brOutput = new BufferedReader(new InputStreamReader(finOutput));
     StringBuilder sbOutput = new StringBuilder();
     String lineOutput;
-    while ((lineOutput = brOutput.readLine()) != null) {  
+    while ((lineOutput = brOutput.readLine()) != null) {
       sbOutput.append(lineOutput);
     }
 
@@ -134,4 +146,26 @@ public class TestIfcSpfReader {
       return false;
     }
   }
+  
+  /**
+	 * List all files in a particular directory.
+	 * 
+	 * @param dir
+	 *            the input directory for which you wish to list file.
+	 * @return a {@link java.util.List} of Strings denoting files.
+	 */
+	public static List<String> showAllFiles(String dir) {
+		List<String> goodFiles = new ArrayList<>();
+
+		File folder = new File(dir);
+		File[] listOfFiles = folder.listFiles();
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile())
+				goodFiles.add(listOfFiles[i].getAbsolutePath());
+			else if (listOfFiles[i].isDirectory())
+				goodFiles.addAll(showAllFiles(listOfFiles[i].getAbsolutePath()));
+		}
+		return goodFiles;
+	}
 }
