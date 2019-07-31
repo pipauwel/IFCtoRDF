@@ -320,7 +320,7 @@
     <junit.version>4.7</junit.version>
     <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
     <jena.version>3.1.1</jena.version>
-    <expresstoowl.version>0.2</expresstoowl.version>
+    <expresstoowl.version>0.3</expresstoowl.version>
     <!-- Maven Plugin Dependencies -->
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>

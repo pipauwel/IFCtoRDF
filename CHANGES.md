@@ -1,6 +1,7 @@
 # IFCtoRDF Change Log
 
-## Current Development 0.3-SNAPSHOT
+## Release 0.3 (2019-07-31)
+- included integration with Zenodo for the generation of DOIs per release
 - added support for IFC4x1 - conversion of instance data
 - mvn unit testing with sample files covering most of IFC's peculiarities
 - changed namespace and output to http://standards.buildingsmart.org/IFC/DEV/
