@@ -36,7 +36,7 @@
     <url>https://github.com/pipauwel/IFCtoRDF</url>
     <connection>scm:git:git@github.com/pipauwel/IFCtoRDF.git</connection>
     <developerConnection>scm:git:git@github.com:pipauwel/IFCtoRDF.git</developerConnection>
-    <tag>IFCtoRDF-0.2</tag>
+    <tag>IFCtoRDF-0.3</tag>
   </scm>
   <distributionManagement>
     <repository>
