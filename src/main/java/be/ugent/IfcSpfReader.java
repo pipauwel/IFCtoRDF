@@ -48,21 +48,21 @@ import com.buildingsmart.tech.ifcowl.vo.TypeVO;
  */
 public class IfcSpfReader {
 
-	private static final Logger LOG = LoggerFactory.getLogger(IfcSpfReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IfcSpfReader.class);
 
-	private String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+    private String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 
-	public final String DEFAULT_PATH = "http://linkedbuildingdata.net/ifc/resources" + timeLog + "/";
+    public final String DEFAULT_PATH = "http://linkedbuildingdata.net/ifc/resources" + timeLog + "/";
 
-	private boolean removeDuplicates = false;
-	private static final int FLAG_DIR = 0;
-	private static final int FLAG_KEEP_DUPLICATES = 1;
+    private boolean removeDuplicates = false;
+    private static final int FLAG_DIR = 0;
+    private static final int FLAG_KEEP_DUPLICATES = 1;
 
-	/**
-	 * Primary integration point for the IFCtoRDF codebase. Run the method
-	 * without any input parameters for descriptions of runtime parameters.
-	 */
-	public static void main(String[] args) throws IOException {
+    /**
+     * Primary integration point for the IFCtoRDF codebase. Run the method
+     * without any input parameters for descriptions of runtime parameters.
+     */
+    public static void main(String[] args) throws IOException {
 		String[] options = new String[] { "--dir", "--keep-duplicates" };
 		Boolean[] optionValues = new Boolean[] { false, false, false, false, false };
 
@@ -119,14 +119,14 @@ public class IfcSpfReader {
 
 	}
 
-	/**
-	 * List all files in a particular directory.
-	 * 
-	 * @param dir
-	 *            the input directory for which you wish to list file.
-	 * @return a {@link java.util.List} of Strings denoting files.
-	 */
-	public static List<String> showFiles(String dir) {
+    /**
+     * List all files in a particular directory.
+     * 
+     * @param dir
+     *            the input directory for which you wish to list file.
+     * @return a {@link java.util.List} of Strings denoting files.
+     */
+    public static List<String> showFiles(String dir) {
 		List<String> goodFiles = new ArrayList<>();
 
 		File folder = new File(dir);
@@ -141,7 +141,7 @@ public class IfcSpfReader {
 		return goodFiles;
 	}
 
-	private static String getExpressSchema(String ifcFile) {
+    private static String getExpressSchema(String ifcFile) {
 		try (FileInputStream fstream = new FileInputStream(ifcFile)) {
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -172,16 +172,16 @@ public class IfcSpfReader {
 		return "";
 	}
 
-	public static String slurp(InputStream in) throws IOException {
-		StringBuilder out = new StringBuilder();
-		byte[] b = new byte[4096];
-		for (int n; (n = in.read(b)) != -1;) {
-			out.append(new String(b, 0, n));
-		}
-		return out.toString();
-	}
+    public static String slurp(InputStream in) throws IOException {
+        StringBuilder out = new StringBuilder();
+        byte[] b = new byte[4096];
+        for (int n; (n = in.read(b)) != -1;) {
+            out.append(new String(b, 0, n));
+        }
+        return out.toString();
+    }
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
 
 		if (!ifcFile.endsWith(".ifc")) {

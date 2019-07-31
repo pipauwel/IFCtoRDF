@@ -41,7 +41,7 @@ Include the IFCtoRDF in your Java / Maven project using the POM file:
 <dependency>
     <groupId>com.github.pipauwel</groupId>
     <artifactId>IFCtoRDF</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
 </dependency>
 ```
 
