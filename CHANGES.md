@@ -1,5 +1,7 @@
 # IFCtoRDF Change Log
 
+## Current Development 1.0-SNAPSHOT
+
 ## Release 0.3 (2019-07-31)
 - included integration with Zenodo for the generation of DOIs per release
 - added support for IFC4x1 - conversion of instance data
