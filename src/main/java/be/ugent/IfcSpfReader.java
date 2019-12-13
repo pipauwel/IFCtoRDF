@@ -203,7 +203,7 @@ public class IfcSpfReader {
 
 		InputStream in = null;
 		try {
-			HttpOp.setDefaultHttpClient(HttpClientBuilder.create().build());
+			HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
 			om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
 			in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
 			om.read(in, null, "TTL");
