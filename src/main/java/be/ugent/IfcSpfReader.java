@@ -50,21 +50,31 @@ public class IfcSpfReader {
 
     private static final Logger LOG = LoggerFactory.getLogger(IfcSpfReader.class);
 
-    private String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-
-    public final String DEFAULT_PATH = "http://linkedbuildingdata.net/ifc/resources" + timeLog + "/";
+    public static String DEFAULT_PATH = "";
 
     private boolean removeDuplicates = false;
-    private static final int FLAG_DIR = 0;
-    private static final int FLAG_KEEP_DUPLICATES = 1;
+	private static final int FLAG_BASEURI = 0;
+    private static final int FLAG_DIR = 1;
+    private static final int FLAG_KEEP_DUPLICATES = 2;
+
+    //used in conversion
+	private String ifcFile;
+	private InputStream in = null;
+    private String exp = "";
+    private String ontURI = "";
+    private Map<String, EntityVO> ent;
+	private Map<String, TypeVO> typ;
 
     /**
      * Primary integration point for the IFCtoRDF codebase. Run the method
      * without any input parameters for descriptions of runtime parameters.
      */
     public static void main(String[] args) throws IOException {
-		String[] options = new String[] { "--dir", "--keep-duplicates" };
-		Boolean[] optionValues = new Boolean[] { false, false, false, false, false };
+		String[] options = new String[] {"--baseURI", "--dir", "--keep-duplicates"};
+		Boolean[] optionValues = new Boolean[] { false, false, false};
+
+		String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+		DEFAULT_PATH = "http://linkedbuildingdata.net/ifc/resources" + timeLog + "/";
 
 		List<String> argsList = new ArrayList<>(Arrays.asList(args));
 		for (int i = 0; i < options.length; ++i) {
@@ -79,22 +89,47 @@ public class IfcSpfReader {
 			argsList.remove(flag);
 		}
 
-		final int numRequiredOptions = (optionValues[FLAG_DIR]) ? 1 : 2;
+		int numRequiredOptions = 0;
+		if(optionValues[FLAG_DIR])
+			numRequiredOptions++;
+		else
+			numRequiredOptions = 2;
+		if(optionValues[FLAG_BASEURI])
+			numRequiredOptions++;
+
 		if (argsList.size() != numRequiredOptions) {
-			LOG.info("Usage:\n" + "    IFC_Converter [--keep-duplicates] <input_file> <output_file>\n"
-					+ "    IFC_Converter [--keep-duplicates] --dir <directory>\n");
+			LOG.info("Usage:\n"
+					+ "    IfcSpfReader [--baseURI <baseURI>] [--keep-duplicates] <input_file> <output_file>\n"
+					+ "    IfcSpfReader [--baseURI <baseURI>] [--keep-duplicates] --dir <directory>\n");
 			return;
 		}
 
 		final List<String> inputFiles;
 		final List<String> outputFiles;
+		String baseURI = "";
 
 		if (optionValues[FLAG_DIR]) {
-			inputFiles = showFiles(argsList.get(0));
-			outputFiles = null;
+			if(optionValues[FLAG_BASEURI]){
+				baseURI = argsList.get(0);
+				inputFiles = showFiles(argsList.get(1));
+				outputFiles = null;
+			}
+			else{
+				baseURI = DEFAULT_PATH;
+				inputFiles = showFiles(argsList.get(0));
+				outputFiles = null;
+			}
 		} else {
-			inputFiles = Arrays.asList(new String[] { argsList.get(0) });
-			outputFiles = Arrays.asList(new String[] { argsList.get(1) });
+			if(optionValues[FLAG_BASEURI]){
+				baseURI = argsList.get(0);
+				inputFiles = Arrays.asList(new String[] { argsList.get(1) });
+				outputFiles = Arrays.asList(new String[] { argsList.get(2) });
+			}
+			else{
+				baseURI = DEFAULT_PATH;
+				inputFiles = Arrays.asList(new String[] { argsList.get(0) });
+				outputFiles = Arrays.asList(new String[] { argsList.get(1) });
+			}
 		}
 
 		for (int i = 0; i < inputFiles.size(); ++i) {
@@ -113,7 +148,8 @@ public class IfcSpfReader {
 
 				LOG.info("Converting file: " + inputFile + "\r\n");
 
-				r.convert(inputFile, outputFile, r.DEFAULT_PATH);
+				r.setup(inputFile);
+				r.convert(inputFile, outputFile, baseURI);
 			}
 		}
 
@@ -181,36 +217,26 @@ public class IfcSpfReader {
         return out.toString();
     }
 
-    @SuppressWarnings("unchecked")
-	public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
-
+    public void setup(String ifcFileIn) throws IOException {
+    	ifcFile = ifcFileIn;
 		if (!ifcFile.endsWith(".ifc")) {
 			ifcFile += ".ifc";
 		}
 
-		String exp = getExpressSchema(ifcFile);
+		exp = getExpressSchema(ifcFile);
 
 		// check if we are able to convert this: only four schemas are supported
 		if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1")
 				&& !exp.equalsIgnoreCase("IFC4_ADD2") && !exp.equalsIgnoreCase("IFC4_ADD1")
 				&& !exp.equalsIgnoreCase("IFC4") && !exp.equalsIgnoreCase("IFC4x1")) {
 			LOG.error("Unrecognised EXPRESS schema: " + exp
-					+ ". File should be in IFC4X1, IFC4 or IFC2X3 schema. Stopping conversion." + "\r\n");
+					+ ". File should be in IFC4X1, IFC4 or IFC2X3 schema. Quitting." + "\r\n");
 		}
 
-		// CONVERSION
-		OntModel om = null;
-
-		InputStream in = null;
 		try {
-			HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
-			om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
-			in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
-			om.read(in, null, "TTL");
-
 			InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
 			ObjectInputStream ois = new ObjectInputStream(fis);
-			Map<String, EntityVO> ent = null;
+			ent = null;
 			try {
 				ent = (Map<String, EntityVO>) ois.readObject();
 			} catch (ClassNotFoundException e) {
@@ -221,7 +247,7 @@ public class IfcSpfReader {
 
 			fis = IfcSpfReader.class.getResourceAsStream("/typ" + exp + ".ser");
 			ois = new ObjectInputStream(fis);
-			Map<String, TypeVO> typ = null;
+			typ = null;
 			try {
 				typ = (Map<String, TypeVO>) ois.readObject();
 			} catch (ClassNotFoundException e) {
@@ -246,8 +272,24 @@ public class IfcSpfReader {
 			if (exp.equalsIgnoreCase("IFC4"))
 				inAlt = "IFC4/FINAL/";
 
-			String ontURI = "http://standards.buildingsmart.org/IFC/DEV/" + inAlt + "OWL";
+			ontURI = "http://standards.buildingsmart.org/IFC/DEV/" + inAlt + "OWL";
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+	}
 
+    @SuppressWarnings("unchecked")
+	public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
+		// CONVERSION
+		OntModel om = null;
+
+		in = null;
+		HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
+		om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
+		in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
+		om.read(in, null, "TTL");
+
+		try {
 			RDFWriter conv = new RDFWriter(om, new FileInputStream(ifcFile), baseURI, ent, typ, ontURI);
 			conv.setRemoveDuplicates(removeDuplicates);
 			conv.setIfcReader(this);
@@ -268,5 +310,21 @@ public class IfcSpfReader {
 				e1.printStackTrace();
 			}
 		}
+	}
+
+	public void setRemoveDuplicates(boolean val){
+		removeDuplicates = val;
+	}
+
+	public Map<String, EntityVO> getEntityMap(){
+		return ent;
+	}
+
+	public Map<String, TypeVO> getTypeMap(){
+		return typ;
+	}
+
+	public String getOntURI(){
+		return ontURI;
 	}
 }

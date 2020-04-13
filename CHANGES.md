@@ -1,6 +1,8 @@
 # IFCtoRDF Change Log
 
-## Current Development 1.0-SNAPSHOT
+## Current Development 0.4-SNAPSHOT
+- added baseURI option at start up
+- moved functions to separate IfcParser Class for better reusability
 
 ## Release 0.3 (2019-07-31)
 - included integration with Zenodo for the generation of DOIs per release
