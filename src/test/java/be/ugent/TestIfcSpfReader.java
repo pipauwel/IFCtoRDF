@@ -14,20 +14,15 @@
  */
 package be.ugent;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author lewismc
@@ -67,7 +62,7 @@ public class TestIfcSpfReader {
     List<String> fileList = IfcSpfReader.showFiles(getClass().getClassLoader().getResource("showfiles").getFile());
     List<String> files = new ArrayList<>();
     for (String file : fileList) {
-      files.add(file.substring(file.lastIndexOf("\\")+1));
+      files.add(file.substring(file.lastIndexOf(File.separatorChar)+1));
     }
     java.util.Collections.sort(files);
     StringBuilder sb = new StringBuilder();
