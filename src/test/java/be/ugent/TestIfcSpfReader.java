@@ -100,6 +100,7 @@ public class TestIfcSpfReader {
 
         for (int i = 0; i < inputFiles.size(); ++i) {
             final String inputFile = inputFiles.get(i);
+            System.out.println("file : " + inputFile);
             final String outputFileBase;
             final String outputFileNew;
             if (inputFile.endsWith(".ifc")) {

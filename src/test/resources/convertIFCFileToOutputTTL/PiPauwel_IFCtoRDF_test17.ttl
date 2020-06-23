@@ -1,7 +1,7 @@
 # baseURI: http://linkedbuildingdata.net/ifc/resources/
 # imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL
 
-@prefix ifcowl:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix ifc:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
 @prefix inst:  <http://linkedbuildingdata.net/ifc/resources/> .
 @prefix list:  <https://w3id.org/list#> .
 @prefix express:  <https://w3id.org/express#> .
@@ -10,23 +10,23 @@
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 
 inst:   rdf:type     owl:Ontology ;
-        owl:imports  ifcowl: .
+        owl:imports  ifc: .
 
-inst:IfcSite_1  rdf:type  ifcowl:IfcSite .
+inst:IfcSite_1  rdf:type  ifc:IfcSite .
 
 inst:IfcCompoundPlaneAngleMeasure_1
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
-inst:IfcSite_1  ifcowl:refLatitude_IfcSite  inst:IfcCompoundPlaneAngleMeasure_1 .
+inst:IfcSite_1  ifc:refLatitude_IfcSite  inst:IfcCompoundPlaneAngleMeasure_1 .
 
 inst:IfcCompoundPlaneAngleMeasure_2
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
 inst:IfcCompoundPlaneAngleMeasure_3
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
 inst:IfcCompoundPlaneAngleMeasure_4
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
 inst:INTEGER_5  rdf:type    express:INTEGER ;
         express:hasInteger  49 .
@@ -56,18 +56,18 @@ inst:IfcCompoundPlaneAngleMeasure_4
         list:hasContents  inst:INTEGER_8 .
 
 inst:IfcCompoundPlaneAngleMeasure_9
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
-inst:IfcSite_1  ifcowl:refLongitude_IfcSite  inst:IfcCompoundPlaneAngleMeasure_9 .
+inst:IfcSite_1  ifc:refLongitude_IfcSite  inst:IfcCompoundPlaneAngleMeasure_9 .
 
 inst:IfcCompoundPlaneAngleMeasure_10
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
 inst:IfcCompoundPlaneAngleMeasure_11
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
 inst:IfcCompoundPlaneAngleMeasure_12
-        rdf:type  ifcowl:IfcCompoundPlaneAngleMeasure .
+        rdf:type  ifc:IfcCompoundPlaneAngleMeasure .
 
 inst:INTEGER_13  rdf:type   express:INTEGER ;
         express:hasInteger  8 .

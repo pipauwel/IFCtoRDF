@@ -1,7 +1,7 @@
 # baseURI: http://linkedbuildingdata.net/ifc/resources/
 # imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL
 
-@prefix ifcowl:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix ifc:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
 @prefix inst:  <http://linkedbuildingdata.net/ifc/resources/> .
 @prefix list:  <https://w3id.org/list#> .
 @prefix express:  <https://w3id.org/express#> .
@@ -10,22 +10,22 @@
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 
 inst:   rdf:type     owl:Ontology ;
-        owl:imports  ifcowl: .
+        owl:imports  ifc: .
 
 inst:IfcCartesianPointList3D_200
-        rdf:type  ifcowl:IfcCartesianPointList3D .
+        rdf:type  ifc:IfcCartesianPointList3D .
 
 inst:IfcLengthMeasure_List_1
-        rdf:type  ifcowl:IfcLengthMeasure_List .
+        rdf:type  ifc:IfcLengthMeasure_List .
 
 inst:IfcLengthMeasure_List_2
-        rdf:type  ifcowl:IfcLengthMeasure_List .
+        rdf:type  ifc:IfcLengthMeasure_List .
 
 inst:IfcLengthMeasure_List_3
-        rdf:type  ifcowl:IfcLengthMeasure_List .
+        rdf:type  ifc:IfcLengthMeasure_List .
 
 inst:IfcLengthMeasure_4
-        rdf:type           ifcowl:IfcLengthMeasure ;
+        rdf:type           ifc:IfcLengthMeasure ;
         express:hasDouble  "-300.0"^^xsd:double .
 
 inst:IfcLengthMeasure_List_1
@@ -33,7 +33,7 @@ inst:IfcLengthMeasure_List_1
         list:hasNext      inst:IfcLengthMeasure_List_2 .
 
 inst:IfcLengthMeasure_5
-        rdf:type           ifcowl:IfcLengthMeasure ;
+        rdf:type           ifc:IfcLengthMeasure ;
         express:hasDouble  "150.0"^^xsd:double .
 
 inst:IfcLengthMeasure_List_2
@@ -41,23 +41,23 @@ inst:IfcLengthMeasure_List_2
         list:hasNext      inst:IfcLengthMeasure_List_3 .
 
 inst:IfcLengthMeasure_6
-        rdf:type           ifcowl:IfcLengthMeasure ;
+        rdf:type           ifc:IfcLengthMeasure ;
         express:hasDouble  "0.0"^^xsd:double .
 
 inst:IfcLengthMeasure_List_3
         list:hasContents  inst:IfcLengthMeasure_6 .
 
 inst:IfcLengthMeasure_List_7
-        rdf:type  ifcowl:IfcLengthMeasure_List .
+        rdf:type  ifc:IfcLengthMeasure_List .
 
 inst:IfcLengthMeasure_List_8
-        rdf:type  ifcowl:IfcLengthMeasure_List .
+        rdf:type  ifc:IfcLengthMeasure_List .
 
 inst:IfcLengthMeasure_List_9
-        rdf:type  ifcowl:IfcLengthMeasure_List .
+        rdf:type  ifc:IfcLengthMeasure_List .
 
 inst:IfcLengthMeasure_10
-        rdf:type           ifcowl:IfcLengthMeasure ;
+        rdf:type           ifc:IfcLengthMeasure ;
         express:hasDouble  "-260.012578"^^xsd:double .
 
 inst:IfcLengthMeasure_List_7
@@ -65,7 +65,7 @@ inst:IfcLengthMeasure_List_7
         list:hasNext      inst:IfcLengthMeasure_List_8 .
 
 inst:IfcLengthMeasure_11
-        rdf:type           ifcowl:IfcLengthMeasure ;
+        rdf:type           ifc:IfcLengthMeasure ;
         express:hasDouble  "202.771984"^^xsd:double .
 
 inst:IfcLengthMeasure_List_8
@@ -76,15 +76,15 @@ inst:IfcLengthMeasure_List_9
         list:hasContents  inst:IfcLengthMeasure_6 .
 
 inst:IfcLengthMeasure_List_List_12
-        rdf:type  ifcowl:IfcLengthMeasure_List_List .
+        rdf:type  ifc:IfcLengthMeasure_List_List .
 
 inst:IfcCartesianPointList3D_200
-        ifcowl:coordList_IfcCartesianPointList3D  inst:IfcLengthMeasure_List_List_12 .
+        ifc:coordList_IfcCartesianPointList3D  inst:IfcLengthMeasure_List_List_12 .
 
 inst:IfcLengthMeasure_List_List_12
         list:hasContents  inst:IfcLengthMeasure_List_1 ;
         list:hasNext      inst:IfcLengthMeasure_List_List_13 .
 
 inst:IfcLengthMeasure_List_List_13
-        rdf:type          ifcowl:IfcLengthMeasure_List_List ;
+        rdf:type          ifc:IfcLengthMeasure_List_List ;
         list:hasContents  inst:IfcLengthMeasure_List_7 .
