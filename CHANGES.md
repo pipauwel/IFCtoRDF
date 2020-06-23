@@ -3,6 +3,7 @@
 ## Current Development 0.4-SNAPSHOT
 - added baseURI option at start up
 - moved functions to separate IfcParser Class for better reusability
+- added conversion and files for IFC4x3_RC1
 
 ## Release 0.3 (2019-07-31)
 - included integration with Zenodo for the generation of DOIs per release

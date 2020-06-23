@@ -188,6 +188,10 @@ public class IfcSpfReader {
 						if (strLine.startsWith("FILE_SCHEMA")) {
 							if (strLine.indexOf("IFC2X3") != -1)
 								return "IFC2X3_TC1";
+							if (strLine.indexOf("IFC4x3") != -1)
+								return "IFC4x3_RC1";
+							if (strLine.indexOf("IFC4X3") != -1)
+								return "IFC4x3_RC1";
 							if (strLine.indexOf("IFC4X1") != -1)
 								return "IFC4x1";
 							if (strLine.indexOf("IFC4x1") != -1)
@@ -228,9 +232,10 @@ public class IfcSpfReader {
 		// check if we are able to convert this: only four schemas are supported
 		if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1")
 				&& !exp.equalsIgnoreCase("IFC4_ADD2") && !exp.equalsIgnoreCase("IFC4_ADD1")
-				&& !exp.equalsIgnoreCase("IFC4") && !exp.equalsIgnoreCase("IFC4x1")) {
+				&& !exp.equalsIgnoreCase("IFC4") && !exp.equalsIgnoreCase("IFC4x1")
+				&& !exp.equalsIgnoreCase("IFC4x3_RC1")) {
 			LOG.error("Unrecognised EXPRESS schema: " + exp
-					+ ". File should be in IFC4X1, IFC4 or IFC2X3 schema. Quitting." + "\r\n");
+					+ ". File should be in IFC4x3, IFC4X1, IFC4 or IFC2X3 schema. Quitting." + "\r\n");
 		}
 
 		try {
@@ -269,6 +274,8 @@ public class IfcSpfReader {
 				inAlt = "IFC4/ADD2_TC1/";
 			if (exp.equalsIgnoreCase("IFC4x1"))
 				inAlt = "IFC4_1/";
+			if (exp.equalsIgnoreCase("IFC4x3"))
+				inAlt = "IFC4_3/RC1/";
 			if (exp.equalsIgnoreCase("IFC4"))
 				inAlt = "IFC4/FINAL/";
 
