@@ -12,7 +12,8 @@ IFCtoRDF is a set of reusable Java components that allows to parse IFC-SPF files
 ## How to run this code?
 If you simply want to run your computer on your device, you are advised to download
 - the shaded executable JAR archive from the GitHub Release folder at https://github.com/pipauwel/IFCtoRDF/releases; or
-- the shaded executable JAR archive from the Maven Central repository at https://search.maven.org/artifact/com.github.pipauwel/IFCtoRDF
+- the shaded executable JAR archive from the Maven Central repository at https://search.maven.org/artifact/com.github.pipauwel/IFCtoRDF  
+
 Both are identical, and include all necessary dependencies to be able to run the code out of the box.
 
 This code does not have a Graphical User Interface (GUI). Run any one of the following commands in a command line interface (CLI) to generate an RDF graph in TTL format for the provided IFC-SPF files. These commands allow converting all ifc files in a directory (`--dir` flag) or just one specific file (no `--dir` flag), with a user-specific URI specified or not (`--baseURI` flag).
