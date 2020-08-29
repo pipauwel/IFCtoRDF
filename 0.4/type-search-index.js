@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"be.ugent","l":"IfcSpfParser"},{"p":"be.ugent","l":"IfcSpfReader"},{"p":"be.ugent","l":"RDFWriter"}]
