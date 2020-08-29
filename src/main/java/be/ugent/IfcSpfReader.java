@@ -53,17 +53,17 @@ public class IfcSpfReader {
     public static String DEFAULT_PATH = "";
 
     private boolean removeDuplicates = false;
-	private static final int FLAG_BASEURI = 0;
+    private static final int FLAG_BASEURI = 0;
     private static final int FLAG_DIR = 1;
     private static final int FLAG_KEEP_DUPLICATES = 2;
 
-    //used in conversion
-	private String ifcFile;
-	private InputStream in = null;
+    // used in conversion
+    private String ifcFile;
+    private InputStream in = null;
     private String exp = "";
     private String ontURI = "";
     private Map<String, EntityVO> ent;
-	private Map<String, TypeVO> typ;
+    private Map<String, TypeVO> typ;
 
     /**
      * Primary integration point for the IFCtoRDF codebase. Run the method
@@ -226,74 +226,71 @@ public class IfcSpfReader {
     }
 
     public void setup(String ifcFileIn) throws IOException {
-    	ifcFile = ifcFileIn;
-		if (!ifcFile.endsWith(".ifc")) {
-			ifcFile += ".ifc";
-		}
+        ifcFile = ifcFileIn;
+        if (!ifcFile.endsWith(".ifc")) {
+            ifcFile += ".ifc";
+        }
 
-		exp = getExpressSchema(ifcFile);
+        exp = getExpressSchema(ifcFile);
 
-		// check if we are able to convert this: only four schemas are supported
-		if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1")
-				&& !exp.equalsIgnoreCase("IFC4_ADD2") && !exp.equalsIgnoreCase("IFC4_ADD1")
-				&& !exp.equalsIgnoreCase("IFC4") && !exp.equalsIgnoreCase("IFC4x1")
-				&& !exp.equalsIgnoreCase("IFC4x3_RC1")) {
-			LOG.error("Unrecognised EXPRESS schema: " + exp
-					+ ". File should be in IFC4x3_RC1, IFC4X1, IFC4 or IFC2X3 schema. Quitting." + "\r\n");
-		}
+        // check if we are able to convert this: only four schemas are supported
+        if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2") && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4")
+                        && !exp.equalsIgnoreCase("IFC4x1") && !exp.equalsIgnoreCase("IFC4x3_RC1")) {
+            LOG.error("Unrecognised EXPRESS schema: " + exp + ". File should be in IFC4x3_RC1, IFC4X1, IFC4 or IFC2X3 schema. Quitting." + "\r\n");
+        }
 
-		try {
-			InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			ent = null;
-			try {
-				ent = (Map<String, EntityVO>) ois.readObject();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} finally {
-				ois.close();
-			}
+        try {
+            InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            ent = null;
+            try {
+                ent = (Map<String, EntityVO>) ois.readObject();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                ois.close();
+            }
 
-			fis = IfcSpfReader.class.getResourceAsStream("/typ" + exp + ".ser");
-			ois = new ObjectInputStream(fis);
-			typ = null;
-			try {
-				typ = (Map<String, TypeVO>) ois.readObject();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} finally {
-				ois.close();
-			}
+            fis = IfcSpfReader.class.getResourceAsStream("/typ" + exp + ".ser");
+            ois = new ObjectInputStream(fis);
+            typ = null;
+            try {
+                typ = (Map<String, TypeVO>) ois.readObject();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                ois.close();
+            }
 
-			String inAlt = exp;
-			if (exp.equalsIgnoreCase("IFC2X3_Final"))
-				inAlt = "IFC2x3/FINAL/";
-			if (exp.equalsIgnoreCase("IFC2X3_TC1"))
-				inAlt = "IFC2x3/TC1/";
-			if (exp.equalsIgnoreCase("IFC4_ADD1"))
-				inAlt = "IFC4/ADD1/";
-			if (exp.equalsIgnoreCase("IFC4_ADD2"))
-				inAlt = "IFC4/ADD2/";
-			if (exp.equalsIgnoreCase("IFC4_ADD2_TC1"))
-				inAlt = "IFC4/ADD2_TC1/";
-			if (exp.equalsIgnoreCase("IFC4x1"))
-				inAlt = "IFC4_1/";
-			if (exp.equalsIgnoreCase("IFC4x3"))
-				inAlt = "IFC4_3/RC1/";
-			if (exp.equalsIgnoreCase("IFC4X3"))
-				inAlt = "IFC4_3/RC1/";
-			if (exp.equalsIgnoreCase("IFC4x3_RC1"))
-				inAlt = "IFC4_3/RC1/";
-			if (exp.equalsIgnoreCase("IFC4X3_RC1"))
-				inAlt = "IFC4_3/RC1/";
-			if (exp.equalsIgnoreCase("IFC4"))
-				inAlt = "IFC4/FINAL/";
+            String inAlt = exp;
+            if (exp.equalsIgnoreCase("IFC2X3_Final"))
+                inAlt = "IFC2x3/FINAL/";
+            if (exp.equalsIgnoreCase("IFC2X3_TC1"))
+                inAlt = "IFC2x3/TC1/";
+            if (exp.equalsIgnoreCase("IFC4_ADD1"))
+                inAlt = "IFC4/ADD1/";
+            if (exp.equalsIgnoreCase("IFC4_ADD2"))
+                inAlt = "IFC4/ADD2/";
+            if (exp.equalsIgnoreCase("IFC4_ADD2_TC1"))
+                inAlt = "IFC4/ADD2_TC1/";
+            if (exp.equalsIgnoreCase("IFC4x1"))
+                inAlt = "IFC4_1/";
+            if (exp.equalsIgnoreCase("IFC4x3"))
+                inAlt = "IFC4_3/RC1/";
+            if (exp.equalsIgnoreCase("IFC4X3"))
+                inAlt = "IFC4_3/RC1/";
+            if (exp.equalsIgnoreCase("IFC4x3_RC1"))
+                inAlt = "IFC4_3/RC1/";
+            if (exp.equalsIgnoreCase("IFC4X3_RC1"))
+                inAlt = "IFC4_3/RC1/";
+            if (exp.equalsIgnoreCase("IFC4"))
+                inAlt = "IFC4/FINAL/";
 
-			ontURI = "http://standards.buildingsmart.org/IFC/DEV/" + inAlt + "OWL";
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
-	}
+            ontURI = "http://standards.buildingsmart.org/IFC/DEV/" + inAlt + "OWL";
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+    }
 
     @SuppressWarnings("unchecked")
 	public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
@@ -329,19 +326,19 @@ public class IfcSpfReader {
 		}
 	}
 
-	public void setRemoveDuplicates(boolean val){
-		removeDuplicates = val;
-	}
+    public void setRemoveDuplicates(boolean val) {
+        removeDuplicates = val;
+    }
 
-	public Map<String, EntityVO> getEntityMap(){
-		return ent;
-	}
+    public Map<String, EntityVO> getEntityMap() {
+        return ent;
+    }
 
-	public Map<String, TypeVO> getTypeMap(){
-		return typ;
-	}
+    public Map<String, TypeVO> getTypeMap() {
+        return typ;
+    }
 
-	public String getOntURI(){
-		return ontURI;
-	}
+    public String getOntURI() {
+        return ontURI;
+    }
 }

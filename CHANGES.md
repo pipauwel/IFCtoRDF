@@ -1,6 +1,6 @@
 # IFCtoRDF Change Log
 
-## Current Development 0.4-SNAPSHOT
+## Release 0.4 (2020-08-29)
 - added baseURI option at start up
 - moved functions to separate IfcParser Class for better reusability
 - added conversion and files for IFC4x3_RC1
