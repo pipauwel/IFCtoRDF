@@ -61,7 +61,7 @@ public class IfcSpfReader {
     private String ifcFile;
     private InputStream in = null;
     private String exp = "";
-    private String ontURI = "";
+    protected String ontURI = "";
     private Map<String, EntityVO> ent;
     private Map<String, TypeVO> typ;
 
@@ -241,7 +241,10 @@ public class IfcSpfReader {
 
         try {
             InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
-            ObjectInputStream ois = new ObjectInputStream(fis);
+			if (fis == null)
+				fis = IfcSpfReader.class.getResourceAsStream("/resources/ent" + exp + ".ser");  // Eclipse FIX
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			
             ent = null;
             try {
                 ent = (Map<String, EntityVO>) ois.readObject();
@@ -252,6 +255,11 @@ public class IfcSpfReader {
             }
 
             fis = IfcSpfReader.class.getResourceAsStream("/typ" + exp + ".ser");
+            
+			if (fis == null)
+				fis = IfcSpfReader.class.getResourceAsStream("/resources/typ" + exp + ".ser"); // Eclipse FIX
+
+			
             ois = new ObjectInputStream(fis);
             typ = null;
             try {
@@ -301,6 +309,9 @@ public class IfcSpfReader {
 		HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
 		om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
 		in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
+		if (in == null)
+			in = IfcSpfReader.class.getResourceAsStream("/resources/" + exp + ".ttl");  // Eclipse FIX
+		
 		om.read(in, null, "TTL");
 
 		try {
