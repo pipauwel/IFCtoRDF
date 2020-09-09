@@ -1,6 +1,7 @@
 # IFCtoRDF Change Log
 
 ## Current Development 0.5-SNAPSHOT
+- bugfix for IFC4_ADD2_TC1
 
 ## Release 0.4 (2020-08-29)
 - added baseURI option at start up

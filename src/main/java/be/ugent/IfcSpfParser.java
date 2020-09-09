@@ -11,6 +11,7 @@ public class IfcSpfParser {
 
     private InputStream inputStream;
     private int idCounter = 0;
+    private long lineNumMax = 0;
     private Map<Long, IFCVO> linemap = new HashMap<>();
     private Map<Long, Long> listOfDuplicateLineEntries = new HashMap<>();
 
@@ -46,6 +47,8 @@ public class IfcSpfParser {
                     }
                 }
             } finally {
+                if(lineNumMax > idCounter)
+                    idCounter = (int) lineNumMax;
                 br.close();
             }
         } catch (IOException e) {
@@ -67,6 +70,8 @@ public class IfcSpfParser {
                 case 0:
                     if (ch == '=') {
                         ifcvo.setLineNum(toLong(sb.toString()));
+                        if(toLong(sb.toString()) > lineNumMax)
+                            lineNumMax = toLong(sb.toString());
                         sb.setLength(0);
                         state++;
                         continue;
