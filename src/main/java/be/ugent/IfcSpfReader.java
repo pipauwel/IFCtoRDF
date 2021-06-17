@@ -234,9 +234,8 @@ public class IfcSpfReader {
         exp = getExpressSchema(ifcFile);
 
         // check if we are able to convert this: only four schemas are supported
-        if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2_TC1")
-				&& !exp.equalsIgnoreCase("IFC4_ADD2") && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4")
-                        && !exp.equalsIgnoreCase("IFC4x1") && !exp.equalsIgnoreCase("IFC4x3_RC1")) {
+        if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2")
+                        && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4") && !exp.equalsIgnoreCase("IFC4x1") && !exp.equalsIgnoreCase("IFC4x3_RC1")) {
             LOG.error("Unrecognised EXPRESS schema: " + exp + ". File should be in IFC4x3_RC1, IFC4X1, IFC4, IFC4_ADD1, IFC4_ADD2, IFC4_ADD2_TC1 or IFC2X3 schema. Quitting." + "\r\n");
         }
 
