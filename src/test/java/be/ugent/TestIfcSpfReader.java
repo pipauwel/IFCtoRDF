@@ -152,7 +152,7 @@ public class TestIfcSpfReader {
             failForDifferentFileLength(lineInput, lineOutput);
             line++;
             if (!lineInput.equals(lineOutput)) {
-                Assertions.fail(String.format("Acutal output differs from expected output:\n" + "  input: file %s\n" + "  expected output file: %s\n" + "  difference at line %d\n"
+                Assertions.fail(String.format("Actual output differs from expected output:\n" + "  input: file %s\n" + "  expected output file: %s\n" + "  difference at line %d\n"
                                 + "  expected line:%s\n" + "    actual line:%s", testInputTTL, testOutputTTL, line, lineInput, lineOutput));
             }
         }
