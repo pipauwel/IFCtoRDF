@@ -21,21 +21,19 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.ontology.OntResource;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.riot.system.StreamRDFLib;
 import org.apache.jena.riot.system.StreamRDFWriter;
 import org.apache.jena.sparql.util.Context;
 import org.apache.jena.util.iterator.ExtendedIterator;
@@ -74,8 +72,6 @@ public class RDFWriter {
   private InputStream inputStream;
   private final OntModel ontModel;
 
-  private IfcSpfReader myIfcReaderStream;
-
   // for removing duplicates in line entries
   private Map<String, Resource> listOfUniqueResources = new HashMap<>();
 
@@ -96,13 +92,18 @@ public class RDFWriter {
     this.ontNS = ontURI + "#";
   }
 
-  public void setIfcReader(IfcSpfReader r) {
-    this.myIfcReaderStream = r;
-  }
-
-  public void parseModel2Stream(OutputStream out) throws IOException {
+  public void parseModelToOutputStream(OutputStream out) throws IOException {
 	// CHANGED:  Jena  3.16.0    JO: 2020, added Context.emptyContext
     ttlWriter = StreamRDFWriter.getWriterStream(out, RDFFormat.TURTLE_BLOCKS,Context.emptyContext);
+    parseModelToOutputStream();
+  }
+
+  public void parseModelToGraph(Graph graph) throws IOException {
+    ttlWriter = StreamRDFLib.graph(graph);
+    parseModelToOutputStream();
+  }
+
+  private void parseModelToOutputStream() throws IOException {
     ttlWriter.base(baseURI);
     ttlWriter.prefix("ifc", ontNS);
     ttlWriter.prefix("inst", baseURI);
@@ -112,39 +113,28 @@ public class RDFWriter {
     ttlWriter.prefix("xsd", Namespace.XSD);
     ttlWriter.prefix("owl", Namespace.OWL);
     ttlWriter.start();
-
     ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), RDF.type.asNode(), OWL.Ontology.asNode()));
     ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), OWL.imports.asNode(), NodeFactory.createURI(ontNS)));
-
     IfcSpfParser parser = new IfcSpfParser(inputStream);
-
     // Read the whole file into a linemap Map object
     parser.readModel();
-
     LOG.info("Model parsed");
-
     if (removeDuplicates) {
       parser.resolveDuplicates();
     }
-
     // map entries of the linemap Map object to the ontology Model and make
     // new instances in the model
     boolean parsedSuccessfully = parser.mapEntries();
-
     if (!parsedSuccessfully)
       return;
-
     //recover data from parser
     idCounter = parser.getIdCounter();
     linemap = parser.getLinemap();
-
     LOG.info("Entries mapped, now creating instances");
     createInstances();
-
     // Save memory
     linemap.clear();
     linemap = null;
-
     ttlWriter.finish();
   }
 

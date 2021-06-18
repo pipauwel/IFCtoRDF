@@ -14,6 +14,15 @@
  */
 package be.ugent;
 
+import org.apache.jena.ext.com.google.common.collect.Streams;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphMatcher;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.sparql.graph.GraphFactory;
+import org.apache.jena.sparql.graph.GraphOps;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * @author lewismc
@@ -101,13 +112,39 @@ public class TestIfcSpfReader {
     @ParameterizedTest
     @MethodSource
     public final void testConvertIFCFileToOutputTTL(File input, File expectedOutput) throws IOException {
-        final String outputFileBase;
-        final String outputFileNew;
-        outputFileBase = input.getAbsolutePath().substring(0, input.getAbsolutePath().length() - 4) + ".ttl";
-        outputFileNew = "target" + outputFileBase.split("convertIFCFileToOutputTTL")[1];
+
+        Graph expected = GraphFactory.createGraphMem();
+        RDFDataMgr.read(expected, new FileInputStream(expectedOutput), Lang.TTL);
         reader.setup(input.getAbsolutePath());
-        reader.convert(input.getAbsolutePath(), outputFileNew, "http://linkedbuildingdata.net/ifc/resources/");
-        compareFileContents(outputFileBase, outputFileNew);
+        Graph actual = reader.convert(input.getAbsolutePath(), "http://linkedbuildingdata.net/ifc/resources/");
+        if (!expected.isIsomorphicWith(actual)){
+            int expectedSize = expected.size();
+            int actualSize = actual.size();
+            Graph intersection = GraphFactory.createGraphMem();
+            GraphOps.addAll(intersection, expected.stream().filter(actual::contains).iterator());
+            int intersectionSize = intersection.size();
+            GraphOps.deleteAll(expected, intersection.find());
+            GraphOps.deleteAll(actual, intersection.find());
+            StringWriter intersectionAsTTl = new StringWriter();
+            RDFDataMgr.write(intersectionAsTTl, intersection, Lang.TTL);
+            StringWriter actualAsTTl = new StringWriter();
+            RDFDataMgr.write(actualAsTTl, actual, Lang.TTL);
+            StringWriter expectedAsTTl = new StringWriter();
+            RDFDataMgr.write(expectedAsTTl, expected, Lang.TTL);
+            String message = String.format(
+                            "Test Failed!\n"
+                            + "  Input: %s\n"
+                            + "  Expected output: %s\n"
+                            + "  Expected size: %d\n"
+                            + "  Actual size: %d\n"
+                            + "  Intersection size: %d\n"
+                            + "  In expected and actual:\n%s\n"
+                            + "  Only in expected:\n%s\n"
+                            + "  Only in actual:\n%s\n",
+                            input.getName(), expectedOutput.getName(), expectedSize, actualSize, intersectionSize,
+                            intersectionAsTTl.toString(), expectedAsTTl.toString(), actualAsTTl.toString());
+            Assertions.fail(message);
+        }
     }
 
     public static Stream<Arguments> testConvertIFCFileToOutputTTL() {

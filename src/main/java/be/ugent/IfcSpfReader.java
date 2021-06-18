@@ -31,10 +31,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.jena.graph.Graph;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.web.HttpOp;
+import org.apache.jena.sparql.graph.GraphFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -319,17 +321,51 @@ public class IfcSpfReader {
 		try {
 			RDFWriter conv = new RDFWriter(om, new FileInputStream(ifcFile), baseURI, ent, typ, ontURI);
 			conv.setRemoveDuplicates(removeDuplicates);
-			conv.setIfcReader(this);
 			try (FileOutputStream out = new FileOutputStream(outputFile)) {
 				String s = "# baseURI: " + baseURI;
 				s += "\r\n# imports: " + ontURI + "\r\n\r\n";
 				out.write(s.getBytes());
 				LOG.info("Started parsing stream");
-				conv.parseModel2Stream(out);
+				conv.parseModelToOutputStream(out);
 				LOG.info("Finished!!");
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
+		} finally {
+			try {
+				in.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	public Graph convert(String ifcFile, String baseURI) throws IOException {
+		Graph graph = GraphFactory.createGraphMem();
+		convert(ifcFile, graph, baseURI);
+		return graph;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void convert(String ifcFile, Graph toGraph, String baseURI) throws IOException {
+		// CONVERSION
+		OntModel om = null;
+
+		in = null;
+		HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
+		om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
+		in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
+		if (in == null)
+			in = IfcSpfReader.class.getResourceAsStream("/resources/" + exp + ".ttl");  // Eclipse FIX
+
+		om.read(in, null, "TTL");
+
+		try {
+			RDFWriter conv = new RDFWriter(om, new FileInputStream(ifcFile), baseURI, ent, typ, ontURI);
+			conv.setRemoveDuplicates(removeDuplicates);
+			LOG.info("Started parsing stream");
+			conv.parseModelToGraph(toGraph);
+			LOG.info("Finished!!");
 		} finally {
 			try {
 				in.close();
