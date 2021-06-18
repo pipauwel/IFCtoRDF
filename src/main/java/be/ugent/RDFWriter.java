@@ -37,6 +37,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
@@ -100,7 +101,8 @@ public class RDFWriter {
   }
 
   public void parseModel2Stream(OutputStream out) throws IOException {
-    ttlWriter = StreamRDFWriter.getWriterStream(out, RDFFormat.TURTLE_BLOCKS);
+	// CHANGED:  Jena  3.16.0    JO: 2020, added Context.emptyContext
+    ttlWriter = StreamRDFWriter.getWriterStream(out, RDFFormat.TURTLE_BLOCKS,Context.emptyContext);
     ttlWriter.base(baseURI);
     ttlWriter.prefix("ifc", ontNS);
     ttlWriter.prefix("inst", baseURI);

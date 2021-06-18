@@ -1,5 +1,4 @@
 /*
- * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,13 +60,16 @@ public class IfcSpfReader {
     private String ifcFile;
     private InputStream in = null;
     private String exp = "";
-    private String ontURI = "";
+    protected String ontURI = "";
     private Map<String, EntityVO> ent;
     private Map<String, TypeVO> typ;
 
     /**
      * Primary integration point for the IFCtoRDF codebase. Run the method
      * without any input parameters for descriptions of runtime parameters.
+     * @param args a String array containing parameters <code>--baseURI</code>,
+     * <code>--dir</code> and <code>--keep-duplicates</code>.
+     * @throws IOException if there is an error reading the input parameters
      */
     public static void main(String[] args) throws IOException {
 		String[] options = new String[] {"--baseURI", "--dir", "--keep-duplicates"};
@@ -241,7 +243,10 @@ public class IfcSpfReader {
 
         try {
             InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
-            ObjectInputStream ois = new ObjectInputStream(fis);
+			if (fis == null)
+				fis = IfcSpfReader.class.getResourceAsStream("/resources/ent" + exp + ".ser");  // Eclipse FIX
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			
             ent = null;
             try {
                 ent = (Map<String, EntityVO>) ois.readObject();
@@ -252,6 +257,11 @@ public class IfcSpfReader {
             }
 
             fis = IfcSpfReader.class.getResourceAsStream("/typ" + exp + ".ser");
+            
+			if (fis == null)
+				fis = IfcSpfReader.class.getResourceAsStream("/resources/typ" + exp + ".ser"); // Eclipse FIX
+
+			
             ois = new ObjectInputStream(fis);
             typ = null;
             try {
@@ -301,6 +311,9 @@ public class IfcSpfReader {
 		HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
 		om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
 		in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
+		if (in == null)
+			in = IfcSpfReader.class.getResourceAsStream("/resources/" + exp + ".ttl");  // Eclipse FIX
+		
 		om.read(in, null, "TTL");
 
 		try {
