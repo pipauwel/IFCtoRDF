@@ -1,5 +1,4 @@
 /*
- * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -68,6 +67,9 @@ public class IfcSpfReader {
     /**
      * Primary integration point for the IFCtoRDF codebase. Run the method
      * without any input parameters for descriptions of runtime parameters.
+     * @param args a String array containing parameters <code>--baseURI</code>,
+     * <code>--dir</code> and <code>--keep-duplicates</code>.
+     * @throws IOException if there is an error reading the input parameters
      */
     public static void main(String[] args) throws IOException {
 		String[] options = new String[] {"--baseURI", "--dir", "--keep-duplicates"};
