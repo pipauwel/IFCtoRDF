@@ -103,6 +103,11 @@ public class RDFWriter {
     parseModelToOutputStream();
   }
 
+  public void parseModelToStreamRdf(StreamRDF writer) throws IOException {
+    ttlWriter = writer;
+    parseModelToOutputStream();
+  }
+
   private void parseModelToOutputStream() throws IOException {
     ttlWriter.base(baseURI);
     ttlWriter.prefix("ifc", ontNS);
