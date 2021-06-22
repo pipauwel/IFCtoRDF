@@ -40,7 +40,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Merkmalservice</name>
-            <url>https://maven.pkg.github.com/Merkmalservice/utils</url>
+            <url>https://maven.pkg.github.com/Merkmalservice</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
