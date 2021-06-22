@@ -317,7 +317,7 @@ public class IfcSpfReader {
 				writer.parseModelToOutputStream(out);
 				LOG.info("Finished!!");
 			} catch (Exception e) {
-				throw new RuntimeException(String.format("Could not write output %s: %s", outputFile, e.getMessage() ));
+				throw new RuntimeException(String.format("Could not write output %s: %s", outputFile, e.getMessage() ), e);
 			}
 		});
 	}
@@ -332,7 +332,7 @@ public class IfcSpfReader {
 			handler.accept(conv);
 			LOG.info("Finished!!");
 		} catch (Exception e) {
-			throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()));
+			throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()), e);
 		}
 	}
 
@@ -349,7 +349,7 @@ public class IfcSpfReader {
 			try {
 				writer.parseModelToGraph(toGraph);
 			} catch (Exception e) {
-				throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()));
+				throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()), e);
 			}
 		});
 	}
@@ -359,7 +359,7 @@ public class IfcSpfReader {
 			try {
 				writer.parseModelToStreamRdf(streamRDF);
 			} catch (Exception e) {
-				throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()));
+				throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()), e);
 			}
 		});
 	}
