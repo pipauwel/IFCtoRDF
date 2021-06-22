@@ -120,7 +120,7 @@ public class RDFWriter {
     ttlWriter.start();
     ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), RDF.type.asNode(), OWL.Ontology.asNode()));
     ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), OWL.imports.asNode(), NodeFactory.createURI(ontNS)));
-    IfcSpfParser parser = new IfcSpfParser(inputStream);
+    IfcSpfParser parser = new IfcSpfParser(inputStream, removeDuplicates);
     // Read the whole file into a linemap Map object
     parser.readModel();
     LOG.info("Model parsed");
@@ -202,7 +202,7 @@ public class RDFWriter {
           LOG.warn("*WARNING 1*: fillProperties 2: unhandled type property found.");
         } else if (IFCVO.class.isInstance(o)) {
           LOG.warn("*WARNING 2*: fillProperties 2: unhandled type property found.");
-        } else if (LinkedList.class.isInstance(o)) {
+        } else if (List.class.isAssignableFrom(o.getClass())) {
           if (LOG.isDebugEnabled()) {
             LOG.debug("fillProperties 3 - fillPropertiesHandleListObject(tvo)");
           }
@@ -233,7 +233,7 @@ public class RDFWriter {
             LOG.debug("fillProperties 5 - fillPropertiesHandleIfcObject(evo)");
           }
           attributePointer = fillPropertiesHandleIfcObject(r, evo, attributePointer, o);
-        } else if (LinkedList.class.isInstance(o)) {
+        } else if (List.class.isAssignableFrom(o.getClass())) {
           if (LOG.isDebugEnabled()) {
             LOG.debug("fillProperties 6 - fillPropertiesHandleListObject(evo)");
           }
@@ -322,10 +322,10 @@ public class RDFWriter {
   @SuppressWarnings("unchecked")
   private int fillPropertiesHandleListObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
 
-    final LinkedList<Object> tmpList = (LinkedList<Object>) o;
-    LinkedList<String> literals = new LinkedList<>();
-    LinkedList<Resource> listRemembranceResources = new LinkedList<>();
-    LinkedList<IFCVO> ifcVOs = new LinkedList<>();
+    final List<Object> tmpList = (List<Object>) o;
+    List<String> literals = new LinkedList<>();
+    List<Resource> listRemembranceResources = new LinkedList<>();
+    List<IFCVO> ifcVOs = new LinkedList<>();
 
     // process list
     for (int j = 0; j < tmpList.size(); j++) {
@@ -389,9 +389,9 @@ public class RDFWriter {
         } else {
           LOG.warn("*WARNING 13*: Nothing happened. Not sure if this is good or bad, possible or not.");
         }
-      } else if (LinkedList.class.isInstance(o1)) {
+      } else if (List.class.isAssignableFrom(o1.getClass())) {
         if (typeRemembrance != null) {
-          LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
+          List<Object> tmpListInList = (List<Object>) o1;
           for (int jj = 0; jj < tmpListInList.size(); jj++) {
             Object o2 = tmpListInList.get(jj);
             if (Character.class.isInstance(o2)) {
@@ -403,13 +403,13 @@ public class RDFWriter {
             } else if (IFCVO.class.isInstance(o2)) {
               // Lists of IFC entities
               LOG.warn("*WARNING 30: Nothing happened. Not sure if this is good or bad, possible or not.");
-            } else if (LinkedList.class.isInstance(o2)) {
+            } else if (List.class.isAssignableFrom(o2.getClass())) {
               // this happens only for types that are equivalent
               // to lists (e.g. IfcLineIndex in IFC4_ADD1)
               // in this case, the elements of the list should be
               // treated as new instances that are equivalent to
               // the correct lists
-              LinkedList<Object> tmpListInListInList = (LinkedList<Object>) o2;
+              List<Object> tmpListInListInList = (List<Object>) o2;
               for (int jjj = 0; jjj < tmpListInListInList.size(); jjj++) {
                 Object o3 = tmpListInListInList.get(jjj);
                 if (Character.class.isInstance(o3)) {
@@ -462,7 +462,7 @@ public class RDFWriter {
             }
           }
         } else {
-          LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
+          List<Object> tmpListInList = (List<Object>) o1;
           for (int jj = 0; jj < tmpListInList.size(); jj++) {
             Object o2 = tmpListInList.get(jj);
             if (Character.class.isInstance(o2)) {
@@ -473,7 +473,7 @@ public class RDFWriter {
               literals.add(filterExtras((String) o2));
             } else if (IFCVO.class.isInstance(o2)) {
               ifcVOs.add((IFCVO) o2);
-            } else if (LinkedList.class.isInstance(o2)) {
+            } else if (List.class.isAssignableFrom(o2.getClass())) {
               LOG.error("*ERROR 19*: Found List of List of List. Code cannot handle that.");
             } else {
               LOG.warn("*WARNING 32*: Nothing happened. Not sure if this is good or bad, possible or not.");
@@ -524,7 +524,7 @@ public class RDFWriter {
           if (typerange.asClass().hasSuperClass(ontModel.getOntClass(LIST_NS + "OWLList")))
             addRegularListProperty(r, p, literals, typeRemembrance);
           else {
-            addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeRemembrance);
+            addSinglePropertyFromTypeRemembrance(r, p, literals.get(0), typeRemembrance);
             if (literals.size() > 1) {
               LOG.warn("*WARNING 37*: We are ignoring a number of literal values here.");
             }
@@ -558,8 +558,8 @@ public class RDFWriter {
   @SuppressWarnings({ "unchecked" })
   private void fillPropertiesHandleListObject(Resource r, TypeVO tvo, Object o) throws IOException {
 
-    final LinkedList<Object> tmpList = (LinkedList<Object>) o;
-    LinkedList<String> literals = new LinkedList<>();
+    final List<Object> tmpList = (List<Object>) o;
+    List<String> literals = new LinkedList<>();
 
     // process list
     for (int j = 0; j < tmpList.size(); j++) {
@@ -580,8 +580,8 @@ public class RDFWriter {
         } else {
           LOG.warn("*WARNING 19*: Nothing happened. Not sure if this is good or bad, possible or not.");
         }
-      } else if (LinkedList.class.isInstance(o1) && typeRemembrance != null) {
-        LinkedList<Object> tmpListInlist = (LinkedList<Object>) o1;
+      } else if (List.class.isAssignableFrom(o1.getClass()) && typeRemembrance != null) {
+        List<Object> tmpListInlist = (List<Object>) o1;
         for (int jj = 0; jj < tmpListInlist.size(); jj++) {
           Object o2 = tmpListInlist.get(jj);
           if (String.class.isInstance(o2)) {
@@ -872,7 +872,7 @@ public class RDFWriter {
     }
   }
 
-  private void fillClassInstanceList(LinkedList<Object> tmpList, OntResource typerange, OntProperty p, Resource r) throws IOException {
+  private void fillClassInstanceList(List<Object> tmpList, OntResource typerange, OntProperty p, Resource r) throws IOException {
     List<Resource> reslist = new ArrayList<>();
     List<IFCVO> entlist = new ArrayList<>();
 

@@ -1,33 +1,52 @@
 package be.ugent;
 
 import com.buildingsmart.tech.ifcowl.vo.IFCVO;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.invoke.MethodHandles;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class IfcSpfParser {
-
+    private final boolean resolveDuplicates;
     private InputStream inputStream;
     private int idCounter = 0;
     private long lineNumMax = 0;
-    private Map<Long, IFCVO> linemap = new HashMap<>();
+    private Map<Long, IFCVO> linemap = new TreeMap<>();
     private Map<Long, Long> listOfDuplicateLineEntries = new HashMap<>();
 
-    private static final Logger LOG = LoggerFactory.getLogger(RDFWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public IfcSpfParser(InputStream inputStream){
+    public IfcSpfParser(InputStream inputStream, boolean resolveDuplicates)
+    {
         this.inputStream = inputStream;
+        this.resolveDuplicates = resolveDuplicates;
     }
 
+
     public void readModel() {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         try {
-            DataInputStream in = new DataInputStream(inputStream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             try {
                 String strLine;
+                int cnt = 0;
                 while ((strLine = br.readLine()) != null) {
+                    cnt++;
+                    if (cnt % 10000 == 0) {
+                        LOG.debug("parsed: {} lines", cnt);
+                    }
                     if (strLine.length() > 0) {
                         if (strLine.charAt(0) == '#') {
                             StringBuilder sb = new StringBuilder();
@@ -46,6 +65,7 @@ public class IfcSpfParser {
                         }
                     }
                 }
+                LOG.debug("done reading");
             } finally {
                 if(lineNumMax > idCounter)
                     idCounter = (int) lineNumMax;
@@ -54,16 +74,21 @@ public class IfcSpfParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        stopWatch.stop();
+        LOG.info("Done reading model in {}", Duration.of(stopWatch.getTime(TimeUnit.NANOSECONDS), ChronoUnit.NANOS));
     }
 
     private void parseIfcLineStatement(String line) {
         IFCVO ifcvo = new IFCVO();
-        ifcvo.setFullLineAfterNum(line.substring(line.indexOf('=') + 1));
+        if (resolveDuplicates) {
+            // remembering the full line costs a lot of memory, we only do it if needed
+            ifcvo.setFullLineAfterNum(line.substring(line.indexOf('=') + 1));
+        }
         int state = 0;
-        StringBuilder sb = new StringBuilder();
         int clCount = 0;
-        LinkedList<Object> current = (LinkedList<Object>) ifcvo.getObjectList();
-        Stack<LinkedList<Object>> listStack = new Stack<>();
+        StringBuilder sb = new StringBuilder();
+        List<Object> current = new LinkedList<>();
+        Deque<List<Object>> listStack = new ArrayDeque<>();
         for (int i = 0; i < line.length(); i++) {
             char ch = line.charAt(i);
             switch (state) {
@@ -98,29 +123,26 @@ public class IfcSpfParser {
                     if (ch == '(') {
                         listStack.push(current);
                         LinkedList<Object> tmp = new LinkedList<>();
-                        if (sb.toString().trim().length() > 0)
-                            current.add(sb.toString().trim());
+                        addBufferToCurrentListIfNotEmpty(sb, current);
                         sb.setLength(0);
-                        current.add(tmp);
                         current = tmp;
                         clCount++;
                     } else if (ch == ')') {
                         if (clCount == 0) {
-                            if (sb.toString().trim().length() > 0)
-                                current.add(sb.toString().trim());
+                            addBufferToCurrentListIfNotEmpty(sb, current);
                             sb.setLength(0);
                             state = Integer.MAX_VALUE; // line is done
                             continue;
                         } else {
-                            if (sb.toString().trim().length() > 0)
-                                current.add(sb.toString().trim());
+                            addBufferToCurrentListIfNotEmpty(sb, current);
                             sb.setLength(0);
                             clCount--;
+                            List sub = toArrayList(current);
                             current = listStack.pop();
+                            current.add(sub);
                         }
                     } else if (ch == ',') {
-                        if (sb.toString().trim().length() > 0)
-                            current.add(sb.toString().trim());
+                        addBufferToCurrentListIfNotEmpty(sb, current);
                         current.add(Character.valueOf(ch));
 
                         sb.setLength(0);
@@ -139,8 +161,33 @@ public class IfcSpfParser {
                     // Do nothing
             }
         }
+
+        ifcvo.setList(toArrayList(current));
         linemap.put(ifcvo.getLineNum(), ifcvo);
         idCounter++;
+    }
+
+    private void addBufferToCurrentListIfNotEmpty(StringBuilder sb, List<Object> current) {
+        String value = sb.toString().trim();
+        if (value.length() > 0) {
+            if (value.charAt(0) == '#'){
+                Long id = Long.valueOf(value.substring(1));
+                IFCVO reference = linemap.get(id);
+                if (reference == null) {
+                    current.add(id);
+                } else {
+                    current.add(reference);
+                }
+            } else {
+                current.add(value);
+            }
+        }
+    }
+
+    private <T> List<T> toArrayList(List<T> aList) {
+        List result = new ArrayList(aList.size());
+        result.addAll(aList);
+        return result;
     }
 
     public void resolveDuplicates() throws IOException {
@@ -164,96 +211,98 @@ public class IfcSpfParser {
     }
 
     public boolean mapEntries() throws IOException {
+        int cnt = 0;
+        int preRef=0;
+        int postRef=0;
         for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
+            cnt++;
+            if (cnt % 10000 == 0) {
+                LOG.debug("Mapped {} entries...", cnt);
+            }
             IFCVO vo = entry.getValue();
-
             // mapping properties to IFCVOs
-            for (int i = 0; i < vo.getObjectList().size(); i++) {
-                Object o = vo.getObjectList().get(i);
+            List objectList = vo.getObjectList();
+            int size = objectList.size();
+            for (int i = 0; i < size; i++) {
+                Object o = objectList.get(i);
                 if (Character.class.isInstance(o)) {
                     if ((Character) o != ',') {
                         LOG.error("*ERROR 15*: We found a character that is not a comma. That should not be possible");
                     }
-                } else if (String.class.isInstance(o)) {
-                    String s = (String) o;
-                    if (s.length() < 1)
-                        continue;
-                    if (s.charAt(0) == '#') {
-                        Object or = null;
-                        if (listOfDuplicateLineEntries.containsKey(toLong(s.substring(1))))
-                            or = linemap.get(listOfDuplicateLineEntries.get(toLong(s.substring(1))));
-                        else
-                            or = linemap.get(toLong(s.substring(1)));
-
-                        if (or == null) {
-                            LOG.error("*ERROR 6*: Reference to non-existing line number in line: #"
-                                    + vo.getLineNum() + "=" + vo.getFullLineAfterNum());
-                            return false;
-                        }
-                        vo.getObjectList().set(i, or);
+                } else if (IFCVO.class.isInstance(o)){
+                    // found reference during line parsing
+                    preRef++;
+                } else if (Long.class.isInstance(o)) {
+                    Long id = (Long) o;
+                    postRef++;
+                    boolean success = resolveReference(objectList, i, id, vo, "*ERROR 6*");
+                    if (!success) {
+                        return false;
                     }
-                } else if (LinkedList.class.isInstance(o)) {
+                } else if (List.class.isAssignableFrom(o.getClass())) {
                     @SuppressWarnings("unchecked")
-                    LinkedList<Object> tmpList = (LinkedList<Object>) o;
+                    List<Object> tmpList = (List<Object>) o;
 
                     for (int j = 0; j < tmpList.size(); j++) {
                         Object o1 = tmpList.get(j);
-                        if (Character.class.isInstance(o)) {
-                            if ((Character) o != ',') {
+                        if (Character.class.isInstance(o1)) {
+                            if ((Character) o1 != ',') {
                                 LOG.error("*ERROR 16*: We found a character that is not a comma. "
-                                        + "That should not be possible!");
+                                                + "That should not be possible!");
                             }
-                        } else if (String.class.isInstance(o1)) {
-                            String s = (String) o1;
-                            if (s.length() < 1)
-                                continue;
-                            if (s.charAt(0) == '#') {
-                                Object or = null;
-                                if (listOfDuplicateLineEntries.containsKey(toLong(s.substring(1))))
-                                    or = linemap.get(listOfDuplicateLineEntries.get(toLong(s.substring(1))));
-                                else
-                                    or = linemap.get(toLong(s.substring(1)));
-                                if (or == null) {
-                                    LOG.error("*ERROR 7*: Reference to non-existing line number in line: #"
-                                            + vo.getLineNum() + " - " + vo.getFullLineAfterNum());
-                                    tmpList.set(j, "-");
-                                    return false;
-                                } else
-                                    tmpList.set(j, or);
-                            } else {
-                                // list/set of values
-                                tmpList.set(j, s);
+                        } else if (IFCVO.class.isInstance(o1)){
+                            preRef++;
+                            // do nothing - we had already found the reference during line parsing
+                        } else if (Long.class.isInstance(o1)) {
+                            postRef++;
+                            Long idSub = (Long) o1;
+                            boolean success = resolveReference(tmpList, j, idSub, vo, "*ERROR 7*");
+                            if (!success) {
+                                return false;
                             }
-                        } else if (LinkedList.class.isInstance(o1)) {
+                        } else if (List.class.isAssignableFrom(o1.getClass())) {
                             @SuppressWarnings("unchecked")
-                            LinkedList<Object> tmp2List = (LinkedList<Object>) o1;
+                            List<Object> tmp2List = (List<Object>) o1;
                             for (int j2 = 0; j2 < tmp2List.size(); j2++) {
                                 Object o2 = tmp2List.get(j2);
-                                if (String.class.isInstance(o2)) {
-                                    String s = (String) o2;
-                                    if (s.length() < 1)
-                                        continue;
-                                    if (s.charAt(0) == '#') {
-                                        Object or = null;
-                                        if (listOfDuplicateLineEntries.containsKey(toLong(s.substring(1))))
-                                            or = linemap.get(listOfDuplicateLineEntries.get(toLong(s.substring(1))));
-                                        else
-                                            or = linemap.get(toLong(s.substring(1)));
-                                        if (or == null) {
-                                            LOG.error("*ERROR 8*: Reference to non-existing line number in line: #" + vo.getLineNum() + " - " + vo.getFullLineAfterNum());
-                                            tmp2List.set(j2, "-");
-                                            return false;
-                                        } else
-                                            tmp2List.set(j2, or);
+                                if (Long.class.isInstance(o2)) {
+                                    Long idSubSub = (Long) o2;
+                                    postRef++;
+                                    boolean success = resolveReference(tmp2List, j2, idSubSub, vo, "*ERROR 8*");
+                                    if (!success) {
+                                        return false;
                                     }
+                                } else if (IFCVO.class.isInstance(o2)){
+                                    preRef++;
                                 }
                             }
-                            tmpList.set(j, tmp2List);
                         }
                     }
                 }
             }
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("mapped {} entries", cnt);
+            LOG.debug("references mapped in second pass: {}", postRef);
+            LOG.debug("references mapped during line parsing: {}", preRef);
+        }
+        return true;
+    }
+
+    private boolean resolveReference(List objectList, int i, Long id, IFCVO vo, String errorCode) {
+        Object or = null;
+        Long idDup = listOfDuplicateLineEntries.get(id);
+        if (idDup != null) {
+            or = linemap.get(idDup);
+        }
+        if (or == null) {
+            or = linemap.get(id);
+        }
+        if (or == null) {
+            LOG.error("{}: Reference to non-existing line number in line: #{}={}", errorCode, vo.getLineNum(), vo.getFullLineAfterNum());
+            return false;
+        }
+        objectList.set(i, or);
         return true;
     }
 

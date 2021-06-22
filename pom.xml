@@ -198,7 +198,7 @@
                     <systemPropertyVariables>
                         <test.build.data>${project.basedir}/target/test-data/</test.build.data>
                     </systemPropertyVariables>
-                    <argLine>-Xmx1024m</argLine>
+                    <argLine>-Xmx900m</argLine>
                     <forkMode>always</forkMode>
                     <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
@@ -332,7 +332,8 @@
         <org.junit.jupiter.version>5.7.2</org.junit.jupiter.version>
         <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
         <jena.version>4.1.0</jena.version>
-        <expresstoowl.version>0.4</expresstoowl.version>
+        <expresstoowl.version>0.5-SNAPSHOT</expresstoowl.version>
+        <ifcparserlib.version>0.3-SNAPSHOT</ifcparserlib.version>
         <!-- Maven Plugin Dependencies -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
@@ -376,24 +377,18 @@
             <version>${expresstoowl.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-          <version>1.7.25</version>
-          <scope>runtime</scope>
-        </dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.6</version>
+            <version>1.7.31</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
-            <scope>compile</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
         </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
