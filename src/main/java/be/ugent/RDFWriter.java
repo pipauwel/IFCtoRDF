@@ -21,21 +21,19 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.ontology.OntResource;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.riot.system.StreamRDFLib;
 import org.apache.jena.riot.system.StreamRDFWriter;
 import org.apache.jena.sparql.util.Context;
 import org.apache.jena.util.iterator.ExtendedIterator;
@@ -74,8 +72,6 @@ public class RDFWriter {
   private InputStream inputStream;
   private final OntModel ontModel;
 
-  private IfcSpfReader myIfcReaderStream;
-
   // for removing duplicates in line entries
   private Map<String, Resource> listOfUniqueResources = new HashMap<>();
 
@@ -96,13 +92,23 @@ public class RDFWriter {
     this.ontNS = ontURI + "#";
   }
 
-  public void setIfcReader(IfcSpfReader r) {
-    this.myIfcReaderStream = r;
-  }
-
-  public void parseModel2Stream(OutputStream out) throws IOException {
+  public void parseModelToOutputStream(OutputStream out) throws IOException {
 	// CHANGED:  Jena  3.16.0    JO: 2020, added Context.emptyContext
     ttlWriter = StreamRDFWriter.getWriterStream(out, RDFFormat.TURTLE_BLOCKS,Context.emptyContext);
+    parseModelToOutputStream();
+  }
+
+  public void parseModelToGraph(Graph graph) throws IOException {
+    ttlWriter = StreamRDFLib.graph(graph);
+    parseModelToOutputStream();
+  }
+
+  public void parseModelToStreamRdf(StreamRDF writer) throws IOException {
+    ttlWriter = writer;
+    parseModelToOutputStream();
+  }
+
+  private void parseModelToOutputStream() throws IOException {
     ttlWriter.base(baseURI);
     ttlWriter.prefix("ifc", ontNS);
     ttlWriter.prefix("inst", baseURI);
@@ -112,39 +118,28 @@ public class RDFWriter {
     ttlWriter.prefix("xsd", Namespace.XSD);
     ttlWriter.prefix("owl", Namespace.OWL);
     ttlWriter.start();
-
     ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), RDF.type.asNode(), OWL.Ontology.asNode()));
     ttlWriter.triple(new Triple(NodeFactory.createURI(baseURI), OWL.imports.asNode(), NodeFactory.createURI(ontNS)));
-
-    IfcSpfParser parser = new IfcSpfParser(inputStream);
-
+    IfcSpfParser parser = new IfcSpfParser(inputStream, removeDuplicates);
     // Read the whole file into a linemap Map object
     parser.readModel();
-
     LOG.info("Model parsed");
-
     if (removeDuplicates) {
       parser.resolveDuplicates();
     }
-
     // map entries of the linemap Map object to the ontology Model and make
     // new instances in the model
     boolean parsedSuccessfully = parser.mapEntries();
-
     if (!parsedSuccessfully)
       return;
-
     //recover data from parser
     idCounter = parser.getIdCounter();
     linemap = parser.getLinemap();
-
     LOG.info("Entries mapped, now creating instances");
     createInstances();
-
     // Save memory
     linemap.clear();
     linemap = null;
-
     ttlWriter.finish();
   }
 
@@ -167,10 +162,11 @@ public class RDFWriter {
       }
       listOfUniqueResources.put(ifcLineEntry.getFullLineAfterNum(), r);
 
-      LOG.info("-------------------------------");
-      LOG.info(r.getLocalName());
-      LOG.info("-------------------------------");
-
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("-------------------------------");
+        LOG.debug(r.getLocalName());
+        LOG.debug("-------------------------------");
+      }
       fillProperties(ifcLineEntry, r);
     }
     // The map is used only to avoid duplicates.
@@ -206,8 +202,10 @@ public class RDFWriter {
           LOG.warn("*WARNING 1*: fillProperties 2: unhandled type property found.");
         } else if (IFCVO.class.isInstance(o)) {
           LOG.warn("*WARNING 2*: fillProperties 2: unhandled type property found.");
-        } else if (LinkedList.class.isInstance(o)) {
-          LOG.info("fillProperties 3 - fillPropertiesHandleListObject(tvo)");
+        } else if (List.class.isAssignableFrom(o.getClass())) {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("fillProperties 3 - fillPropertiesHandleListObject(tvo)");
+          }
           fillPropertiesHandleListObject(r, tvo, o);
         }
       }
@@ -226,13 +224,19 @@ public class RDFWriter {
             LOG.error("*ERROR 18*: We found a character that is not a comma. That should not be possible!");
           }
         } else if (String.class.isInstance(o)) {
-          LOG.info("fillProperties 4 - fillPropertiesHandleStringObject(evo)");
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("fillProperties 4 - fillPropertiesHandleStringObject(evo)");
+          }
           attributePointer = fillPropertiesHandleStringObject(r, evo, subject, attributePointer, o);
         } else if (IFCVO.class.isInstance(o)) {
-          LOG.info("fillProperties 5 - fillPropertiesHandleIfcObject(evo)");
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("fillProperties 5 - fillPropertiesHandleIfcObject(evo)");
+          }
           attributePointer = fillPropertiesHandleIfcObject(r, evo, attributePointer, o);
-        } else if (LinkedList.class.isInstance(o)) {
-          LOG.info("fillProperties 6 - fillPropertiesHandleListObject(evo)");
+        } else if (List.class.isAssignableFrom(o.getClass())) {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("fillProperties 6 - fillPropertiesHandleListObject(evo)");
+          }
           attributePointer = fillPropertiesHandleListObject(r, evo, attributePointer, o);
         }
       }
@@ -265,17 +269,22 @@ public class RDFWriter {
               addEnumProperty(r, p, range, literalString);
             } else if (range.asClass().hasSuperClass(ontModel.getOntClass(EXPRESS_NS + "SELECT"))) {
               // Check for SELECT
-              LOG.info("*OK 25*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range.getLocalName() + " - " + literalString);
+              if (LOG.isDebugEnabled()) {
+                LOG.debug("*OK 25*: found subClass of SELECT Class, now doing nothing with it: {} - {} - {}", p,
+                                range.getLocalName(), literalString);
+              }
               createLiteralProperty(r, p, range, literalString);
             } else if (range.asClass().hasSuperClass(ontModel.getOntClass(LIST_NS + "OWLList"))) {
               // Check for LIST
-              LOG.info("*WARNING 5*: found LIST property (but doing nothing with it): " + subject + " -- " + p + " - " + range.getLocalName() + " - "
-                      + literalString);
+              if (LOG.isDebugEnabled()) {
+                LOG.debug("*WARNING 5*: found LIST property (but doing nothing with it): {} -- {} - {} - {}",
+                                new Object[] { subject, p, range.getLocalName(), literalString });
+              }
             } else {
               createLiteralProperty(r, p, range, literalString);
             }
           } else {
-            LOG.warn("*WARNING 7*: found other kind of property: " + p + " - " + range.getLocalName());
+            LOG.warn("*WARNING 7*: found other kind of property: {} - {}", p ,range.getLocalName());
           }
         } else {
           LOG.warn("*WARNING 8*: Nothing happened. Not sure if this is good or bad, possible or not.");
@@ -300,7 +309,9 @@ public class RDFWriter {
 
       Resource r1 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) o).getLineNum(), rclass);
       ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
-      LOG.info("*OK 1*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("*OK 1*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
+      }
     } else {
       LOG.warn("*WARNING 3*: Nothing happened. Not sure if this is good or bad, possible or not.");
     }
@@ -311,10 +322,10 @@ public class RDFWriter {
   @SuppressWarnings("unchecked")
   private int fillPropertiesHandleListObject(Resource r, EntityVO evo, int attributePointer, Object o) throws IOException {
 
-    final LinkedList<Object> tmpList = (LinkedList<Object>) o;
-    LinkedList<String> literals = new LinkedList<>();
-    LinkedList<Resource> listRemembranceResources = new LinkedList<>();
-    LinkedList<IFCVO> ifcVOs = new LinkedList<>();
+    final List<Object> tmpList = (List<Object>) o;
+    List<String> literals = new LinkedList<>();
+    List<Resource> listRemembranceResources = new LinkedList<>();
+    List<IFCVO> ifcVOs = new LinkedList<>();
 
     // process list
     for (int j = 0; j < tmpList.size(); j++) {
@@ -369,14 +380,18 @@ public class RDFWriter {
 
             Resource r1 = getResource(baseURI + evorange.getName() + "_" + ((IFCVO) o1).getLineNum(), rclass);
             ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
-            LOG.info("*OK 5*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("*OK 5*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1
+                              .getLocalName());
+            }
+
           }
         } else {
           LOG.warn("*WARNING 13*: Nothing happened. Not sure if this is good or bad, possible or not.");
         }
-      } else if (LinkedList.class.isInstance(o1)) {
+      } else if (List.class.isAssignableFrom(o1.getClass())) {
         if (typeRemembrance != null) {
-          LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
+          List<Object> tmpListInList = (List<Object>) o1;
           for (int jj = 0; jj < tmpListInList.size(); jj++) {
             Object o2 = tmpListInList.get(jj);
             if (Character.class.isInstance(o2)) {
@@ -388,13 +403,13 @@ public class RDFWriter {
             } else if (IFCVO.class.isInstance(o2)) {
               // Lists of IFC entities
               LOG.warn("*WARNING 30: Nothing happened. Not sure if this is good or bad, possible or not.");
-            } else if (LinkedList.class.isInstance(o2)) {
+            } else if (List.class.isAssignableFrom(o2.getClass())) {
               // this happens only for types that are equivalent
               // to lists (e.g. IfcLineIndex in IFC4_ADD1)
               // in this case, the elements of the list should be
               // treated as new instances that are equivalent to
               // the correct lists
-              LinkedList<Object> tmpListInListInList = (LinkedList<Object>) o2;
+              List<Object> tmpListInListInList = (List<Object>) o2;
               for (int jjj = 0; jjj < tmpListInListInList.size(); jjj++) {
                 Object o3 = tmpListInListInList.get(jjj);
                 if (Character.class.isInstance(o3)) {
@@ -447,7 +462,7 @@ public class RDFWriter {
             }
           }
         } else {
-          LinkedList<Object> tmpListInList = (LinkedList<Object>) o1;
+          List<Object> tmpListInList = (List<Object>) o1;
           for (int jj = 0; jj < tmpListInList.size(); jj++) {
             Object o2 = tmpListInList.get(jj);
             if (Character.class.isInstance(o2)) {
@@ -458,7 +473,7 @@ public class RDFWriter {
               literals.add(filterExtras((String) o2));
             } else if (IFCVO.class.isInstance(o2)) {
               ifcVOs.add((IFCVO) o2);
-            } else if (LinkedList.class.isInstance(o2)) {
+            } else if (List.class.isAssignableFrom(o2.getClass())) {
               LOG.error("*ERROR 19*: Found List of List of List. Code cannot handle that.");
             } else {
               LOG.warn("*WARNING 32*: Nothing happened. Not sure if this is good or bad, possible or not.");
@@ -509,7 +524,7 @@ public class RDFWriter {
           if (typerange.asClass().hasSuperClass(ontModel.getOntClass(LIST_NS + "OWLList")))
             addRegularListProperty(r, p, literals, typeRemembrance);
           else {
-            addSinglePropertyFromTypeRemembrance(r, p, literals.getFirst(), typeRemembrance);
+            addSinglePropertyFromTypeRemembrance(r, p, literals.get(0), typeRemembrance);
             if (literals.size() > 1) {
               LOG.warn("*WARNING 37*: We are ignoring a number of literal values here.");
             }
@@ -543,8 +558,8 @@ public class RDFWriter {
   @SuppressWarnings({ "unchecked" })
   private void fillPropertiesHandleListObject(Resource r, TypeVO tvo, Object o) throws IOException {
 
-    final LinkedList<Object> tmpList = (LinkedList<Object>) o;
-    LinkedList<String> literals = new LinkedList<>();
+    final List<Object> tmpList = (List<Object>) o;
+    List<String> literals = new LinkedList<>();
 
     // process list
     for (int j = 0; j < tmpList.size(); j++) {
@@ -565,8 +580,8 @@ public class RDFWriter {
         } else {
           LOG.warn("*WARNING 19*: Nothing happened. Not sure if this is good or bad, possible or not.");
         }
-      } else if (LinkedList.class.isInstance(o1) && typeRemembrance != null) {
-        LinkedList<Object> tmpListInlist = (LinkedList<Object>) o1;
+      } else if (List.class.isAssignableFrom(o1.getClass()) && typeRemembrance != null) {
+        List<Object> tmpListInlist = (List<Object>) o1;
         for (int jj = 0; jj < tmpListInlist.size(); jj++) {
           Object o2 = tmpListInlist.get(jj);
           if (String.class.isInstance(o2)) {
@@ -624,7 +639,10 @@ public class RDFWriter {
         addEnumProperty(r, p, range, literalString);
       } else if (range.asClass().hasSuperClass(ontModel.getOntClass(EXPRESS_NS + "SELECT"))) {
         // Check for SELECT
-        LOG.info("*OK 24*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range.getLocalName() + " - " + literalString);
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("*OK 24*: found subClass of SELECT Class, now doing nothing with it: " + p + " - " + range
+                          .getLocalName() + " - " + literalString);
+        }
         createLiteralProperty(r, p, range, literalString);
       } else if (range.asClass().hasSuperClass(ontModel.getOntClass(LIST_NS + "OWLList"))) {
         // Check for LIST
@@ -642,7 +660,10 @@ public class RDFWriter {
       OntResource rangeInstance = instances.next();
       if (rangeInstance.getProperty(RDFS.label).getString().equalsIgnoreCase(filterPoints(literalString))) {
         ttlWriter.triple(new Triple(r.asNode(), p.asNode(), rangeInstance.asNode()));
-        LOG.info("*OK 2*: added ENUM statement " + r.getLocalName() + " - " + p.getLocalName() + " - " + rangeInstance.getLocalName());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("*OK 2*: added ENUM statement " + r.getLocalName() + " - " + p.getLocalName() + " - "
+                          + rangeInstance.getLocalName());
+        }
         return;
       }
     }
@@ -676,8 +697,9 @@ public class RDFWriter {
       addLiteral(r1, valueProp, ResourceFactory.createTypedLiteral(literalString, XSDDatatype.XSDstring));
     else
       addLiteral(r1, valueProp, ResourceFactory.createTypedLiteral(literalString));
-
-    LOG.info("*OK 4*: added literal: " + r1.getLocalName() + " - " + valueProp + " - " + literalString);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("*OK 4*: added literal: " + r1.getLocalName() + " - " + valueProp + " - " + literalString);
+    }
   }
 
   // LIST HANDLING
@@ -714,14 +736,22 @@ public class RDFWriter {
             EntityVO evorange = ent.get(ExpressReader.formatClassName((vo).getName()));
             OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());
             Resource r2 = getResource(baseURI + evorange.getName() + "_" + (vo).getLineNum(), rclass);
-            LOG.info("*OK 21*: created resource: " + r2.getLocalName());
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("*OK 21*: created resource: " + r2.getLocalName());
+            }
             idCounter++;
             ttlWriter.triple(new Triple(r1.asNode(), ontModel.getOntProperty(LIST_NS + "hasContents").asNode(), r2.asNode()));
-            LOG.info("*OK 22*: added property: " + r1.getLocalName() + " - " + "-hasContents-" + " - " + r2.getLocalName());
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("*OK 22*: added property: " + r1.getLocalName() + " - " + "-hasContents-" + " - " + r2
+                              .getLocalName());
+            }
 
             if (i < el.size() - 1) {
               ttlWriter.triple(new Triple(r1.asNode(), ontModel.getOntProperty(LIST_NS + "hasNext").asNode(), reslist.get(i + 1).asNode()));
-              LOG.info("*OK 23*: added property: " + r1.getLocalName() + " - " + "-hasNext-" + " - " + reslist.get(i + 1).getLocalName());
+              if (LOG.isDebugEnabled()) {
+                LOG.debug("*OK 23*: added property: " + r1.getLocalName() + " - " + "-hasNext-" + " - " + reslist
+                                .get(i + 1).getLocalName());
+              }
             }
           }
         }
@@ -752,7 +782,10 @@ public class RDFWriter {
             idCounter++;
             if (ii == 0) {
               ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
-              LOG.info("*OK 7*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
+              if (LOG.isDebugEnabled()) {
+                LOG.debug("*OK 7*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1
+                                .getLocalName());
+              }
             }
           }
           // bindtheproperties
@@ -776,13 +809,17 @@ public class RDFWriter {
       if (r1 == null) {
         r1 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + idCounter);
         ttlWriter.triple(new Triple(r1.asNode(), RDF.type.asNode(), range.asNode()));
-        LOG.info("*OK 17*: created resource: " + r1.getLocalName());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("*OK 17*: created resource: " + r1.getLocalName());
+        }
         idCounter++;
         propertyResourceMap.put(key, r1);
         addLiteralToResource(r1, valueProp, xsdType, literalString);
       }
       ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
-      LOG.info("*OK 3*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("*OK 3*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
+      }
     } else {
       LOG.error("*ERROR 1*: XSD type not found for: " + p + " - " + range.getURI() + " - " + literalString);
     }
@@ -795,7 +832,9 @@ public class RDFWriter {
 
       if (listrange != null) {
         if (listrange.asClass().hasSuperClass(ontModel.getOntClass(LIST_NS + "OWLList"))) {
-          LOG.info("*OK 20*: Handling list of list");
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("*OK 20*: Handling list of list");
+          }
           listrange = range;
         }
         for (int i = 0; i < el.size(); i++) {
@@ -803,27 +842,37 @@ public class RDFWriter {
           Resource r2 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + idCounter); // was
           // listrange
           ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), range.asNode()));
-          LOG.info("*OK 14*: added property: " + r2.getLocalName() + " - rdf:type - " + range.getLocalName());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("*OK 14*: added property: " + r2.getLocalName() + " - rdf:type - " + range.getLocalName());
+          }
           idCounter++;
           Resource r3 = ResourceFactory.createResource(baseURI + range.getLocalName() + "_" + idCounter);
 
           if (i == 0) {
             ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r2.asNode()));
-            LOG.info("*OK 15*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r2.getLocalName());
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("*OK 15*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r2
+                              .getLocalName());
+            }
           }
           ttlWriter.triple(new Triple(r2.asNode(), ontModel.getOntProperty(LIST_NS + "hasContents").asNode(), r1.asNode()));
-          LOG.info("*OK 16*: added property: " + r2.getLocalName() + " - " + "-hasContents-" + " - " + r1.getLocalName());
-
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("*OK 16*: added property: " + r2.getLocalName() + " - " + "-hasContents-" + " - " + r1
+                            .getLocalName());
+          }
           if (i < el.size() - 1) {
             ttlWriter.triple(new Triple(r2.asNode(), ontModel.getOntProperty(LIST_NS + "hasNext").asNode(), r3.asNode()));
-            LOG.info("*OK 17*: added property: " + r2.getLocalName() + " - " + "-hasNext-" + " - " + r3.getLocalName());
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("*OK 17*: added property: " + r2.getLocalName() + " - " + "-hasNext-" + " - " + r3
+                              .getLocalName());
+            }
           }
         }
       }
     }
   }
 
-  private void fillClassInstanceList(LinkedList<Object> tmpList, OntResource typerange, OntProperty p, Resource r) throws IOException {
+  private void fillClassInstanceList(List<Object> tmpList, OntResource typerange, OntProperty p, Resource r) throws IOException {
     List<Resource> reslist = new ArrayList<>();
     List<IFCVO> entlist = new ArrayList<>();
 
@@ -836,7 +885,10 @@ public class RDFWriter {
         entlist.add((IFCVO) tmpList.get(i));
         if (i == 0) {
           ttlWriter.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
-          LOG.info("*OK 13*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("*OK 13*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1
+                            .getLocalName());
+          }
         }
       }
     }
@@ -858,17 +910,26 @@ public class RDFWriter {
         rclass = ontModel.getOntResource(ontNS + typerange.getName());
         Resource r1 = getResource(baseURI + typerange.getName() + "_" + entlist.get(i).getLineNum(), rclass);
         ttlWriter.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
-        LOG.info("*OK 8*: created property: " + r.getLocalName() + " - " + listp.getLocalName() + " - " + r1.getLocalName());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("*OK 8*: created property: " + r.getLocalName() + " - " + listp.getLocalName() + " - " + r1
+                          .getLocalName());
+        }
       } else {
         rclass = ontModel.getOntResource(ontNS + evorange.getName());
         Resource r1 = getResource(baseURI + evorange.getName() + "_" + entlist.get(i).getLineNum(), rclass);
         ttlWriter.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
-        LOG.info("*OK 9*: created property: " + r.getLocalName() + " - " + listp.getLocalName() + " - " + r1.getLocalName());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("*OK 9*: created property: " + r.getLocalName() + " - " + listp.getLocalName() + " - " + r1
+                          .getLocalName());
+        }
       }
 
       if (i < reslist.size() - 1) {
         ttlWriter.triple(new Triple(r.asNode(), isfollowed.asNode(), reslist.get(i + 1).asNode()));
-        LOG.info("*OK 10*: created property: " + r.getLocalName() + " - " + isfollowed.getLocalName() + " - " + reslist.get(i + 1).getLocalName());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("*OK 10*: created property: " + r.getLocalName() + " - " + isfollowed.getLocalName() + " - "
+                          + reslist.get(i + 1).getLocalName());
+        }
       }
     }
   }
@@ -891,17 +952,25 @@ public class RDFWriter {
         if (r2 == null) {
           r2 = ResourceFactory.createResource(baseURI + listrange.getLocalName() + "_" + idCounter);
           ttlWriter.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));
-          LOG.info("*OK 19*: created resource: " + r2.getLocalName());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("*OK 19*: created resource: " + r2.getLocalName());
+          }
           idCounter++;
           propertyResourceMap.put(key, r2);
           addLiteralToResource(r2, valueProp, xsdType, literalString);
         }
         ttlWriter.triple(new Triple(r.asNode(), ontModel.getOntProperty(LIST_NS + "hasContents").asNode(), r2.asNode()));
-        LOG.info("*OK 11*: added property: " + r.getLocalName() + " - " + "-hasContents-" + " - " + r2.getLocalName());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("*OK 11*: added property: " + r.getLocalName() + " - " + "-hasContents-" + " - " + r2
+                          .getLocalName());
+        }
 
         if (i < listelements.size() - 1) {
           ttlWriter.triple(new Triple(r.asNode(), ontModel.getOntProperty(LIST_NS + "hasNext").asNode(), reslist.get(i + 1).asNode()));
-          LOG.info("*OK 12*: added property: " + r.getLocalName() + " - " + "-hasNext-" + " - " + reslist.get(i + 1).getLocalName());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("*OK 12*: added property: " + r.getLocalName() + " - " + "-hasNext-" + " - " + reslist.get(i + 1)
+                            .getLocalName());
+          }
         }
       }
     } else {

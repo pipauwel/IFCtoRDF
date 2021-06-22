@@ -208,7 +208,7 @@
                     <systemPropertyVariables>
                         <test.build.data>${project.basedir}/target/test-data/</test.build.data>
                     </systemPropertyVariables>
-                    <argLine>-Xmx1024m</argLine>
+                    <argLine>-Xmx900m</argLine>
                     <forkMode>always</forkMode>
                     <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
@@ -394,24 +394,18 @@
             <artifactId>expresstoowl</artifactId>
             <version>0.5-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-          <version>1.7.25</version>
-          <scope>runtime</scope>
-        </dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.6</version>
+            <version>1.7.31</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
-            <scope>compile</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
         </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
