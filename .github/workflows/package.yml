@@ -15,6 +15,6 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Publish package
-        run: mvn --batch-mode deploy -Dmaven.skip.tests=true 
+        run: mvn --batch-mode -Dmaven.skip.test=true deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
