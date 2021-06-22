@@ -36,6 +36,19 @@
         <developerConnection>scm:git:git@github.com:pipauwel/IFCtoRDF.git</developerConnection>
         <tag>IFCtoRDF-0.4</tag>
     </scm>
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Merkmalservice</name>
+            <url>https://maven.pkg.github.com/Merkmalservice/utils</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
     <distributionManagement>
         <repository>
             <id>sonatype-nexus-staging</id>
@@ -338,7 +351,6 @@
         <org.junit.jupiter.version>5.7.2</org.junit.jupiter.version>
         <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
         <jena.version>4.1.0</jena.version>
-        <expresstoowl.version>0.4</expresstoowl.version>
         <!-- Maven Plugin Dependencies -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
@@ -378,9 +390,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.pipauwel</groupId>
-            <artifactId>EXPRESStoOWL</artifactId>
-            <version>${expresstoowl.version}</version>
-            <scope>compile</scope>
+            <artifactId>expresstoowl</artifactId>
+            <version>0.5-SNAPSHOT</version>
         </dependency>
         <!--<dependency>
           <groupId>org.slf4j</groupId>
