@@ -40,9 +40,10 @@
         <repository>
             <id>github</id>
             <name>GitHub Merkmalservice</name>
-            <url>https://maven.pkg.github.com/Merkmalservice</url>
+            <url>https://maven.pkg.github.com/Merkmalservice/*</url>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
             <releases>
                 <enabled>true</enabled>
