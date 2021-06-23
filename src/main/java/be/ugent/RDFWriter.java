@@ -187,7 +187,13 @@ public class RDFWriter {
     LOG.info("ontology size : {}", ent.entrySet().size());
     int linemapEntries = linemap.size();
     LOG.info("linemap entries: {}", linemapEntries);
+    int i = 0;
     for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
+      if (LOG.isDebugEnabled()) {
+        if (++i % 10000 == 0) {
+          LOG.debug("handled {} linemap entries", i);
+        }
+      }
       IFCVO ifcLineEntry = entry.getValue();
       String typeName = "";
       if (ent.containsKey(ifcLineEntry.getName()))
