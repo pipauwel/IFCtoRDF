@@ -1,69 +1,60 @@
-# baseURI: http://linkedbuildingdata.net/ifc/resources/
-# imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix ifc:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
-@prefix inst:  <http://linkedbuildingdata.net/ifc/resources/> .
-@prefix list:  <https://w3id.org/list#> .
-@prefix express:  <https://w3id.org/express#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
-
-inst:   rdf:type     owl:Ontology ;
-        owl:imports  ifc: .
-
-inst:IfcIndexedPolyCurve_205
-        rdf:type  ifc:IfcIndexedPolyCurve .
-
-inst:IfcLineIndex_1  rdf:type  ifc:IfcLineIndex .
-
-inst:IfcLineIndex_2  rdf:type  ifc:IfcLineIndex .
-
-inst:IfcPositiveInteger_3
-        rdf:type            ifc:IfcPositiveInteger ;
-        express:hasInteger  1 .
-
-inst:IfcLineIndex_1  list:hasContents  inst:IfcPositiveInteger_3 ;
-        list:hasNext      inst:IfcLineIndex_2 .
-
-inst:IfcPositiveInteger_4
-        rdf:type            ifc:IfcPositiveInteger ;
-        express:hasInteger  2 .
-
-inst:IfcLineIndex_2  list:hasContents  inst:IfcPositiveInteger_4 .
-
-inst:IfcArcIndex_5  rdf:type  ifc:IfcArcIndex .
-
-inst:IfcArcIndex_6  rdf:type  ifc:IfcArcIndex .
-
-inst:IfcArcIndex_7  rdf:type  ifc:IfcArcIndex .
-
-inst:IfcArcIndex_5  list:hasContents  inst:IfcPositiveInteger_4 ;
-        list:hasNext      inst:IfcArcIndex_6 .
-
-inst:IfcPositiveInteger_8
-        rdf:type            ifc:IfcPositiveInteger ;
+inst:IfcPositiveInteger_212
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
         express:hasInteger  3 .
 
-inst:IfcArcIndex_6  list:hasContents  inst:IfcPositiveInteger_8 ;
-        list:hasNext      inst:IfcArcIndex_7 .
+inst:IfcLineIndex_206
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLineIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_208 .
 
-inst:IfcPositiveInteger_9
-        rdf:type            ifc:IfcPositiveInteger ;
+inst:IfcSegmentIndexSelect_List_214
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcSegmentIndexSelect_List> ;
+        list:hasContents  inst:IfcLineIndex_205 ;
+        list:hasNext      inst:IfcSegmentIndexSelect_List_215 .
+
+inst:IfcPositiveInteger_213
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
         express:hasInteger  4 .
 
-inst:IfcArcIndex_7  list:hasContents  inst:IfcPositiveInteger_9 .
+inst:IfcArcIndex_210  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_212 ;
+        list:hasNext      inst:IfcArcIndex_211 .
 
-inst:IfcSegmentIndexSelect_List_10
-        rdf:type  ifc:IfcSegmentIndexSelect_List .
+inst:IfcPositiveInteger_207
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
+        express:hasInteger  1 .
+
+inst:IfcArcIndex_209  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_208 ;
+        list:hasNext      inst:IfcArcIndex_210 .
+
+inst:IfcLineIndex_205
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLineIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_207 ;
+        list:hasNext      inst:IfcLineIndex_206 .
 
 inst:IfcIndexedPolyCurve_205
-        ifc:segments_IfcIndexedPolyCurve  inst:IfcSegmentIndexSelect_List_10 .
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcIndexedPolyCurve> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#segments_IfcIndexedPolyCurve>
+                inst:IfcSegmentIndexSelect_List_214 .
 
-inst:IfcSegmentIndexSelect_List_10
-        list:hasContents  inst:IfcLineIndex_1 ;
-        list:hasNext      inst:IfcSegmentIndexSelect_List_11 .
+inst:IfcSegmentIndexSelect_List_215
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcSegmentIndexSelect_List> ;
+        list:hasContents  inst:IfcArcIndex_209 .
 
-inst:IfcSegmentIndexSelect_List_11
-        rdf:type          ifc:IfcSegmentIndexSelect_List ;
-        list:hasContents  inst:IfcArcIndex_5 .
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+inst:IfcArcIndex_211  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_213 .
+
+inst:IfcPositiveInteger_208
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
+        express:hasInteger  2 .

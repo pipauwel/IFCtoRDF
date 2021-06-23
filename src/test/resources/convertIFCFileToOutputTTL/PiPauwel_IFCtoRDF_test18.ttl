@@ -1,74 +1,70 @@
-# baseURI: http://linkedbuildingdata.net/ifc/resources/
-# imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL
-
-@prefix ifc:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
-@prefix inst:  <http://linkedbuildingdata.net/ifc/resources/> .
-@prefix list:  <https://w3id.org/list#> .
-@prefix express:  <https://w3id.org/express#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
-
-inst:   rdf:type     owl:Ontology ;
-        owl:imports  ifc: .
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 inst:IfcPropertyEnumeration_226
-        rdf:type  ifc:IfcPropertyEnumeration .
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPropertyEnumeration> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#enumerationValues_IfcPropertyEnumeration>
+                inst:IfcValue_List_226 .
 
-inst:IfcValue_List_1  rdf:type  ifc:IfcValue_List .
+inst:IfcValue_List_230
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_237 ;
+        list:hasNext      inst:IfcValue_List_231 .
 
-inst:IfcPropertyEnumeration_226
-        ifc:enumerationValues_IfcPropertyEnumeration  inst:IfcValue_List_1 .
-
-inst:IfcValue_List_2  rdf:type  ifc:IfcValue_List .
-
-inst:IfcValue_List_3  rdf:type  ifc:IfcValue_List .
-
-inst:IfcValue_List_4  rdf:type  ifc:IfcValue_List .
-
-inst:IfcValue_List_5  rdf:type  ifc:IfcValue_List .
-
-inst:IfcValue_List_6  rdf:type  ifc:IfcValue_List .
-
-inst:IfcValue_List_7  rdf:type  ifc:IfcValue_List .
-
-inst:IfcLabel_8  rdf:type  ifc:IfcLabel ;
+inst:IfcLabel_233  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
         express:hasString  "NEW" .
 
-inst:IfcValue_List_1  list:hasContents  inst:IfcLabel_8 ;
-        list:hasNext      inst:IfcValue_List_2 .
-
-inst:IfcLabel_9  rdf:type  ifc:IfcLabel ;
-        express:hasString  "EXISTING" .
-
-inst:IfcValue_List_2  list:hasContents  inst:IfcLabel_9 ;
-        list:hasNext      inst:IfcValue_List_3 .
-
-inst:IfcLabel_10  rdf:type  ifc:IfcLabel ;
-        express:hasString  "DEMOLISH" .
-
-inst:IfcValue_List_3  list:hasContents  inst:IfcLabel_10 ;
-        list:hasNext      inst:IfcValue_List_4 .
-
-inst:IfcLabel_11  rdf:type  ifc:IfcLabel ;
-        express:hasString  "TEMPORARY" .
-
-inst:IfcValue_List_4  list:hasContents  inst:IfcLabel_11 ;
-        list:hasNext      inst:IfcValue_List_5 .
-
-inst:IfcLabel_12  rdf:type  ifc:IfcLabel ;
-        express:hasString  "OTHER" .
-
-inst:IfcValue_List_5  list:hasContents  inst:IfcLabel_12 ;
-        list:hasNext      inst:IfcValue_List_6 .
-
-inst:IfcLabel_13  rdf:type  ifc:IfcLabel ;
+inst:IfcLabel_238  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
         express:hasString  "NOTKNOWN" .
 
-inst:IfcValue_List_6  list:hasContents  inst:IfcLabel_13 ;
-        list:hasNext      inst:IfcValue_List_7 .
+inst:IfcValue_List_229
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_236 ;
+        list:hasNext      inst:IfcValue_List_230 .
 
-inst:IfcLabel_14  rdf:type  ifc:IfcLabel ;
+inst:IfcLabel_236  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "TEMPORARY" .
+
+inst:IfcValue_List_227
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_234 ;
+        list:hasNext      inst:IfcValue_List_228 .
+
+inst:IfcValue_List_231
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_238 ;
+        list:hasNext      inst:IfcValue_List_232 .
+
+inst:IfcLabel_234  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "EXISTING" .
+
+inst:IfcLabel_239  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
         express:hasString  "UNSET" .
 
-inst:IfcValue_List_7  list:hasContents  inst:IfcLabel_14 .
+inst:IfcLabel_237  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "OTHER" .
+
+inst:IfcValue_List_228
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_235 ;
+        list:hasNext      inst:IfcValue_List_229 .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+inst:IfcValue_List_232
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_239 .
+
+inst:IfcLabel_235  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "DEMOLISH" .
+
+inst:IfcValue_List_226
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_233 ;
+        list:hasNext      inst:IfcValue_List_227 .

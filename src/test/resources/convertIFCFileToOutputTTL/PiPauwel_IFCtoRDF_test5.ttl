@@ -1,22 +1,18 @@
-# baseURI: http://linkedbuildingdata.net/ifc/resources/
-# imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL
-
-@prefix ifc:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
-@prefix inst:  <http://linkedbuildingdata.net/ifc/resources/> .
-@prefix list:  <https://w3id.org/list#> .
-@prefix express:  <https://w3id.org/express#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 inst:   rdf:type     owl:Ontology ;
-        owl:imports  ifc: .
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
 
 inst:IfcOrganization_2
-        rdf:type  ifc:IfcOrganization .
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcOrganization> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#name_IfcOrganization>
+                inst:IfcLabel_2 .
 
-inst:IfcLabel_1  rdf:type  ifc:IfcLabel ;
+inst:IfcLabel_2  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
         express:hasString  "Ghent University" .
-
-inst:IfcOrganization_2
-        ifc:name_IfcOrganization  inst:IfcLabel_1 .
