@@ -68,7 +68,7 @@ public class IfcSpfReader {
     protected String ontURI = "";
     private Map<String, EntityVO> ent;
     private Map<String, TypeVO> typ;
-    private ProgressListener progressListener;
+    private TaskProgressListener progressListener;
 
     /**
      * Primary integration point for the IFCtoRDF codebase. Run the method
@@ -240,7 +240,7 @@ public class IfcSpfReader {
         setup(ifcFileIn, null);
     }
 
-    public void setup(String ifcFileIn, ProgressListener progressListener) throws IOException {
+    public void setup(String ifcFileIn, TaskProgressListener progressListener) throws IOException {
         this.progressListener = progressListener;
         ifcFile = ifcFileIn;
         if (!ifcFile.endsWith(".ifc")) {

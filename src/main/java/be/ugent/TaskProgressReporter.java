@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
-public class ProgressReporter {
+public class TaskProgressReporter {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final ProgressData progressData;
-    private ProgressListener progressListener;
+    private TaskProgressListener progressListener;
     private double startValue;
     private double targetValue;
     private double stepSize;
@@ -21,19 +21,19 @@ public class ProgressReporter {
     private double nextStep;
     private MessageGenerator messageGenerator = progressData -> String.format("Step %d of %d", progressData.getStep(), progressData.getSteps());
 
-    public static ProgressReporterBuilder builder(ProgressListener listener, double targetValue) {
+    public static ProgressReporterBuilder builder(TaskProgressListener listener, double targetValue) {
         return new ProgressReporterBuilder(listener, targetValue);
     }
 
     public static class ProgressReporterBuilder {
 
-        private ProgressReporter reporter;
+        private TaskProgressReporter reporter;
 
-        private ProgressReporterBuilder(ProgressListener progressListener, double targetValue) {
-            reporter = new ProgressReporter(progressListener, targetValue);
+        private ProgressReporterBuilder(TaskProgressListener progressListener, double targetValue) {
+            reporter = new TaskProgressReporter(progressListener, targetValue);
         }
 
-        public ProgressReporter build() {
+        public TaskProgressReporter build() {
             reporter.setup();
             return reporter;
         }
@@ -74,7 +74,7 @@ public class ProgressReporter {
         }
     }
 
-    private ProgressReporter(ProgressListener progressListener, double targetValue) {
+    private TaskProgressReporter(TaskProgressListener progressListener, double targetValue) {
         this.progressListener = progressListener;
         this.targetValue = targetValue;
         this.progressData = new ProgressData();

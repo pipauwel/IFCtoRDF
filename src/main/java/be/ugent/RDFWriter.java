@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -95,8 +94,8 @@ public class RDFWriter {
   private boolean removeDuplicates = false;
 
   private static final Logger LOG = LoggerFactory.getLogger(RDFWriter.class);
-  private ProgressListener progressListener;
-  private ProgressReporter progressReporter;
+  private TaskProgressListener progressListener;
+  private TaskProgressReporter progressReporter;
 
   public RDFWriter(OntModel ontModel, File inputFile, String baseURI, Map<String, EntityVO> ent, Map<String, TypeVO> typ, String ontURI) {
     this.ontModel = ontModel;
@@ -235,7 +234,7 @@ public class RDFWriter {
     }
   }
 
-  public void setProgressListener(ProgressListener progressListener) {
+  public void setProgressListener(TaskProgressListener progressListener) {
     this.progressListener = progressListener;
   }
 
@@ -282,7 +281,7 @@ public class RDFWriter {
   private void createInstances() throws IOException {
     LOG.info("ontology size : {}", ent.entrySet().size());
     LOG.info("linemap entries: {}", linemap.size());
-      progressReporter = ProgressReporter.builder(progressListener, linemap.size())
+      progressReporter = TaskProgressReporter.builder(progressListener, linemap.size())
                       .taskName("Generating Triples")
                       .messageGenerator(progressData -> String.format("generated triples for %.0f of %.0f entities",
                                       progressData.getPosition(),

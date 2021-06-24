@@ -22,11 +22,11 @@ public class IfcSpfParser {
     private long lineNumMax = 0;
     private final Map<Long, IFCVO> linemap = new TreeMap<>();
     private final Map<Long, Long> listOfDuplicateLineEntries = new TreeMap<>();
-    private final ProgressListener progressListener;
+    private final TaskProgressListener progressListener;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public IfcSpfParser(File inputFile, boolean resolveDuplicates, ProgressListener progressListener)
+    public IfcSpfParser(File inputFile, boolean resolveDuplicates, TaskProgressListener progressListener)
     {
         this.inputFile = inputFile;
         this.resolveDuplicates = resolveDuplicates;
@@ -40,8 +40,8 @@ public class IfcSpfParser {
         try {
             Path path = Paths.get(inputFile.toURI());
             long fileSize = Files.size(path);
-            ProgressReporter progressReporter =
-                            ProgressReporter.builder(progressListener, fileSize)
+            TaskProgressReporter progressReporter =
+                            TaskProgressReporter.builder(progressListener, fileSize)
                                             .steps(100)
                                             .taskName("Reading IFC file")
                                             .messageGenerator( progressData -> String.format("%s of %s read",
@@ -218,7 +218,7 @@ public class IfcSpfParser {
         int cnt = 0;
         int preRef=0;
         int postRef=0;
-        ProgressReporter progressReporter = ProgressReporter
+        TaskProgressReporter progressReporter = TaskProgressReporter
                         .builder(progressListener, linemap.size())
                         .taskName("Mapping entries")
                         .messageGenerator(progressData -> String.format("%.0f of %.0f mapped",

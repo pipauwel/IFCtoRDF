@@ -14,11 +14,7 @@
  */
 package be.ugent;
 
-import org.apache.jena.ext.com.google.common.collect.Streams;
 import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphUtil;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.graph.impl.GraphMatcher;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDFLib;
@@ -34,10 +30,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -103,7 +97,7 @@ public class TestIfcSpfReader {
         // URL resource =
         // getClass().getResource("/showfiles/Barcelona_Pavilion.ifc");
         File file = new File("C:\\Users\\fkleedorfer\\Nextcloud2\\Projekte\\2020-AF öbv merkmalservice\\partner-data\\asfinag\\autobahnmeisterei\\ABM_ARCH.ifc");
-        reader.setup(file.getAbsolutePath(), new ProgressListener() {
+        reader.setup(file.getAbsolutePath(), new TaskProgressListener() {
             @Override
             public void notifyProgress(String task, String message, float level) {
                 logger.debug("{}: {} ({}%)", task, message, String.format("%.2f", level));
