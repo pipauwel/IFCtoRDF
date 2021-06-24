@@ -1,10 +1,14 @@
 package be.ugent;
 
 import org.apache.jena.ext.com.google.common.util.concurrent.AtomicDouble;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
 public class ProgressReporter {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final ProgressData progressData;
     private ProgressListener progressListener;
     private double startValue;
@@ -65,11 +69,13 @@ public class ProgressReporter {
             throw new IllegalArgumentException("stepSize cannot be 0");
         }
         this.nextStep = this.position.get() + this.stepSize;
+        if (this.progressListener == null){
+            logger.info("ProgressReporter for task '{}', targetValue {} got null passed for its ProgressListener - no progress will be reported", taskName, targetValue);
+        }
     }
 
     private ProgressReporter(ProgressListener progressListener, double targetValue) {
         this.progressListener = progressListener;
-        Objects.requireNonNull(progressListener);
         this.targetValue = targetValue;
         this.progressData = new ProgressData();
     }
@@ -79,11 +85,17 @@ public class ProgressReporter {
     }
 
     public void advanceBy(double relativeValue) {
+        if (this.progressListener == null) {
+            return;
+        }
         this.position.addAndGet(relativeValue);
         adjustStepAndReportIfNewStep();
     }
 
     public void advanceTo(double absoluteValue) {
+        if (this.progressListener == null) {
+            return;
+        }
         this.position.set(absoluteValue);
         adjustStepAndReportIfNewStep();
     }
