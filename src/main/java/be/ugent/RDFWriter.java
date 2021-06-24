@@ -296,6 +296,7 @@ public class RDFWriter {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    progressReporter.finished();
   }
 
   private void generateTriplesForIfcVo(IFCVO ifcLineEntry) {

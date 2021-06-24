@@ -100,6 +100,12 @@ public class TaskProgressReporter {
         adjustStepAndReportIfNewStep();
     }
 
+    public void finished(){
+        if (this.progressListener != null){
+            this.progressListener.notifyFinished(this.taskName);
+        }
+    }
+
     private void adjustStepAndReportIfNewStep() {
         if (isNewstep()) {
             synchronized (this) {

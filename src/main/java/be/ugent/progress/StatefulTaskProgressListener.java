@@ -6,23 +6,30 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class StatefulTaskProgressListener implements TaskProgressListener{
 
-    ConcurrentHashMap<String, TaskProgress> latestTaskStates = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, TaskProgress> latestTaskProgress = new ConcurrentHashMap<>();
 
     @Override
     final public void notifyProgress(String task, String message, float level) {
+        latestTaskProgress.put(task, new TaskProgress(task, message, level));
         doNotifyProgress(task, message, level);
-        latestTaskStates.put(task, new TaskProgress(task, message, level));
     }
 
-    public TaskProgress getState(String task) {
-        return latestTaskStates.get(task);
+    @Override public void notifyFinished(String task) {
+        latestTaskProgress.put(task, new TaskProgress(task, "finished", 1));
+        doNotifyFinished(task);
+    }
+
+    public TaskProgress getTaskProgress(String task) {
+        return latestTaskProgress.get(task);
     }
 
     public Set<String> getTaskNames(){
-        return new HashSet(latestTaskStates.keySet());
+        return new HashSet(latestTaskProgress.keySet());
     }
 
     abstract public void doNotifyProgress(String task, String message, float level);
+
+    abstract public void doNotifyFinished(String task);
 
     public static class TaskProgress {
         private String task;
@@ -45,6 +52,10 @@ public abstract class StatefulTaskProgressListener implements TaskProgressListen
 
         public float getLevel() {
             return level;
+        }
+
+        public boolean isFinished(){
+            return level >= 1;
         }
     }
 }

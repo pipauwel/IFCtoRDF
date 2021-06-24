@@ -74,6 +74,7 @@ public class IfcSpfParser {
                         }
                     }
                 }
+                progressReporter.finished();
                 LOG.debug("done reading");
             } finally {
                 if (lineNumMax > idCounter) {
@@ -290,6 +291,7 @@ public class IfcSpfParser {
                 }
             }
         }
+        progressReporter.finished();
         if (LOG.isDebugEnabled()) {
             LOG.debug("mapped {} entries", cnt);
             LOG.debug("references mapped in second pass: {}", postRef);

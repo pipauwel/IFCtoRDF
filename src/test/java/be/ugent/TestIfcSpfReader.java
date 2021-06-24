@@ -101,7 +101,11 @@ public class TestIfcSpfReader {
         reader.setup(file.getAbsolutePath(), new TaskProgressListener() {
             @Override
             public void notifyProgress(String task, String message, float level) {
-                logger.debug("{}: {} ({}%)", task, message, String.format("%.2f", level));
+                logger.debug("{}: {} ({}%)", task, message, String.format("%.0f", level * 100));
+            }
+
+            @Override public void notifyFinished(String task) {
+                logger.debug("{}: {} ({}%)", task, "finished", String.format("%.0f", 100));
             }
         });
         reader.convert(file.getAbsolutePath(), StreamRDFLib.sinkNull(), "http://linkedbuildingdata.net/ifc/resources/");
