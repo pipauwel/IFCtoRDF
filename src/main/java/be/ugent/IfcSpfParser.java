@@ -140,8 +140,6 @@ public class IfcSpfParser {
                         }
                     } else if (ch == ',') {
                         addBufferToCurrentListIfNotEmpty(sb, current);
-                        current.add(ch);
-
                         sb.setLength(0);
                     } else {
                         sb.append(ch);
@@ -166,7 +164,8 @@ public class IfcSpfParser {
 
     private void addBufferToCurrentListIfNotEmpty(StringBuilder sb, List<Object> current) {
         String value = sb.toString().trim();
-        if (value.length() > 0) {
+        int length = value.length();
+        if (length > 0) {
             if (value.charAt(0) == '#'){
                 Long id = Long.valueOf(value.substring(1));
                 IFCVO reference = linemap.get(id);
