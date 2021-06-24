@@ -6,14 +6,7 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-inst:IfcMeasureWithUnit_29
-        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcMeasureWithUnit> ;
-        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#valueComponent_IfcMeasureWithUnit>
-                inst:IfcLengthMeasure_29 .
+inst:IfcSIUnit_28  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcSIUnit> .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
-
-inst:IfcLengthMeasure_29
-        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
-        express:hasDouble  "0.0254"^^xsd:double .

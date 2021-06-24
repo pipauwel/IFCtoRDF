@@ -1,0 +1,77 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+inst:IfcPropertyEnumeration_226
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPropertyEnumeration> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#enumerationValues_IfcPropertyEnumeration>
+                inst:IfcValue_List_rAmEWLarO19SKWP1MrpdkIlYHUHt6Ar4hUfi1jmmKS8 .
+
+inst:IfcLabel_1or3JpDI-DEXcvqhQ2dDcEeMZkr2pCXBT8t_s7rduZE
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "UNSET" .
+
+inst:IfcLabel_h80_jUJ2cwLuOPhF-ADfOOrKB05e_KcNWM1e0T_PESg
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "NOTKNOWN" .
+
+inst:IfcLabel_yFlKMzzwuCU9wLWlPBXPKdvvDiWotXHLoZqWGFOMMLg
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "EXISTING" .
+
+inst:IfcValue_List_rAmEWLarO19SKWP1MrpdkIlYHUHt6Ar4hUfi1jmmKS8
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel__3P_wgB7Wt7xbijH0f3VEyUagD7Zs67ahFlf1raiF0E ;
+        list:hasNext      inst:IfcValue_List_ljLj8UJA2YP5cwc4CW25lv1jsOa5trEVznwPGJty-sg .
+
+inst:IfcValue_List_ljLj8UJA2YP5cwc4CW25lv1jsOa5trEVznwPGJty-sg
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_yFlKMzzwuCU9wLWlPBXPKdvvDiWotXHLoZqWGFOMMLg ;
+        list:hasNext      inst:IfcValue_List_wyXvt2oHxhT1yhoXh8NB8d4I6JG_TOr_5_i3iwsX5IE .
+
+inst:IfcValue_List_5DbCIasBfhj2yBedAAV-th-xDyXnvHdU5AQZqjOT4lU
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_2k9n1L7r10irVGFA_Zvu71PT_xD-3bu_IRS6Rcm6Rd8 ;
+        list:hasNext      inst:IfcValue_List_-0AJXGsEUXw8L3BlmOiYB-ODR17gLk5ywQSbdAjQvWY .
+
+inst:IfcLabel_2k9n1L7r10irVGFA_Zvu71PT_xD-3bu_IRS6Rcm6Rd8
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "TEMPORARY" .
+
+inst:IfcValue_List_-0AJXGsEUXw8L3BlmOiYB-ODR17gLk5ywQSbdAjQvWY
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_u6iz6uwy1SNSI-L4hLLPMdoYgncxFmg7LeyAMlN5Ydk ;
+        list:hasNext      inst:IfcValue_List_FOCGSlV8_Pndg2XEtDgGCR55IvqH2t_8Bdv3EqLqrbE .
+
+inst:IfcValue_List_wyXvt2oHxhT1yhoXh8NB8d4I6JG_TOr_5_i3iwsX5IE
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_hqYgzCCYY3SJFoLn5THZts8jGElMf1ZPu7jqc2AiLLE ;
+        list:hasNext      inst:IfcValue_List_5DbCIasBfhj2yBedAAV-th-xDyXnvHdU5AQZqjOT4lU .
+
+inst:IfcLabel_u6iz6uwy1SNSI-L4hLLPMdoYgncxFmg7LeyAMlN5Ydk
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "OTHER" .
+
+inst:IfcLabel_hqYgzCCYY3SJFoLn5THZts8jGElMf1ZPu7jqc2AiLLE
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "DEMOLISH" .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+inst:IfcValue_List_yFRGMcYPxODC4fjx-bu3DGctsLQ5a_ct_1l37CJfBpE
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_1or3JpDI-DEXcvqhQ2dDcEeMZkr2pCXBT8t_s7rduZE .
+
+inst:IfcLabel__3P_wgB7Wt7xbijH0f3VEyUagD7Zs67ahFlf1raiF0E
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "NEW" .
+
+inst:IfcValue_List_FOCGSlV8_Pndg2XEtDgGCR55IvqH2t_8Bdv3EqLqrbE
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  inst:IfcLabel_h80_jUJ2cwLuOPhF-ADfOOrKB05e_KcNWM1e0T_PESg ;
+        list:hasNext      inst:IfcValue_List_yFRGMcYPxODC4fjx-bu3DGctsLQ5a_ct_1l37CJfBpE .

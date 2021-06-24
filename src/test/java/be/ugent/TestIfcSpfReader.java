@@ -21,21 +21,22 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.GraphMatcher;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.system.StreamRDFLib;
 import org.apache.jena.sparql.graph.GraphFactory;
 import org.apache.jena.sparql.graph.GraphOps;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -92,6 +93,14 @@ public class TestIfcSpfReader {
             sb.toString());
   }
 
+  @Test
+  public void testLargeFile() throws IOException {
+      //URL resource = getClass().getResource("/showfiles/Barcelona_Pavilion.ifc");
+      File file = new File("C:\\Users\\fkleedorfer\\Nextcloud2\\Projekte\\2020-AF öbv merkmalservice\\partner-data\\asfinag\\autobahnmeisterei\\ABM_ARCH.ifc");
+      reader.setup(file.getAbsolutePath());
+      reader.convert(file.getAbsolutePath(), StreamRDFLib.sinkNull(),"http://linkedbuildingdata.net/ifc/resources/");
+  }
+
     /**
      * Test method for {@link be.ugent.IfcSpfReader#slurp(java.io.InputStream)}.
      */
@@ -111,16 +120,65 @@ public class TestIfcSpfReader {
      */
     @ParameterizedTest
     @MethodSource
-    public final void testConvertIFCFileToOutputTTL(File input, File expectedOutput) throws IOException {
+    public final void testConvert(File input, File expectedOutput) throws IOException {
+        reader.setup(input.getAbsolutePath());
+        reader.setRemoveDuplicates(false);
+        reader.setAvoidDuplicatePropertyResources(false);
+        doTest(input, expectedOutput);
+    }
 
+    public static Stream<Arguments> testConvert() {
+        final List<String> inputFiles;
+        inputFiles = showAllFiles(TestIfcSpfReader.class.getClassLoader().getResource("convert").getFile());
+        List<Arguments> result = new ArrayList();
+        for (int i = 0; i < inputFiles.size(); ++i) {
+            final String inputFile = inputFiles.get(i);
+            final String outputFile;
+            if (inputFile.endsWith(".ifc")) {
+                outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+                result.add(Arguments.of(new File(inputFile), new File(outputFile)));
+            }
+        }
+        return result.stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    public final void testConvert_avoidDuplicatePropertyResources(File input, File expectedOutput) throws IOException {
+        reader.setup(input.getAbsolutePath());
+        reader.setRemoveDuplicates(false);
+        reader.setAvoidDuplicatePropertyResources(true);
+        doTest(input, expectedOutput);
+    }
+
+    public static Stream<Arguments> testConvert_avoidDuplicatePropertyResources() {
+        final List<String> inputFiles;
+        inputFiles = showAllFiles(TestIfcSpfReader.class.getClassLoader().getResource("convert_avoidDuplicatePropertyResources").getFile());
+        List<Arguments> result = new ArrayList();
+        for (int i = 0; i < inputFiles.size(); ++i) {
+            final String inputFile = inputFiles.get(i);
+            final String outputFile;
+            if (inputFile.endsWith(".ifc")) {
+                outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+                result.add(Arguments.of(new File(inputFile), new File(outputFile)));
+            }
+        }
+        return result.stream();
+    }
+
+    private void doTest(File input, File expectedOutput) throws IOException {
         Graph expected = GraphFactory.createGraphMem();
         RDFDataMgr.read(expected, new FileInputStream(expectedOutput), Lang.TTL);
-        reader.setup(input.getAbsolutePath());
         Graph actual = reader.convert(input.getAbsolutePath(), "http://linkedbuildingdata.net/ifc/resources/");
+        actual.getPrefixMapping().setNsPrefixes(expected.getPrefixMapping());
+        File out = new File(expectedOutput.getParent(), expectedOutput.getName() + ".actual.ttl");
+        System.out.println("writing to: " + out);
+        RDFDataMgr.write(new FileOutputStream(out), actual, Lang.TTL);
+        int expectedSize = expected.size();
+        int actualSize = actual.size();
         if (!expected.isIsomorphicWith(actual)){
-            int expectedSize = expected.size();
-            int actualSize = actual.size();
             Graph intersection = GraphFactory.createGraphMem();
+            intersection.getPrefixMapping().setNsPrefixes(expected.getPrefixMapping());
             GraphOps.addAll(intersection, expected.stream().filter(actual::contains).iterator());
             int intersectionSize = intersection.size();
             GraphOps.deleteAll(expected, intersection.find());
@@ -133,34 +191,21 @@ public class TestIfcSpfReader {
             RDFDataMgr.write(expectedAsTTl, expected, Lang.TTL);
             String message = String.format(
                             "Test Failed!\n"
-                            + "  Input: %s\n"
-                            + "  Expected output: %s\n"
-                            + "  Expected size: %d\n"
-                            + "  Actual size: %d\n"
-                            + "  Intersection size: %d\n"
-                            + "  In expected and actual:\n%s\n"
-                            + "  Only in expected:\n%s\n"
-                            + "  Only in actual:\n%s\n",
+                            + "  Input             : %s\n"
+                            + "  Expected output   : %s\n"
+                            + "  Expected size     : %d\n"
+                            + "  Actual size       : %d\n"
+                            + "  Intersection size : %d\n"
+                            + "\nIn expected and actual:\n%s\n"
+                            + "\nOnly in expected:\n%s\n"
+                            + "\nOnly in actual: \n%s\n",
                             input.getName(), expectedOutput.getName(), expectedSize, actualSize, intersectionSize,
                             intersectionAsTTl.toString(), expectedAsTTl.toString(), actualAsTTl.toString());
             Assertions.fail(message);
         }
     }
 
-    public static Stream<Arguments> testConvertIFCFileToOutputTTL() {
-        final List<String> inputFiles;
-        inputFiles = showAllFiles(TestIfcSpfReader.class.getClassLoader().getResource("convertIFCFileToOutputTTL").getFile());
-        List<Arguments> result = new ArrayList();
-        for (int i = 0; i < inputFiles.size(); ++i) {
-            final String inputFile = inputFiles.get(i);
-            final String outputFile;
-            if (inputFile.endsWith(".ifc")) {
-                outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
-                result.add(Arguments.of(new File(inputFile), new File(outputFile)));
-            }
-        }
-        return result.stream();
-    }
+
 
     /**
      * Method to read the string contents of two files and compare for equality.
@@ -223,6 +268,14 @@ public class TestIfcSpfReader {
 			else if (listOfFiles[i].isDirectory())
 				goodFiles.addAll(showAllFiles(listOfFiles[i].getAbsolutePath()));
 		}
+		Pattern fileNumberPattern = Pattern.compile( ".+test(\\d+).(ttl|ifc)");
+        goodFiles.sort((f1, f2) -> {
+            Matcher m = fileNumberPattern.matcher(f1);
+            int num1 = m.matches() ? Integer.valueOf(m.group(1)) : Integer.MAX_VALUE;
+            m = fileNumberPattern.matcher(f2);
+            int num2 = m.matches() ? Integer.valueOf(m.group(1)) : Integer.MAX_VALUE;
+            return num1 - num2;
+        });
 		return goodFiles;
 	}
 }

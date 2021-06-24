@@ -233,7 +233,6 @@ public class IfcSpfParser {
                         return false;
                     }
                 } else if (List.class.isAssignableFrom(o.getClass())) {
-                    @SuppressWarnings("unchecked")
                     List<Object> tmpList = (List<Object>) o;
 
                     for (int j = 0; j < tmpList.size(); j++) {
