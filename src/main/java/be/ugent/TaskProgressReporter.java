@@ -118,8 +118,8 @@ public class TaskProgressReporter {
     }
 
     private void reportProgress() {
-        double percentage = this.progressData.getProgressPercentage();
-        progressListener.notifyProgress(this.taskName, messageGenerator.generateProgressMessage(progressData), (float) percentage);
+        progressListener.notifyProgress(this.taskName, messageGenerator.generateProgressMessage(progressData),
+                        (float) progressData.getProgressBetween0And1());
     }
 
     public interface MessageGenerator {
@@ -156,7 +156,11 @@ public class TaskProgressReporter {
         }
 
         public double getProgressPercentage() {
-            return (this.getPosition() - this.getStartValue()) / (this.getTargetValue() - this.getStartValue()) * 100;
+            return getProgressBetween0And1() * 100;
+        }
+
+        private double getProgressBetween0And1() {
+            return (this.getPosition() - this.getStartValue()) / (this.getTargetValue() - this.getStartValue());
         }
     }
 
