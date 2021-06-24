@@ -45,6 +45,7 @@ import org.apache.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -76,7 +77,7 @@ public class RDFWriter {
   private final Map<String, TypeVO> typ;
 
   private StreamRDF streamRDF;
-  private final InputStream inputStream;
+  private final File inputFile;
   private final OntModel ontModel;
 
   // for removing duplicates in line entries
@@ -94,10 +95,12 @@ public class RDFWriter {
   private boolean removeDuplicates = false;
 
   private static final Logger LOG = LoggerFactory.getLogger(RDFWriter.class);
+  private ProgressListener progressListener;
+  private ProgressReporter progressReporter;
 
-  public RDFWriter(OntModel ontModel, InputStream inputStream, String baseURI, Map<String, EntityVO> ent, Map<String, TypeVO> typ, String ontURI) {
+  public RDFWriter(OntModel ontModel, File inputFile, String baseURI, Map<String, EntityVO> ent, Map<String, TypeVO> typ, String ontURI) {
     this.ontModel = ontModel;
-    this.inputStream = inputStream;
+    this.inputFile = inputFile;
     this.baseURI = baseURI;
     this.ent = ent;
     this.typ = typ;
@@ -174,7 +177,7 @@ public class RDFWriter {
   private void parseModelToOutputStream() throws IOException {
     try {
       setup();
-      IfcSpfParser parser = new IfcSpfParser(inputStream, removeDuplicates);
+      IfcSpfParser parser = new IfcSpfParser(inputFile, removeDuplicates, progressListener);
       // Read the whole file into a linemap Map object
       parser.readModel();
       LOG.info("Model parsed");
@@ -232,6 +235,10 @@ public class RDFWriter {
     }
   }
 
+  public void setProgressListener(ProgressListener progressListener) {
+    this.progressListener = progressListener;
+  }
+
   private static class TypeRemembrance {
     private TypeVO typeVO;
 
@@ -275,6 +282,12 @@ public class RDFWriter {
   private void createInstances() throws IOException {
     LOG.info("ontology size : {}", ent.entrySet().size());
     LOG.info("linemap entries: {}", linemap.size());
+    progressReporter = ProgressReporter.builder(progressListener, linemap.size())
+                    .taskName("Generating Triples")
+                    .messageGenerator(progressData -> String.format("generated triples for %.0f of %.0f entities",
+                                    progressData.getPosition(),
+                                    progressData.getTargetValue()))
+                    .build();
     try {
       linemap.values()
              .stream()
@@ -285,9 +298,7 @@ public class RDFWriter {
   }
 
   private void generateTriplesForIfcVo(IFCVO ifcLineEntry) {
-    if (cnt.incrementAndGet() % 10000 == 0) {
-      LOG.debug("handled {} linemap entries", cnt);
-    }
+    progressReporter.advanceBy(1);
     String typeName = "";
     if (ent.containsKey(ifcLineEntry.getName()))
       typeName = ent.get(ifcLineEntry.getName()).getName();
@@ -1000,7 +1011,6 @@ public class RDFWriter {
         }
       }
     }
-
     addClassInstanceListProperties(reslist, entlist);
   }
 

@@ -28,8 +28,11 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,6 +49,7 @@ import static java.util.stream.Collectors.joining;
  * 
  */
 public class TestIfcSpfReader {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private IfcSpfReader reader;
 
@@ -98,7 +102,12 @@ public class TestIfcSpfReader {
         // URL resource =
         // getClass().getResource("/showfiles/Barcelona_Pavilion.ifc");
         File file = new File("C:\\Users\\fkleedorfer\\Nextcloud2\\Projekte\\2020-AF öbv merkmalservice\\partner-data\\asfinag\\autobahnmeisterei\\ABM_ARCH.ifc");
-        reader.setup(file.getAbsolutePath());
+        reader.setup(file.getAbsolutePath(), new ProgressListener() {
+            @Override
+            public void notifyProgress(String task, String message, float level) {
+                logger.debug("{}: {} ({}%)", task, message, String.format("%.2f", level));
+            }
+        });
         reader.convert(file.getAbsolutePath(), StreamRDFLib.sinkNull(), "http://linkedbuildingdata.net/ifc/resources/");
     }
 

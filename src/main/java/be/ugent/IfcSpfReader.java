@@ -68,6 +68,7 @@ public class IfcSpfReader {
     protected String ontURI = "";
     private Map<String, EntityVO> ent;
     private Map<String, TypeVO> typ;
+    private ProgressListener progressListener;
 
     /**
      * Primary integration point for the IFCtoRDF codebase. Run the method
@@ -158,7 +159,7 @@ public class IfcSpfReader {
 
 				LOG.info("Converting file: " + inputFile + "\r\n");
 
-				r.setup(inputFile);
+				r.setup(inputFile, null);
 				r.convert(inputFile, outputFile, baseURI);
 			}
 		}
@@ -236,6 +237,11 @@ public class IfcSpfReader {
     }
 
     public void setup(String ifcFileIn) throws IOException {
+        setup(ifcFileIn, null);
+    }
+
+    public void setup(String ifcFileIn, ProgressListener progressListener) throws IOException {
+        this.progressListener = progressListener;
         ifcFile = ifcFileIn;
         if (!ifcFile.endsWith(".ifc")) {
             ifcFile += ".ifc";
@@ -327,20 +333,21 @@ public class IfcSpfReader {
 		});
 	}
 
-    public void convert(String ifcFile, String baseURI, Consumer<RDFWriter> handler){
-		// CONVERSION
-		OntModel om = readOntology();
-		try (InputStream in = new FileInputStream(ifcFile)){
-			RDFWriter conv = new RDFWriter(om, in, baseURI, ent, typ, ontURI);
-			conv.setRemoveDuplicates(removeDuplicates);
-			conv.setAvoidDuplicatePropertyResources(avoidDuplicatePropertyResources);
-			LOG.info("Started parsing stream");
-			handler.accept(conv);
-			LOG.info("Finished!!");
-		} catch (Exception e) {
-			throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()), e);
-		}
-	}
+    public void convert(String ifcFile, String baseURI, Consumer<RDFWriter> handler) {
+        // CONVERSION
+        OntModel om = readOntology();
+        try {
+            RDFWriter conv = new RDFWriter(om, new File(ifcFile), baseURI, ent, typ, ontURI);
+            conv.setProgressListener(progressListener);
+            conv.setRemoveDuplicates(removeDuplicates);
+            conv.setAvoidDuplicatePropertyResources(avoidDuplicatePropertyResources);
+            LOG.info("Started parsing stream");
+            handler.accept(conv);
+            LOG.info("Finished!!");
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()), e);
+        }
+    }
 
     public Graph convert(String ifcFile, String baseURI) throws IOException {
         Graph graph = GraphFactory.createGraphMem();
