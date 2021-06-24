@@ -1,4 +1,4 @@
-package be.ugent;
+package be.ugent.progress;
 
 import org.apache.jena.ext.com.google.common.util.concurrent.AtomicDouble;
 import org.slf4j.Logger;

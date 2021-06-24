@@ -15,6 +15,8 @@
  */
 package be.ugent;
 
+import be.ugent.progress.TaskProgressListener;
+import be.ugent.progress.TaskProgressReporter;
 import com.buildingsmart.tech.ifcowl.ExpressReader;
 import com.buildingsmart.tech.ifcowl.vo.EntityVO;
 import com.buildingsmart.tech.ifcowl.vo.IFCVO;

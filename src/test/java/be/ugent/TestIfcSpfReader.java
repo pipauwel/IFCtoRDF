@@ -14,6 +14,7 @@
  */
 package be.ugent;
 
+import be.ugent.progress.TaskProgressListener;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;

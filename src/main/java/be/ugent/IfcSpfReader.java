@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import be.ugent.progress.TaskProgressListener;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.ontology.OntModel;

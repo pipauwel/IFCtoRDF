@@ -1,5 +1,7 @@
 package be.ugent;
 
+import be.ugent.progress.TaskProgressListener;
+import be.ugent.progress.TaskProgressReporter;
 import com.buildingsmart.tech.ifcowl.vo.IFCVO;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
