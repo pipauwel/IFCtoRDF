@@ -98,6 +98,7 @@ public class TestIfcSpfReader {
   }
 
     @Test
+    @Disabled
     public void testLargeFile() throws IOException {
         // URL resource =
         // getClass().getResource("/showfiles/Barcelona_Pavilion.ifc");

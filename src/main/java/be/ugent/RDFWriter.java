@@ -282,12 +282,12 @@ public class RDFWriter {
   private void createInstances() throws IOException {
     LOG.info("ontology size : {}", ent.entrySet().size());
     LOG.info("linemap entries: {}", linemap.size());
-    progressReporter = ProgressReporter.builder(progressListener, linemap.size())
-                    .taskName("Generating Triples")
-                    .messageGenerator(progressData -> String.format("generated triples for %.0f of %.0f entities",
-                                    progressData.getPosition(),
-                                    progressData.getTargetValue()))
-                    .build();
+      progressReporter = ProgressReporter.builder(progressListener, linemap.size())
+                      .taskName("Generating Triples")
+                      .messageGenerator(progressData -> String.format("generated triples for %.0f of %.0f entities",
+                                      progressData.getPosition(),
+                                      progressData.getTargetValue()))
+                      .build();
     try {
       linemap.values()
              .stream()
@@ -1219,7 +1219,12 @@ public class RDFWriter {
   }
 
   private void emitResource(Resource resource, OntResource rclass) {
-    streamRDF.triple(new Triple(resource.asNode(), RDF.type.asNode(), rclass.asNode()));
+    streamRDF
+                    .triple(
+                                    new Triple(
+                                                    resource.asNode(),
+                                                    RDF.type.asNode(),
+                                                    rclass.asNode()));
   }
 
   public boolean isRemoveDuplicates() {
