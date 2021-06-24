@@ -93,13 +93,14 @@ public class TestIfcSpfReader {
             sb.toString());
   }
 
-  @Test
-  public void testLargeFile() throws IOException {
-      //URL resource = getClass().getResource("/showfiles/Barcelona_Pavilion.ifc");
-      File file = new File("C:\\Users\\fkleedorfer\\Nextcloud2\\Projekte\\2020-AF öbv merkmalservice\\partner-data\\asfinag\\autobahnmeisterei\\ABM_ARCH.ifc");
-      reader.setup(file.getAbsolutePath());
-      reader.convert(file.getAbsolutePath(), StreamRDFLib.sinkNull(),"http://linkedbuildingdata.net/ifc/resources/");
-  }
+    @Test
+    public void testLargeFile() throws IOException {
+        // URL resource =
+        // getClass().getResource("/showfiles/Barcelona_Pavilion.ifc");
+        File file = new File("C:\\Users\\fkleedorfer\\Nextcloud2\\Projekte\\2020-AF öbv merkmalservice\\partner-data\\asfinag\\autobahnmeisterei\\ABM_ARCH.ifc");
+        reader.setup(file.getAbsolutePath());
+        reader.convert(file.getAbsolutePath(), StreamRDFLib.sinkNull(), "http://linkedbuildingdata.net/ifc/resources/");
+    }
 
     /**
      * Test method for {@link be.ugent.IfcSpfReader#slurp(java.io.InputStream)}.
@@ -204,8 +205,6 @@ public class TestIfcSpfReader {
             Assertions.fail(message);
         }
     }
-
-
 
     /**
      * Method to read the string contents of two files and compare for equality.
