@@ -208,7 +208,7 @@
                     <systemPropertyVariables>
                         <test.build.data>${project.basedir}/target/test-data/</test.build.data>
                     </systemPropertyVariables>
-                    <argLine>-Xmx900m</argLine>
+                    <argLine>-Xmx1024m</argLine>
                     <forkMode>always</forkMode>
                     <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
@@ -405,7 +405,6 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
         </dependency>
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

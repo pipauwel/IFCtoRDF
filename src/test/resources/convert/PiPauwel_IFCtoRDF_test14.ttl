@@ -1,0 +1,35 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+inst:IfcDayInWeekNumber_3OxfcUA0papeTeDBEmKyNYKfdTl31PGsbk4ujX7-AV0
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  5 .
+
+inst:IfcDayInWeekNumber_C76gyikqQlhJ32G0BGK4-X34xCg2hQAod0-fTC7jNxo
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  2 .
+
+inst:IfcRecurrencePattern_788
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcRecurrencePattern> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#weekdayComponent_IfcRecurrencePattern>
+                inst:IfcDayInWeekNumber_3OxfcUA0papeTeDBEmKyNYKfdTl31PGsbk4ujX7-AV0 , inst:IfcDayInWeekNumber_dGW5eeCnGwMyejMJfjlRH-I_6xo1qQ76bOMjNApT3Pc , inst:IfcDayInWeekNumber_UAbBXWGpoU3Iw-Jo8xJGNKqc4mqY39ab2fTdDsoxDcU , inst:IfcDayInWeekNumber_C76gyikqQlhJ32G0BGK4-X34xCg2hQAod0-fTC7jNxo , inst:IfcDayInWeekNumber_SJYYRkje04kTWjRIT6fpjrZvGRZWBFT1oMXbVa951i0 .
+
+inst:IfcDayInWeekNumber_UAbBXWGpoU3Iw-Jo8xJGNKqc4mqY39ab2fTdDsoxDcU
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  3 .
+
+inst:IfcDayInWeekNumber_dGW5eeCnGwMyejMJfjlRH-I_6xo1qQ76bOMjNApT3Pc
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  4 .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+inst:IfcDayInWeekNumber_SJYYRkje04kTWjRIT6fpjrZvGRZWBFT1oMXbVa951i0
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  1 .

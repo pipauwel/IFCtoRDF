@@ -13,16 +13,15 @@ import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class IfcSpfParser {
     private final boolean resolveDuplicates;
-    private InputStream inputStream;
+    private final InputStream inputStream;
     private int idCounter = 0;
     private long lineNumMax = 0;
-    private Map<Long, IFCVO> linemap = new TreeMap<>();
-    private Map<Long, Long> listOfDuplicateLineEntries = new HashMap<>();
+    private final Map<Long, IFCVO> linemap = new TreeMap<>();
+    private final Map<Long, Long> listOfDuplicateLineEntries = new TreeMap<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -37,9 +36,7 @@ public class IfcSpfParser {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-            try {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
                 String strLine;
                 int cnt = 0;
                 while ((strLine = br.readLine()) != null) {
@@ -61,15 +58,15 @@ public class IfcSpfParser {
                             // the whole IFC gets parsed, and everything ends up
                             // as IFCVO objects in the Map<Long, IFCVO> linemap
                             // variable
-                            parseIfcLineStatement(sb.toString().substring(1));
+                            parseIfcLineStatement(sb.substring(1));
                         }
                     }
                 }
                 LOG.debug("done reading");
             } finally {
-                if(lineNumMax > idCounter)
+                if (lineNumMax > idCounter) {
                     idCounter = (int) lineNumMax;
-                br.close();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,14 +134,12 @@ public class IfcSpfParser {
                             addBufferToCurrentListIfNotEmpty(sb, current);
                             sb.setLength(0);
                             clCount--;
-                            List sub = toArrayList(current);
+                            List<Object> sub = toArrayList(current);
                             current = listStack.pop();
                             current.add(sub);
                         }
                     } else if (ch == ',') {
                         addBufferToCurrentListIfNotEmpty(sb, current);
-                        current.add(Character.valueOf(ch));
-
                         sb.setLength(0);
                     } else {
                         sb.append(ch);
@@ -169,15 +164,12 @@ public class IfcSpfParser {
 
     private void addBufferToCurrentListIfNotEmpty(StringBuilder sb, List<Object> current) {
         String value = sb.toString().trim();
-        if (value.length() > 0) {
+        int length = value.length();
+        if (length > 0) {
             if (value.charAt(0) == '#'){
                 Long id = Long.valueOf(value.substring(1));
                 IFCVO reference = linemap.get(id);
-                if (reference == null) {
-                    current.add(id);
-                } else {
-                    current.add(reference);
-                }
+                current.add(Objects.requireNonNullElse(reference, id));
             } else {
                 current.add(value);
             }
@@ -185,13 +177,13 @@ public class IfcSpfParser {
     }
 
     private <T> List<T> toArrayList(List<T> aList) {
-        List result = new ArrayList(aList.size());
+        List<T> result = new ArrayList<>(aList.size());
         result.addAll(aList);
         return result;
     }
 
-    public void resolveDuplicates() throws IOException {
-        Map<String, IFCVO> listOfUniqueResources = new HashMap<>();
+    public void resolveDuplicates() {
+        Map<String, IFCVO> listOfUniqueResources = new TreeMap<>();
         List<Long> entriesToRemove = new ArrayList<>();
         for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
             IFCVO vo = entry.getValue();
@@ -210,7 +202,7 @@ public class IfcSpfParser {
         }
     }
 
-    public boolean mapEntries() throws IOException {
+    public boolean mapEntries() {
         int cnt = 0;
         int preRef=0;
         int postRef=0;
@@ -221,18 +213,18 @@ public class IfcSpfParser {
             }
             IFCVO vo = entry.getValue();
             // mapping properties to IFCVOs
-            List objectList = vo.getObjectList();
+            List<Object> objectList = vo.getObjectList();
             int size = objectList.size();
             for (int i = 0; i < size; i++) {
                 Object o = objectList.get(i);
-                if (Character.class.isInstance(o)) {
+                if (o instanceof Character) {
                     if ((Character) o != ',') {
                         LOG.error("*ERROR 15*: We found a character that is not a comma. That should not be possible");
                     }
-                } else if (IFCVO.class.isInstance(o)){
+                } else if (o instanceof IFCVO){
                     // found reference during line parsing
                     preRef++;
-                } else if (Long.class.isInstance(o)) {
+                } else if (o instanceof Long) {
                     Long id = (Long) o;
                     postRef++;
                     boolean success = resolveReference(objectList, i, id, vo, "*ERROR 6*");
@@ -240,20 +232,19 @@ public class IfcSpfParser {
                         return false;
                     }
                 } else if (List.class.isAssignableFrom(o.getClass())) {
-                    @SuppressWarnings("unchecked")
                     List<Object> tmpList = (List<Object>) o;
 
                     for (int j = 0; j < tmpList.size(); j++) {
                         Object o1 = tmpList.get(j);
-                        if (Character.class.isInstance(o1)) {
+                        if (o1 instanceof Character) {
                             if ((Character) o1 != ',') {
                                 LOG.error("*ERROR 16*: We found a character that is not a comma. "
                                                 + "That should not be possible!");
                             }
-                        } else if (IFCVO.class.isInstance(o1)){
+                        } else if (o1 instanceof IFCVO){
                             preRef++;
                             // do nothing - we had already found the reference during line parsing
-                        } else if (Long.class.isInstance(o1)) {
+                        } else if (o1 instanceof Long) {
                             postRef++;
                             Long idSub = (Long) o1;
                             boolean success = resolveReference(tmpList, j, idSub, vo, "*ERROR 7*");
@@ -265,14 +256,14 @@ public class IfcSpfParser {
                             List<Object> tmp2List = (List<Object>) o1;
                             for (int j2 = 0; j2 < tmp2List.size(); j2++) {
                                 Object o2 = tmp2List.get(j2);
-                                if (Long.class.isInstance(o2)) {
+                                if (o2 instanceof Long) {
                                     Long idSubSub = (Long) o2;
                                     postRef++;
                                     boolean success = resolveReference(tmp2List, j2, idSubSub, vo, "*ERROR 8*");
                                     if (!success) {
                                         return false;
                                     }
-                                } else if (IFCVO.class.isInstance(o2)){
+                                } else if (o2 instanceof IFCVO){
                                     preRef++;
                                 }
                             }
@@ -289,7 +280,7 @@ public class IfcSpfParser {
         return true;
     }
 
-    private boolean resolveReference(List objectList, int i, Long id, IFCVO vo, String errorCode) {
+    private boolean resolveReference(List<Object> objectList, int i, Long id, IFCVO vo, String errorCode) {
         Object or = null;
         Long idDup = listOfDuplicateLineEntries.get(id);
         if (idDup != null) {

@@ -1,0 +1,86 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+inst:IfcCompoundPlaneAngleMeasure_SOAiNvvor2-iAtPO1lZn6oPe4TiTeBhBhUFahgyeEn0
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_xYJEXM3e97GBhMAHiv-V1TYA58ZKTKIK-aUN7V7Kkgw ;
+        list:hasNext      inst:IfcCompoundPlaneAngleMeasure_85NV0LWK8EytlJLgkq2q3JyyHpzZ8s6PI1CN_VYXYbs .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+inst:INTEGER_jJW6ZAlLCWKC6b2m1zjwjKoSoH9EbOiWlH4gK5QFSX8
+        rdf:type            express:INTEGER ;
+        express:hasInteger  44 .
+
+inst:IfcCompoundPlaneAngleMeasure_85NV0LWK8EytlJLgkq2q3JyyHpzZ8s6PI1CN_VYXYbs
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_eHwJRU3je1r17_KUHxuf9jn7ZekEY5Bps0TVgIMApXQ .
+
+inst:IfcCompoundPlaneAngleMeasure_9zcyBrsaoP-6okdBgAXxfKmZSDTaA_K1cve1i-syd34
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_CVJvTRXOVaE8gQANN75ECEBWf_EcB2eu5LWxl1oC160 ;
+        list:hasNext      inst:IfcCompoundPlaneAngleMeasure_uRc7bnGqjcz2Cej0Oyf6pbX_QGjkqvkfK3OCA2nNyio .
+
+inst:INTEGER_CVJvTRXOVaE8gQANN75ECEBWf_EcB2eu5LWxl1oC160
+        rdf:type            express:INTEGER ;
+        express:hasInteger  8 .
+
+inst:INTEGER_On0hEre34meY-AsE06YAaKOrQ8_xMSrG2RkK68WC9Os
+        rdf:type            express:INTEGER ;
+        express:hasInteger  49 .
+
+inst:IfcCompoundPlaneAngleMeasure_WrNgApER-R_JVEy9K2lmZ4Cm1tceO4ZDNeKl9tlPkwk
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_On0hEre34meY-AsE06YAaKOrQ8_xMSrG2RkK68WC9Os ;
+        list:hasNext      inst:IfcCompoundPlaneAngleMeasure_T7yGjQKyAYvZph9c0KzXF3r5q67De8uvmC4Sr5lpJgs .
+
+inst:INTEGER_lTGaVbyKSFdN4REVpafZqsl-PP7yygTcbqm4MkEGz2s
+        rdf:type            express:INTEGER ;
+        express:hasInteger  26 .
+
+inst:IfcCompoundPlaneAngleMeasure_T7yGjQKyAYvZph9c0KzXF3r5q67De8uvmC4Sr5lpJgs
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_AlLouH1OZ34DGHw9YIQYvkp-QPiScYvM19gplwRtLgM ;
+        list:hasNext      inst:IfcCompoundPlaneAngleMeasure_2Xlk4E_YLCMiex1oPTj6Wv8PnoD-IjaUYqj1P4BHguo .
+
+inst:IfcCompoundPlaneAngleMeasure_RGN6vVFQCP_C-XjDdazzQHatM0S0mY8YwVzQVSMixuA
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_SLYHHrBX6Q6asI6YCgqbFg_GHHxK7nl2ZT_CVwn_nsw .
+
+inst:IfcSite_1  rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcSite> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#refLatitude_IfcSite>
+                inst:IfcCompoundPlaneAngleMeasure_WrNgApER-R_JVEy9K2lmZ4Cm1tceO4ZDNeKl9tlPkwk ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#refLongitude_IfcSite>
+                inst:IfcCompoundPlaneAngleMeasure_9zcyBrsaoP-6okdBgAXxfKmZSDTaA_K1cve1i-syd34 .
+
+inst:INTEGER_xYJEXM3e97GBhMAHiv-V1TYA58ZKTKIK-aUN7V7Kkgw
+        rdf:type            express:INTEGER ;
+        express:hasInteger  1 .
+
+inst:IfcCompoundPlaneAngleMeasure_2Xlk4E_YLCMiex1oPTj6Wv8PnoD-IjaUYqj1P4BHguo
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_jJW6ZAlLCWKC6b2m1zjwjKoSoH9EbOiWlH4gK5QFSX8 ;
+        list:hasNext      inst:IfcCompoundPlaneAngleMeasure_RGN6vVFQCP_C-XjDdazzQHatM0S0mY8YwVzQVSMixuA .
+
+inst:INTEGER_eHwJRU3je1r17_KUHxuf9jn7ZekEY5Bps0TVgIMApXQ
+        rdf:type            express:INTEGER ;
+        express:hasInteger  320000 .
+
+inst:INTEGER_SLYHHrBX6Q6asI6YCgqbFg_GHHxK7nl2ZT_CVwn_nsw
+        rdf:type            express:INTEGER ;
+        express:hasInteger  124 .
+
+inst:INTEGER_AlLouH1OZ34DGHw9YIQYvkp-QPiScYvM19gplwRtLgM
+        rdf:type            express:INTEGER ;
+        express:hasInteger  5 .
+
+inst:IfcCompoundPlaneAngleMeasure_uRc7bnGqjcz2Cej0Oyf6pbX_QGjkqvkfK3OCA2nNyio
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  inst:INTEGER_lTGaVbyKSFdN4REVpafZqsl-PP7yygTcbqm4MkEGz2s ;
+        list:hasNext      inst:IfcCompoundPlaneAngleMeasure_SOAiNvvor2-iAtPO1lZn6oPe4TiTeBhBhUFahgyeEn0 .

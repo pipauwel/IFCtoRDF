@@ -1,0 +1,33 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+inst:IfcLengthMeasure_List_fuhWoZkt7VhgabbwnceQwPA5dcOFm2zlAPKVGDbxaTY
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU .
+
+inst:IfcLengthMeasure_List_cFHzrwufYWq0TOdl8hEGp8u58X1Gf87qUiQrOWbwOyg
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU ;
+        list:hasNext      inst:IfcLengthMeasure_List_fuhWoZkt7VhgabbwnceQwPA5dcOFm2zlAPKVGDbxaTY .
+
+inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "0."^^xsd:double .
+
+inst:IfcCartesianPoint_210
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#coordinates_IfcCartesianPoint>
+                inst:IfcLengthMeasure_List_dM-ZyUSf5kAbyQ6Q5gXlxw9_ZgFtcr_yF0MIwpDoaMQ .
+
+inst:IfcLengthMeasure_List_dM-ZyUSf5kAbyQ6Q5gXlxw9_ZgFtcr_yF0MIwpDoaMQ
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU ;
+        list:hasNext      inst:IfcLengthMeasure_List_cFHzrwufYWq0TOdl8hEGp8u58X1Gf87qUiQrOWbwOyg .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .

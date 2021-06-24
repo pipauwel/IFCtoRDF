@@ -56,6 +56,7 @@ public class IfcSpfReader {
     public static String DEFAULT_PATH = "";
 
     private boolean removeDuplicates = false;
+    private boolean avoidDuplicatePropertyResources = false;
     private static final int FLAG_BASEURI = 0;
     private static final int FLAG_DIR = 1;
     private static final int FLAG_KEEP_DUPLICATES = 2;
@@ -71,9 +72,12 @@ public class IfcSpfReader {
     /**
      * Primary integration point for the IFCtoRDF codebase. Run the method
      * without any input parameters for descriptions of runtime parameters.
-     * @param args a String array containing parameters <code>--baseURI</code>,
-     * <code>--dir</code> and <code>--keep-duplicates</code>.
-     * @throws IOException if there is an error reading the input parameters
+     * 
+     * @param args
+     *            a String array containing parameters <code>--baseURI</code>,
+     *            <code>--dir</code> and <code>--keep-duplicates</code>.
+     * @throws IOException
+     *             if there is an error reading the input parameters
      */
     public static void main(String[] args) throws IOException {
 		String[] options = new String[] {"--baseURI", "--dir", "--keep-duplicates"};
@@ -247,10 +251,11 @@ public class IfcSpfReader {
 
         try {
             InputStream fis = IfcSpfReader.class.getResourceAsStream("/ent" + exp + ".ser");
-			if (fis == null)
-				fis = IfcSpfReader.class.getResourceAsStream("/resources/ent" + exp + ".ser");  // Eclipse FIX
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			
+            if (fis == null)
+                fis = IfcSpfReader.class.getResourceAsStream("/resources/ent" + exp + ".ser"); // Eclipse
+                                                                                               // FIX
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
             ent = null;
             try {
                 ent = (Map<String, EntityVO>) ois.readObject();
@@ -261,11 +266,11 @@ public class IfcSpfReader {
             }
 
             fis = IfcSpfReader.class.getResourceAsStream("/typ" + exp + ".ser");
-            
-			if (fis == null)
-				fis = IfcSpfReader.class.getResourceAsStream("/resources/typ" + exp + ".ser"); // Eclipse FIX
 
-			
+            if (fis == null)
+                fis = IfcSpfReader.class.getResourceAsStream("/resources/typ" + exp + ".ser"); // Eclipse
+                                                                                               // FIX
+
             ois = new ObjectInputStream(fis);
             typ = null;
             try {
@@ -322,12 +327,13 @@ public class IfcSpfReader {
 		});
 	}
 
-	public void convert(String ifcFile, String baseURI, Consumer<RDFWriter> handler){
+    public void convert(String ifcFile, String baseURI, Consumer<RDFWriter> handler){
 		// CONVERSION
 		OntModel om = readOntology();
 		try (InputStream in = new FileInputStream(ifcFile)){
 			RDFWriter conv = new RDFWriter(om, in, baseURI, ent, typ, ontURI);
 			conv.setRemoveDuplicates(removeDuplicates);
+			conv.setAvoidDuplicatePropertyResources(avoidDuplicatePropertyResources);
 			LOG.info("Started parsing stream");
 			handler.accept(conv);
 			LOG.info("Finished!!");
@@ -336,14 +342,13 @@ public class IfcSpfReader {
 		}
 	}
 
+    public Graph convert(String ifcFile, String baseURI) throws IOException {
+        Graph graph = GraphFactory.createGraphMem();
+        convert(ifcFile, graph, baseURI);
+        return graph;
+    }
 
-	public Graph convert(String ifcFile, String baseURI) throws IOException {
-		Graph graph = GraphFactory.createGraphMem();
-		convert(ifcFile, graph, baseURI);
-		return graph;
-	}
-
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public void convert(String ifcFile, Graph toGraph, String baseURI) throws IOException {
 		convert(ifcFile, baseURI, writer -> {
 			try {
@@ -354,7 +359,7 @@ public class IfcSpfReader {
 		});
 	}
 
-	public void convert(String ifcFile, StreamRDF streamRDF, String baseURI) throws IOException {
+    public void convert(String ifcFile, StreamRDF streamRDF, String baseURI) throws IOException {
 		convert(ifcFile, baseURI, writer -> {
 			try {
 				writer.parseModelToStreamRdf(streamRDF);
@@ -364,20 +369,25 @@ public class IfcSpfReader {
 		});
 	}
 
-	private OntModel readOntology() {
-		OntModel om = null;
-		in = null;
-		HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
-		om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
-		in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
-		if (in == null)
-			in = IfcSpfReader.class.getResourceAsStream("/resources/" + exp + ".ttl");  // Eclipse FIX
-		om.read(in, null, "TTL");
-		return om;
-	}
+    private OntModel readOntology() {
+        OntModel om = null;
+        in = null;
+        HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
+        om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
+        in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
+        if (in == null)
+            in = IfcSpfReader.class.getResourceAsStream("/resources/" + exp + ".ttl"); // Eclipse
+                                                                                       // FIX
+        om.read(in, null, "TTL");
+        return om;
+    }
 
     public void setRemoveDuplicates(boolean val) {
         removeDuplicates = val;
+    }
+
+    public void setAvoidDuplicatePropertyResources(boolean avoidDuplicatePropertyResources) {
+        this.avoidDuplicatePropertyResources = avoidDuplicatePropertyResources;
     }
 
     public Map<String, EntityVO> getEntityMap() {
