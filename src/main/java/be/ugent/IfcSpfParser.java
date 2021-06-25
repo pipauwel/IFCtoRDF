@@ -1,15 +1,17 @@
 package be.ugent;
 
+import be.ugent.progress.TaskProgressListener;
+import be.ugent.progress.TaskProgressReporter;
 import com.buildingsmart.tech.ifcowl.vo.IFCVO;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -17,18 +19,20 @@ import java.util.concurrent.TimeUnit;
 
 public class IfcSpfParser {
     private final boolean resolveDuplicates;
-    private final InputStream inputStream;
+    private File inputFile;
     private int idCounter = 0;
     private long lineNumMax = 0;
     private final Map<Long, IFCVO> linemap = new TreeMap<>();
     private final Map<Long, Long> listOfDuplicateLineEntries = new TreeMap<>();
+    private final TaskProgressListener progressListener;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public IfcSpfParser(InputStream inputStream, boolean resolveDuplicates)
+    public IfcSpfParser(File inputFile, boolean resolveDuplicates, TaskProgressListener progressListener)
     {
-        this.inputStream = inputStream;
+        this.inputFile = inputFile;
         this.resolveDuplicates = resolveDuplicates;
+        this.progressListener = progressListener;
     }
 
 
@@ -36,14 +40,22 @@ public class IfcSpfParser {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            Path path = Paths.get(inputFile.toURI());
+            long fileSize = Files.size(path);
+            TaskProgressReporter progressReporter =
+                            TaskProgressReporter.builder(progressListener, fileSize)
+                                            .steps(100)
+                                            .taskName("Reading IFC file")
+                                            .messageGenerator( progressData -> String.format("%s of %s read",
+                                                            Utils.humanReadableByteCountSI((long) progressData.getPosition()),
+                                                            Utils.humanReadableByteCountSI((long) progressData.getTargetValue())))
+                            .build();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)))) {
                 String strLine;
                 int cnt = 0;
                 while ((strLine = br.readLine()) != null) {
-                    cnt++;
-                    if (cnt % 10000 == 0) {
-                        LOG.debug("parsed: {} lines", cnt);
-                    }
+                    long lineSize = strLine.getBytes().length;
+                    progressReporter.advanceBy(lineSize);
                     if (strLine.length() > 0) {
                         if (strLine.charAt(0) == '#') {
                             StringBuilder sb = new StringBuilder();
@@ -62,6 +74,7 @@ public class IfcSpfParser {
                         }
                     }
                 }
+                progressReporter.finished();
                 LOG.debug("done reading");
             } finally {
                 if (lineNumMax > idCounter) {
@@ -185,8 +198,10 @@ public class IfcSpfParser {
     public void resolveDuplicates() {
         Map<String, IFCVO> listOfUniqueResources = new TreeMap<>();
         List<Long> entriesToRemove = new ArrayList<>();
+        int i = 0;
         for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
             IFCVO vo = entry.getValue();
+            i++;
             String t = vo.getFullLineAfterNum();
             if (!listOfUniqueResources.containsKey(t))
                 listOfUniqueResources.put(t, vo);
@@ -206,11 +221,15 @@ public class IfcSpfParser {
         int cnt = 0;
         int preRef=0;
         int postRef=0;
+        TaskProgressReporter progressReporter = TaskProgressReporter
+                        .builder(progressListener, linemap.size())
+                        .taskName("Mapping entries")
+                        .messageGenerator(progressData -> String.format("%.0f of %.0f mapped",
+                                        progressData.getPosition(),
+                                        progressData.getTargetValue()))
+                        .build();
         for (Map.Entry<Long, IFCVO> entry : linemap.entrySet()) {
-            cnt++;
-            if (cnt % 10000 == 0) {
-                LOG.debug("Mapped {} entries...", cnt);
-            }
+            progressReporter.advanceBy(1);
             IFCVO vo = entry.getValue();
             // mapping properties to IFCVOs
             List<Object> objectList = vo.getObjectList();
@@ -272,6 +291,7 @@ public class IfcSpfParser {
                 }
             }
         }
+        progressReporter.finished();
         if (LOG.isDebugEnabled()) {
             LOG.debug("mapped {} entries", cnt);
             LOG.debug("references mapped in second pass: {}", postRef);
