@@ -16,7 +16,9 @@ public interface TaskProgressListener {
 
     /**
      * Informs the listener that the specified task is finished.
-     * @param task the name of the task
+     * 
+     * @param task
+     *            the name of the task
      */
     void notifyFinished(String task);
 

@@ -104,7 +104,8 @@ public class TestIfcSpfReader {
                 logger.debug("{}: {} ({}%)", task, message, String.format("%.0f", level * 100));
             }
 
-            @Override public void notifyFinished(String task) {
+            @Override
+            public void notifyFinished(String task) {
                 logger.debug("{}: {} ({}%)", task, "finished", String.format("%.0f", 100));
             }
         });

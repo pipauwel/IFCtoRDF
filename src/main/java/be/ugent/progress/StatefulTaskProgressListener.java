@@ -1,5 +1,7 @@
 package be.ugent.progress;
 
+import org.apache.thrift.TProcessor;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +12,11 @@ public abstract class StatefulTaskProgressListener implements TaskProgressListen
 
     @Override
     final public void notifyProgress(String task, String message, float level) {
-        latestTaskProgress.put(task, new TaskProgress(task, message, level));
+        TaskProgress progress = new TaskProgress(task, message, level);
+        TaskProgress prev = latestTaskProgress.put(task, progress);
+        if (prev != null) {
+            progress.firstMessageTimestamp = prev.firstMessageTimestamp;
+        }
         doNotifyProgress(task, message, level);
     }
 
@@ -35,11 +41,14 @@ public abstract class StatefulTaskProgressListener implements TaskProgressListen
         private String task;
         private String message;
         private float level;
+        private long firstMessageTimestamp;
+        private long timestamp;
 
         public TaskProgress(String task, String message, float level) {
             this.task = task;
             this.message = message;
             this.level = level;
+            this.timestamp = this.firstMessageTimestamp = System.currentTimeMillis();
         }
 
         public String getTask() {
@@ -56,6 +65,10 @@ public abstract class StatefulTaskProgressListener implements TaskProgressListen
 
         public boolean isFinished(){
             return level >= 1;
+        }
+
+        public long getFirstMessageTimestamp() {
+            return firstMessageTimestamp;
         }
     }
 }
