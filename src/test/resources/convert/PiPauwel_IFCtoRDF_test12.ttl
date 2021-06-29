@@ -6,48 +6,48 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
+inst:IfcCartesianPoint_List__DH74YQtHAe0PAcrTpJU9lUMGGasIbk9jEdGQVTOuL8
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  inst:IfcCartesianPoint_213 ;
+        list:hasNext      inst:IfcCartesianPoint_List_56d0NtqQXySeJZ2L3l8zObMLoZpT5KED1-2g08v0fU4 .
+
 inst:IfcCartesianPoint_211
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .
 
-inst:IfcCartesianPoint_List_f0nmzhDjRDfKDVkNrmnn2laoNxdYcO5R7y2vcXs-fto
+inst:IfcCartesianPoint_List_fSyHMxcOuaZ_jvFU_-OyTr5y5VuwzS9cbLfbK70YnGY
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
-        list:hasContents  inst:IfcCartesianPoint_213 .
+        list:hasContents  inst:IfcCartesianPoint_212 ;
+        list:hasNext      inst:IfcCartesianPoint_List_G1edRHNXWAcZbENoxfeDFPjPwq5Hu9_s-YECa9CkkXg .
 
 inst:IfcCartesianPoint_214
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .
 
-inst:IfcCartesianPoint_List_i2JSNdgGDiA-T-SToFf1yCOMIbdMT7Y2GpOJUdeSfrg
+inst:IfcCartesianPoint_List_kDvC2YMgFocEIY4rH4meiiissSmF9aACTE0ZPyAcvuU
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  inst:IfcCartesianPoint_211 ;
+        list:hasNext      inst:IfcCartesianPoint_List_W6bQzblOfh2HetJQRQbgFYoN72uc7WgD6cp4rFFjIaY .
+
+inst:IfcCartesianPoint_List_W6bQzblOfh2HetJQRQbgFYoN72uc7WgD6cp4rFFjIaY
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
         list:hasContents  inst:IfcCartesianPoint_212 ;
-        list:hasNext      inst:IfcCartesianPoint_List_f0nmzhDjRDfKDVkNrmnn2laoNxdYcO5R7y2vcXs-fto .
-
-inst:IfcCartesianPoint_List_j5quth7Z55Ybp_NWIPfHceSsn8QVETwzPdxamRpSk5w
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
-        list:hasContents  inst:IfcCartesianPoint_213 ;
-        list:hasNext      inst:IfcCartesianPoint_List_ye88H1XFILuysLct-nIXVcbbUePnyp60DeH9xblZP6s .
-
-inst:IfcCartesianPoint_List_vYoNbaUT5CzX-amqxoIISlgrDwgL6QDPBbwGRektFIM
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
-        list:hasContents  inst:IfcCartesianPoint_211 ;
-        list:hasNext      inst:IfcCartesianPoint_List_vPx4UB0kFxCZuOe9UeWFiRXSu6Q84ftSfTU5ePCKcdA .
-
-inst:IfcCartesianPoint_List_CwSIc28Fs5GlAzOdylAbQThmvxT8OSCyJ8gfzKX03So
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
-        list:hasContents  inst:IfcCartesianPoint_211 ;
-        list:hasNext      inst:IfcCartesianPoint_List_i2JSNdgGDiA-T-SToFf1yCOMIbdMT7Y2GpOJUdeSfrg .
+        list:hasNext      inst:IfcCartesianPoint_List__DH74YQtHAe0PAcrTpJU9lUMGGasIbk9jEdGQVTOuL8 .
 
 inst:IfcCartesianPoint_212
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .
 
-inst:IfcCartesianPoint_List_vPx4UB0kFxCZuOe9UeWFiRXSu6Q84ftSfTU5ePCKcdA
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
-        list:hasContents  inst:IfcCartesianPoint_212 ;
-        list:hasNext      inst:IfcCartesianPoint_List_j5quth7Z55Ybp_NWIPfHceSsn8QVETwzPdxamRpSk5w .
-
-inst:IfcCartesianPoint_List_ye88H1XFILuysLct-nIXVcbbUePnyp60DeH9xblZP6s
+inst:IfcCartesianPoint_List_56d0NtqQXySeJZ2L3l8zObMLoZpT5KED1-2g08v0fU4
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
         list:hasContents  inst:IfcCartesianPoint_214 ;
-        list:hasNext      inst:IfcCartesianPoint_List_CwSIc28Fs5GlAzOdylAbQThmvxT8OSCyJ8gfzKX03So .
+        list:hasNext      inst:IfcCartesianPoint_List_70_sa4ArjWbenTjvK7esEOQ1RPlf9khG89KDFwKGSEc .
+
+inst:IfcCartesianPoint_List_70_sa4ArjWbenTjvK7esEOQ1RPlf9khG89KDFwKGSEc
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  inst:IfcCartesianPoint_211 ;
+        list:hasNext      inst:IfcCartesianPoint_List_fSyHMxcOuaZ_jvFU_-OyTr5y5VuwzS9cbLfbK70YnGY .
+
+inst:IfcCartesianPoint_List_G1edRHNXWAcZbENoxfeDFPjPwq5Hu9_s-YECa9CkkXg
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  inst:IfcCartesianPoint_213 .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
@@ -55,7 +55,7 @@ inst:   rdf:type     owl:Ontology ;
 inst:IfcBSplineCurveWithKnots_210
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcBSplineCurveWithKnots> ;
         <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#controlPointsList_IfcBSplineCurve>
-                inst:IfcCartesianPoint_List_vYoNbaUT5CzX-amqxoIISlgrDwgL6QDPBbwGRektFIM .
+                inst:IfcCartesianPoint_List_kDvC2YMgFocEIY4rH4meiiissSmF9aACTE0ZPyAcvuU .
 
 inst:IfcCartesianPoint_213
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .

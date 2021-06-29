@@ -1,0 +1,77 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:uuid:ca1720f3-0635-3ca6-8bab-bfce6966584e>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  <urn:uuid:360b10dd-68e5-3f17-b770-513e78238a90> ;
+        list:hasNext      <urn:uuid:4c2cb602-7e3f-3f76-a278-a0b08548d288> .
+
+<urn:uuid:53037434-375f-37d5-b78b-271e2bd08e9a>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "DEMOLISH" .
+
+<urn:uuid:4c2cb602-7e3f-3f76-a278-a0b08548d288>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  <urn:uuid:3ecba836-4ccf-3679-951f-cd25e6694782> .
+
+<urn:uuid:89a50333-4904-334d-bb04-3016cccd7127>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  <urn:uuid:a8f77f76-31c5-3ad7-9870-8560fae8c3ec> ;
+        list:hasNext      <urn:uuid:00cc99a2-30fc-3eb8-9f34-55a32721e48c> .
+
+<urn:uuid:ab2eaaad-56d3-3dd1-aa57-3a57a57f9e99>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "NEW" .
+
+<urn:uuid:3ecba836-4ccf-3679-951f-cd25e6694782>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "UNSET" .
+
+<urn:uuid:8fad1414-add8-3d14-a5ee-c3aff57b65fc>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "OTHER" .
+
+<urn:uuid:a8f77f76-31c5-3ad7-9870-8560fae8c3ec>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "EXISTING" .
+
+<urn:uuid:3ba100ca-bf26-365c-b925-23c64afa266e>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  <urn:uuid:0d74e6c0-f774-33e3-a2fa-5dc85ed7645f> ;
+        list:hasNext      <urn:uuid:37717ff0-1985-3ca0-bc84-d2843db6b3f7> .
+
+<urn:uuid:360b10dd-68e5-3f17-b770-513e78238a90>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "NOTKNOWN" .
+
+<urn:uuid:6e958b67-cc6f-3d20-bb9c-2cdf36a371af>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  <urn:uuid:ab2eaaad-56d3-3dd1-aa57-3a57a57f9e99> ;
+        list:hasNext      <urn:uuid:89a50333-4904-334d-bb04-3016cccd7127> .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+<urn:uuid:0d74e6c0-f774-33e3-a2fa-5dc85ed7645f>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "TEMPORARY" .
+
+<urn:uuid:37717ff0-1985-3ca0-bc84-d2843db6b3f7>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  <urn:uuid:8fad1414-add8-3d14-a5ee-c3aff57b65fc> ;
+        list:hasNext      <urn:uuid:ca1720f3-0635-3ca6-8bab-bfce6966584e> .
+
+<urn:uuid:6293f732-ff79-3455-84c6-ad1aa00c6900>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPropertyEnumeration> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#enumerationValues_IfcPropertyEnumeration>
+                <urn:uuid:6e958b67-cc6f-3d20-bb9c-2cdf36a371af> .
+
+<urn:uuid:00cc99a2-30fc-3eb8-9f34-55a32721e48c>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcValue_List> ;
+        list:hasContents  <urn:uuid:53037434-375f-37d5-b78b-271e2bd08e9a> ;
+        list:hasNext      <urn:uuid:3ba100ca-bf26-365c-b925-23c64afa266e> .

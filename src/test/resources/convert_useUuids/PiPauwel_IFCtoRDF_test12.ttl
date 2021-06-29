@@ -1,0 +1,61 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:uuid:ee437e09-c694-3982-a319-ec1f3d534472>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  <urn:uuid:5df6d948-dad9-356e-8ece-18cd5c5583b1> .
+
+<urn:uuid:3e523158-97a6-3677-8e9b-072b3ba87dc6>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  <urn:uuid:987d08f6-5375-3b48-a8da-c3a1577d77cb> ;
+        list:hasNext      <urn:uuid:a9f5680e-ebc3-3acd-9ba2-f21972bf4a52> .
+
+<urn:uuid:987d08f6-5375-3b48-a8da-c3a1577d77cb>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .
+
+<urn:uuid:5df6d948-dad9-356e-8ece-18cd5c5583b1>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .
+
+<urn:uuid:b90d106e-2df8-375c-b060-8f2fa30a6fd4>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  <urn:uuid:591aa2d2-87e8-33e0-9409-95e08d191be1> ;
+        list:hasNext      <urn:uuid:ee437e09-c694-3982-a319-ec1f3d534472> .
+
+<urn:uuid:4d0faae2-6b61-3a31-8ea0-040abc4dd59f>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .
+
+<urn:uuid:14c4046f-0070-3f47-a42c-5acba6114824>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  <urn:uuid:987d08f6-5375-3b48-a8da-c3a1577d77cb> ;
+        list:hasNext      <urn:uuid:b90d106e-2df8-375c-b060-8f2fa30a6fd4> .
+
+<urn:uuid:1dedab8b-ab42-3fef-9996-6130a59af782>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  <urn:uuid:4d0faae2-6b61-3a31-8ea0-040abc4dd59f> ;
+        list:hasNext      <urn:uuid:14c4046f-0070-3f47-a42c-5acba6114824> .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+<urn:uuid:61e66624-1639-31ab-9a5b-ee0805abd2e5>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  <urn:uuid:5df6d948-dad9-356e-8ece-18cd5c5583b1> ;
+        list:hasNext      <urn:uuid:1dedab8b-ab42-3fef-9996-6130a59af782> .
+
+<urn:uuid:a9f5680e-ebc3-3acd-9ba2-f21972bf4a52>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint_List> ;
+        list:hasContents  <urn:uuid:591aa2d2-87e8-33e0-9409-95e08d191be1> ;
+        list:hasNext      <urn:uuid:61e66624-1639-31ab-9a5b-ee0805abd2e5> .
+
+<urn:uuid:c2f9f7eb-0481-3e18-900b-519c78a71a5d>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcBSplineCurveWithKnots> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#controlPointsList_IfcBSplineCurve>
+                <urn:uuid:3e523158-97a6-3677-8e9b-072b3ba87dc6> .
+
+<urn:uuid:591aa2d2-87e8-33e0-9409-95e08d191be1>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> .

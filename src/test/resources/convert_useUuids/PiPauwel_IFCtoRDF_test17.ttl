@@ -1,0 +1,87 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:uuid:08916c1a-d84b-3af5-a6b4-35d74d460fc7>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcSite> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#refLatitude_IfcSite>
+                <urn:uuid:c08c9827-afea-39d8-ae2c-9782d46d40f4> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#refLongitude_IfcSite>
+                <urn:uuid:58c87a23-e26d-3660-847b-596ab6c4d16b> .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+<urn:uuid:2d4b6d86-0ae8-3b2f-8f57-c1dc48024fca>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:ddbcae4a-a7cb-3b7a-8761-1e93f18d978a> ;
+        list:hasNext      <urn:uuid:c7a31f3b-698d-3a35-81cd-1785779340b8> .
+
+<urn:uuid:ddbcae4a-a7cb-3b7a-8761-1e93f18d978a>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  1 .
+
+<urn:uuid:4d37c770-e11a-346c-af98-6cdd6332535c>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  26 .
+
+<urn:uuid:953e11c1-3568-3497-ab58-473ed395b116>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:0a3d68ac-bd23-3a86-ac27-b624548b8bfe> .
+
+<urn:uuid:0a3d68ac-bd23-3a86-ac27-b624548b8bfe>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  124 .
+
+<urn:uuid:eb841caa-8366-3cf9-8d8a-5664340fc77c>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:79b64709-a219-324e-82f2-c804bf81580a> ;
+        list:hasNext      <urn:uuid:953e11c1-3568-3497-ab58-473ed395b116> .
+
+<urn:uuid:ebda73ce-24ed-3c63-af2c-93a45296ddb9>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:4d37c770-e11a-346c-af98-6cdd6332535c> ;
+        list:hasNext      <urn:uuid:2d4b6d86-0ae8-3b2f-8f57-c1dc48024fca> .
+
+<urn:uuid:c08c9827-afea-39d8-ae2c-9782d46d40f4>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:06368830-fa88-3c23-9e4b-a3935457b640> ;
+        list:hasNext      <urn:uuid:9f7e97a2-8894-3141-8c10-d3b0b8646695> .
+
+<urn:uuid:4dfb925c-c0d7-3085-acbe-7ce20c50ae6c>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  5 .
+
+<urn:uuid:79b64709-a219-324e-82f2-c804bf81580a>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  44 .
+
+<urn:uuid:58c87a23-e26d-3660-847b-596ab6c4d16b>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:ac8e3102-b850-3504-96ec-8d17a52cf80d> ;
+        list:hasNext      <urn:uuid:ebda73ce-24ed-3c63-af2c-93a45296ddb9> .
+
+<urn:uuid:c7a31f3b-698d-3a35-81cd-1785779340b8>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:7835a23d-b107-3cd2-b6db-05d92b7abff3> .
+
+<urn:uuid:9f7e97a2-8894-3141-8c10-d3b0b8646695>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCompoundPlaneAngleMeasure> ;
+        list:hasContents  <urn:uuid:4dfb925c-c0d7-3085-acbe-7ce20c50ae6c> ;
+        list:hasNext      <urn:uuid:eb841caa-8366-3cf9-8d8a-5664340fc77c> .
+
+<urn:uuid:7835a23d-b107-3cd2-b6db-05d92b7abff3>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  320000 .
+
+<urn:uuid:06368830-fa88-3c23-9e4b-a3935457b640>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  49 .
+
+<urn:uuid:ac8e3102-b850-3504-96ec-8d17a52cf80d>
+        rdf:type            express:INTEGER ;
+        express:hasInteger  8 .

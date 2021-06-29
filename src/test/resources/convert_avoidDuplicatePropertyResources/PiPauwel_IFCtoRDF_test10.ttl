@@ -6,28 +6,28 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-inst:IfcLengthMeasure_List_fuhWoZkt7VhgabbwnceQwPA5dcOFm2zlAPKVGDbxaTY
+inst:IfcLengthMeasure_List_4oadY4wgvlioDZ6y3CXDtRn9hLmrZURNOUjYpblupIc
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU .
+        list:hasContents  inst:IfcLengthMeasure_nFFXb5nGhH8SsHmSAUz-sEqnn6sSiJ5CKHJiv2LKOgg .
 
-inst:IfcLengthMeasure_List_cFHzrwufYWq0TOdl8hEGp8u58X1Gf87qUiQrOWbwOyg
+inst:IfcLengthMeasure_List_9lDKNssqaDze479mkS5OP6JT5nogd6nzolerIpoq6us
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU ;
-        list:hasNext      inst:IfcLengthMeasure_List_fuhWoZkt7VhgabbwnceQwPA5dcOFm2zlAPKVGDbxaTY .
+        list:hasContents  inst:IfcLengthMeasure_nFFXb5nGhH8SsHmSAUz-sEqnn6sSiJ5CKHJiv2LKOgg ;
+        list:hasNext      inst:IfcLengthMeasure_List___Fchy0AR67K2Hc5A0vKl2Z0QG6ddxjAXiuaQhYiyL8 .
 
-inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU
-        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
-        express:hasDouble  "0."^^xsd:double .
+inst:IfcLengthMeasure_List___Fchy0AR67K2Hc5A0vKl2Z0QG6ddxjAXiuaQhYiyL8
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  inst:IfcLengthMeasure_nFFXb5nGhH8SsHmSAUz-sEqnn6sSiJ5CKHJiv2LKOgg ;
+        list:hasNext      inst:IfcLengthMeasure_List_4oadY4wgvlioDZ6y3CXDtRn9hLmrZURNOUjYpblupIc .
 
 inst:IfcCartesianPoint_210
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPoint> ;
         <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#coordinates_IfcCartesianPoint>
-                inst:IfcLengthMeasure_List_dM-ZyUSf5kAbyQ6Q5gXlxw9_ZgFtcr_yF0MIwpDoaMQ .
-
-inst:IfcLengthMeasure_List_dM-ZyUSf5kAbyQ6Q5gXlxw9_ZgFtcr_yF0MIwpDoaMQ
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_gCwsULK3Zz8piIe2oNJvwcqmfLjfInFLrpeMuAtrQnU ;
-        list:hasNext      inst:IfcLengthMeasure_List_cFHzrwufYWq0TOdl8hEGp8u58X1Gf87qUiQrOWbwOyg .
+                inst:IfcLengthMeasure_List_9lDKNssqaDze479mkS5OP6JT5nogd6nzolerIpoq6us .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+inst:IfcLengthMeasure_nFFXb5nGhH8SsHmSAUz-sEqnn6sSiJ5CKHJiv2LKOgg
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "0."^^xsd:double .

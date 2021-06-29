@@ -95,6 +95,8 @@ public class RDFWriter {
 
   private boolean removeDuplicates = false;
 
+  private boolean useUuidsForGeneratedResources = false;
+
   private static final Logger LOG = LoggerFactory.getLogger(RDFWriter.class);
   private TaskProgressListener progressListener;
   private TaskProgressReporter progressReporter;
@@ -307,7 +309,7 @@ public class RDFWriter {
     else if (typ.containsKey(ifcLineEntry.getName()))
       typeName = typ.get(ifcLineEntry.getName()).getName();
     OntClass cl = ontModel.getOntClass(ontNS + typeName);
-    Resource r = makeResourceWithSuffix(baseURI, typeName, ifcLineEntry.getLineNum());
+    Resource r = makeResource(baseURI, typeName, ifcLineEntry.getLineNum());
     emitResource(r, cl);
     if (removeDuplicates) {
       listOfUniqueResources.put(ifcLineEntry.getFullLineAfterNum(), r);
@@ -448,7 +450,7 @@ public class RDFWriter {
       OntProperty p = ontModel.getOntProperty(propURI);
       OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());
 
-      Resource r1 = makeResourceWithSuffix(baseURI, evorange.getName(), ((IFCVO) o).getLineNum());
+      Resource r1 = makeResource(baseURI, evorange.getName(), ((IFCVO) o).getLineNum());
       streamRDF.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
       if (LOG.isTraceEnabled()) {
         LOG.trace("*OK 1*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1.getLocalName());
@@ -513,7 +515,7 @@ public class RDFWriter {
             EntityVO evorange = ent.get(ExpressReader.formatClassName(((IFCVO) o1).getName()));
             OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());
 
-            Resource r1 = makeResourceWithSuffix(baseURI, evorange.getName(), ((IFCVO) o1).getLineNum());
+            Resource r1 = makeResource(baseURI, evorange.getName(), ((IFCVO) o1).getLineNum());
             streamRDF.triple(new Triple(r.asNode(), p.asNode(), r1.asNode()));
             if (LOG.isTraceEnabled()) {
               LOG.trace("*OK 5*: added property: " + r.getLocalName() + " - " + p.getLocalName() + " - " + r1
@@ -564,7 +566,7 @@ public class RDFWriter {
 
                 OntClass cl = ontModel.getOntClass(ontNS + typeRemembrance.get().getName());
                 String uri = baseURI + typeRemembrance.get().getName();
-                Resource r1 = makeResourceWithHashedSuffix(baseURI, typeRemembrance.get().getName(), r.getURI(), evo.getName(), j,jj);
+                Resource r1 = makeResourceWithCompositeKey(baseURI, typeRemembrance.get().getName(), r.getURI(), evo.getName(), j,jj);
                 emitResource(r1, cl);
                 OntResource range = ontModel.getOntResource(ontNS + typeRemembrance.get().getName());
 
@@ -609,7 +611,7 @@ public class RDFWriter {
               String listvaluepropURI = typerange.getLocalName().substring(0, typerange.getLocalName().length() - 5);
               OntResource listrange = ontModel.getOntResource(ontNS + listvaluepropURI);
               final String uri = baseURI + listvaluepropURI;
-              Resource r1 = makeResourceWithHashedSuffix(baseURI, listvaluepropURI, r.getURI(),evo.getName(), j);
+              Resource r1 = makeResourceWithCompositeKey(baseURI, listvaluepropURI, r.getURI(),evo.getName(), j);
               emitResource(r1, listrange);
               List<Object> objects = new ArrayList<>();
               if (!ifcVOs.isEmpty()) {
@@ -826,7 +828,7 @@ public class RDFWriter {
             reslist.add(r);
           else {
             final String uri = baseURI + range.getLocalName();
-            Resource r1 = makeResourceWithHashedSuffix(baseURI, range.getLocalName(), r.getURI(), i);
+            Resource r1 = makeResourceWithCompositeKey(baseURI, range.getLocalName(), r.getURI(), i);
             emitResource(r1, range);
             reslist.add(r1);
           }
@@ -846,7 +848,7 @@ public class RDFWriter {
             IFCVO vo = (IFCVO) el.get(i);
             EntityVO evorange = ent.get(ExpressReader.formatClassName((vo).getName()));
             OntResource rclass = ontModel.getOntResource(ontNS + evorange.getName());
-            Resource r2 = makeResourceWithSuffix(baseURI, evorange.getName(), vo.getLineNum());
+            Resource r2 = makeResource(baseURI, evorange.getName(), vo.getLineNum());
             emitResource(r2, rclass);
             if (LOG.isTraceEnabled()) {
               LOG.trace("*OK 21*: created resource: " + r2.getLocalName());
@@ -887,7 +889,7 @@ public class RDFWriter {
           List<Resource> reslist = new ArrayList<>();
           // createrequirednumberofresources
           for (int ii = 0; ii < el.size(); ii++) {
-            Resource r1 = makeResourceWithHashedSuffix(baseURI, range.getLocalName(), r.getURI(), p.getURI(), listrange.getURI(), el.get(ii), ii);
+            Resource r1 = makeResourceWithCompositeKey(baseURI, range.getLocalName(), r.getURI(), p.getURI(), listrange.getURI(), el.get(ii), ii);
             emitResource(r1, range);
             reslist.add(r1);
             if (ii == 0) {
@@ -917,7 +919,7 @@ public class RDFWriter {
       Resource r1;
       if (avoidDuplicatePropertyResources){
         r1 = propertyResourceMap.computeIfAbsent(key, s -> {
-          Resource res = makeResourceWithHashedSuffix(baseURI, range.getLocalName(), key);
+          Resource res = makeResourceWithCompositeKey(baseURI, range.getLocalName(), key);
           streamRDF.triple(new Triple(res.asNode(), RDF.type.asNode(), range.asNode()));
           if (LOG.isTraceEnabled()) {
             LOG.trace("*OK 17*: created resource: " + res.getLocalName());
@@ -925,7 +927,7 @@ public class RDFWriter {
           return res;
         });
       } else {
-        r1 = makeResourceWithHashedSuffix(baseURI, range.getLocalName(), r.getURI(), p.getURI(), key);
+        r1 = makeResourceWithCompositeKey(baseURI, range.getLocalName(), r.getURI(), p.getURI(), key);
         streamRDF.triple(new Triple(r1.asNode(), RDF.type.asNode(), range.asNode()));
         if (LOG.isTraceEnabled()) {
           LOG.trace("*OK 17*: created resource: " + r1.getLocalName());
@@ -958,15 +960,13 @@ public class RDFWriter {
         }
         for (int i = 0; i < el.size(); i++) {
           Resource r1 = el.get(i);
-          final String uri = baseURI + range.getLocalName();
-          Resource r2 = ResourceFactory.createResource(uri + "_" + makeIdSuffix(r.getURI(), p.getURI(), r1.getURI(), i, 1, uri)); // was
+          Resource r2 = makeResourceWithCompositeKey(baseURI, range.getLocalName(), r.getURI(), p.getURI(), r1.getURI(), i, 1); // was
           // listrange
           streamRDF.triple(new Triple(r2.asNode(), RDF.type.asNode(), range.asNode()));
           if (LOG.isTraceEnabled()) {
             LOG.trace("*OK 14*: added property: " + r2.getLocalName() + " - rdf:type - " + range.getLocalName());
           }
-          Resource r3 = ResourceFactory.createResource(uri + "_" + makeIdSuffix(r.getURI(), p.getURI(), r1.getURI(), i, 2, uri));
-
+          Resource r3 = makeResourceWithCompositeKey(baseURI, range.getLocalName(), r.getURI(), p.getURI(), r1.getURI(), i, 2);
           if (i == 0) {
             streamRDF.triple(new Triple(r.asNode(), p.asNode(), r2.asNode()));
             if (LOG.isTraceEnabled()) {
@@ -1000,7 +1000,7 @@ public class RDFWriter {
       Object o =  tmpList.get(i);
       if (o instanceof IFCVO) {
         IFCVO ifcvo = (IFCVO) o;
-        Resource r1 = makeResourceWithHashedSuffix(baseURI, typerange.getLocalName(), r.getURI(), p.getURI(), i);
+        Resource r1 = makeResourceWithCompositeKey(baseURI, typerange.getLocalName(), r.getURI(), p.getURI(), i);
         emitResource(r1, typerange);
         reslist.add(r1);
         entlist.add(ifcvo);
@@ -1030,7 +1030,7 @@ public class RDFWriter {
       if (evorange == null) {
         TypeVO typerange = typ.get(className);
         rclass = ontModel.getOntResource(ontNS + typerange.getName());
-        Resource r1 = makeResourceWithSuffix(baseURI, typerange.getName(), ifcvo.getLineNum());
+        Resource r1 = makeResource(baseURI, typerange.getName(), ifcvo.getLineNum());
         emitResource(r1, rclass);
         streamRDF.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
         if (LOG.isTraceEnabled()) {
@@ -1038,7 +1038,7 @@ public class RDFWriter {
                           .getLocalName());
         }
       } else {
-        Resource r1 = makeResourceWithSuffix(baseURI, evorange.getName(), ifcvo.getLineNum());
+        Resource r1 = makeResource(baseURI, evorange.getName(), ifcvo.getLineNum());
         streamRDF.triple(new Triple(r.asNode(), listp.asNode(), r1.asNode()));
         if (LOG.isTraceEnabled()) {
           LOG.trace("*OK 9*: created property: " + r.getLocalName() + " - " + listp.getLocalName() + " - " + r1
@@ -1073,7 +1073,7 @@ public class RDFWriter {
         Resource r2;
         if (avoidDuplicatePropertyResources){
           r2 = propertyResourceMap.computeIfAbsent(key, s -> {
-            Resource res = makeResourceWithHashedSuffix(baseURI, listrange.getLocalName(), key);
+            Resource res = makeResourceWithCompositeKey(baseURI, listrange.getLocalName(), key);
             streamRDF.triple(new Triple(res.asNode(), RDF.type.asNode(), listrange.asNode()));
             if (LOG.isTraceEnabled()) {
               LOG.trace("*OK 19*: created resource: " + res.getLocalName());
@@ -1081,7 +1081,7 @@ public class RDFWriter {
             return res;
           });
         } else {
-          r2 = makeResourceWithHashedSuffix(baseURI, listrange.getLocalName(), r.getURI(), key);
+          r2 = makeResourceWithCompositeKey(baseURI, listrange.getLocalName(), r.getURI(), key);
           streamRDF.triple(new Triple(r2.asNode(), RDF.type.asNode(), listrange.asNode()));
           if (LOG.isTraceEnabled()) {
             LOG.trace("*OK 19*: created resource: " + r2.getLocalName());
@@ -1229,6 +1229,14 @@ public class RDFWriter {
                                                     rclass.asNode()));
   }
 
+  public boolean isUseUuidsForGeneratedResources() {
+    return useUuidsForGeneratedResources;
+  }
+
+  public void setUseUuidsForGeneratedResources(boolean useUuidsForGeneratedResources) {
+    this.useUuidsForGeneratedResources = useUuidsForGeneratedResources;
+  }
+
   public boolean isRemoveDuplicates() {
     return removeDuplicates;
   }
@@ -1247,23 +1255,32 @@ public class RDFWriter {
 
   private final ThreadLocal<MessageDigest> messageDigestThreadLocal = new ThreadLocal<>();
 
-  private Resource makeResourceWithSuffix(String prefix, String localName, Object suffix){
+  /**
+   * Creates a new Resource as <code>prefix + localname + "_" + suffix</code> or, if <code>useUuidsForGeneratedResources == true</code>,
+   * generates a named UUID for that string.
+   * @param prefix
+   * @param localName
+   * @param suffix
+   * @return
+   */
+  private Resource makeResource(String prefix, String localName, Object suffix){
+    if (useUuidsForGeneratedResources) {
+      return ResourceFactory.createResource("urn:uuid:" + UUID.nameUUIDFromBytes((prefix + localName + "_" + suffix.toString()).getBytes()).toString());
+    }
     return ResourceFactory.createResource(prefix + localName + "_" + suffix.toString());
   }
 
-  private Resource makeResourceWithHashedSuffix(String prefix, String localname, Object... suffixComponents){
-    String suffix = makeIdSuffix(prefix, localname, suffixComponents);
-    return makeResourceWithSuffix(prefix, localname, suffix);
-  }
-
-  private String makeIdSuffix(String prefix, String localname, Object... suffixComponents){
-    String key = makeKey(prefix, localname, suffixComponents);
-    return hash(key);
-  }
-
-  private String makeIdSuffix(Object... forKeyComponents){
-    String key = makeKey(forKeyComponents);
-    return hash(key);
+  private Resource makeResourceWithCompositeKey(String prefix, String localname, Object... suffixComponents){
+    Object[] all = new Object[suffixComponents.length + 2];
+    all[0] = prefix;
+    all[1] = localname;
+    System.arraycopy(suffixComponents, 0, all, 2, suffixComponents.length);
+    String key = makeKey(all);
+    if (!useUuidsForGeneratedResources) {
+      //no hashing needed if we use UUIDs
+      key = hash(key);
+    }
+    return makeResource(prefix, localname, key);
   }
 
   private String hash(String key) {
@@ -1290,26 +1307,6 @@ public class RDFWriter {
     return sb.toString();
   }
 
-  private String makeKey(String first, String second, Object[] forKeyComponents) {
-    StringBuilder sb = new StringBuilder();
-    appendKeyComponent(sb, first, 0);
-    appendKeyComponent(sb, second, 1);
-    for (int i = 0; i < forKeyComponents.length; i++) {
-      Object o = forKeyComponents[i];
-      appendKeyComponent(sb, o, i+2);
-    }
-    return sb.toString();
-  }
-
-  private void appendKeyComponent(StringBuilder sb, Object o, int i) {
-    if (o == null) {
-      sb.append("[null]").append(i);
-    } else {
-      sb.append(o.toString()).append(i);
-    }
-    sb.append("_");
-  }
-
   private MessageDigest getMessageDigest() {
     MessageDigest md = messageDigestThreadLocal.get();
     if (md == null) {
@@ -1322,17 +1319,4 @@ public class RDFWriter {
     }
     return md;
   }
-
-  private static String bytesToHex(byte[] hash) {
-    StringBuilder hexString = new StringBuilder(2 * hash.length);
-    for (byte b : hash) {
-      String hex = Integer.toHexString(0xff & b);
-      if (hex.length() == 1) {
-        hexString.append('0');
-      }
-      hexString.append(hex);
-    }
-    return hexString.toString();
-  }
-
 }

@@ -1,0 +1,35 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:uuid:16113886-5c6e-383c-b187-bb6087fd5b2d>
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  5 .
+
+<urn:uuid:ecc6a732-dec3-317d-916a-15896b0ec0ab>
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  3 .
+
+<urn:uuid:8f4500a1-d639-3753-9d9c-fb1933b0a115>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcRecurrencePattern> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#weekdayComponent_IfcRecurrencePattern>
+                <urn:uuid:16113886-5c6e-383c-b187-bb6087fd5b2d> , <urn:uuid:e9e8d2f4-de89-38c6-95a5-e6e2abc57513> , <urn:uuid:ecc6a732-dec3-317d-916a-15896b0ec0ab> , <urn:uuid:dcfaa657-841f-3243-bd3b-62a246ee78e7> , <urn:uuid:b995c39b-b7bc-3438-923c-2f731e830541> .
+
+<urn:uuid:e9e8d2f4-de89-38c6-95a5-e6e2abc57513>
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  4 .
+
+<urn:uuid:b995c39b-b7bc-3438-923c-2f731e830541>
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  1 .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+<urn:uuid:dcfaa657-841f-3243-bd3b-62a246ee78e7>
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  2 .
