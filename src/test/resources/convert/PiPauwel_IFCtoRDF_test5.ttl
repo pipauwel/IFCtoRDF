@@ -6,14 +6,14 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
+inst:IfcLabel_q5W6qbjoxKtjedkEdIs8GOfmSxDndirZ_XHuEC47eZU
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
+        express:hasString  "Ghent University" .
+
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
 
 inst:IfcOrganization_2
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcOrganization> ;
         <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#name_IfcOrganization>
-                inst:IfcLabel_8Cy6d8k3nCYOCjfBfb1WOl4F6fb1_9mczDm0NCLhmbE .
-
-inst:IfcLabel_8Cy6d8k3nCYOCjfBfb1WOl4F6fb1_9mczDm0NCLhmbE
-        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
-        express:hasString  "Ghent University" .
+                inst:IfcLabel_q5W6qbjoxKtjedkEdIs8GOfmSxDndirZ_XHuEC47eZU .

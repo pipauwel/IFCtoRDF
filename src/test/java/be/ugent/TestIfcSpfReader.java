@@ -15,7 +15,10 @@
 package be.ugent;
 
 import be.ugent.progress.TaskProgressListener;
+import org.apache.jena.atlas.lib.Sink;
 import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDFLib;
@@ -97,7 +100,7 @@ public class TestIfcSpfReader {
     public void testLargeFile() throws IOException {
         // URL resource =
         // getClass().getResource("/showfiles/Barcelona_Pavilion.ifc");
-        File file = new File("C:\\Users\\fkleedorfer\\Nextcloud2\\Projekte\\2020-AF öbv merkmalservice\\partner-data\\asfinag\\autobahnmeisterei\\ABM_ARCH.ifc");
+        File file = new File("C:\\Users\\fkleedorfer\\Nextcloud2\\SAT\\Projekte\\2020-AF öbv merkmalservice\\partner-data\\asfinag\\autobahnmeisterei\\ABM_ARCH.ifc");
         reader.setup(file.getAbsolutePath(), new TaskProgressListener() {
             @Override
             public void notifyProgress(String task, String message, float level) {
@@ -106,10 +109,61 @@ public class TestIfcSpfReader {
 
             @Override
             public void notifyFinished(String task) {
-                logger.debug("{}: {} ({}%)", task, "finished", String.format("%.0f", 100));
+                logger.debug("{}: {} ({}%)", task, "finished", String.format("%d", 100));
             }
         });
-        reader.convert(file.getAbsolutePath(), StreamRDFLib.sinkNull(), "http://linkedbuildingdata.net/ifc/resources/");
+        reader.convert(file.getAbsolutePath(), StreamRDFLib.sinkTriples(new Sink<Triple>() {
+            long size = 0;
+            int count = 0;
+            long transformedSize = 0;
+
+            @Override
+            public void send(Triple triple) {
+                count++;
+                String subject = getStringRepresentation(triple.getSubject());
+                size += subject.length();
+                subject = replaceLongPrefixes(subject);
+                transformedSize += subject.length();
+                String predicate = getStringRepresentation(triple.getPredicate());
+                size += predicate.length();
+                predicate = replaceLongPrefixes(predicate);
+                transformedSize += predicate.length();
+                String object = getStringRepresentation(triple.getObject());
+                size += object.length();
+                object = replaceLongPrefixes(object);
+                transformedSize += object.length();
+                if (count % 1000000 == 0) {
+                    System.out.println(String.format("size             : %20d", size));
+                    System.out.println(String.format("transformed size : %20d", transformedSize));
+                    System.out.println("-----------------------------");
+                }
+            }
+
+            private String getStringRepresentation(Node node) {
+                return node.isURI() ? node.getURI() : node.toString();
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() {
+            }
+        }), "http://linkedbuildingdata.net/ifc/resources/");
+    }
+
+    String[] toFind = { "http://linkedbuildingdata.net/ifc/resources/", "http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#" };
+    String[] toReplace = { "ifc:res/", "ifc:4#" };
+
+    private String replaceLongPrefixes(String uri) {
+        for (int i = 0; i < toFind.length; i++) {
+            String f = toFind[i];
+            if (uri.startsWith(f)) {
+                return toReplace[i] + uri.substring(f.length());
+            }
+        }
+        return uri;
     }
 
     /**
@@ -165,6 +219,31 @@ public class TestIfcSpfReader {
     public static Stream<Arguments> testConvert_avoidDuplicatePropertyResources() {
         final List<String> inputFiles;
         inputFiles = showAllFiles(TestIfcSpfReader.class.getClassLoader().getResource("convert_avoidDuplicatePropertyResources").getFile());
+        List<Arguments> result = new ArrayList();
+        for (int i = 0; i < inputFiles.size(); ++i) {
+            final String inputFile = inputFiles.get(i);
+            final String outputFile;
+            if (inputFile.endsWith(".ifc")) {
+                outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+                result.add(Arguments.of(new File(inputFile), new File(outputFile)));
+            }
+        }
+        return result.stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    public final void testConvert_useUuids(File input, File expectedOutput) throws IOException {
+        reader.setup(input.getAbsolutePath());
+        reader.setRemoveDuplicates(false);
+        reader.setAvoidDuplicatePropertyResources(false);
+        reader.setUseUuidsForGeneratedResources(true);
+        doTest(input, expectedOutput);
+    }
+
+    public static Stream<Arguments> testConvert_useUuids() {
+        final List<String> inputFiles;
+        inputFiles = showAllFiles(TestIfcSpfReader.class.getClassLoader().getResource("convert_useUuids").getFile());
         List<Arguments> result = new ArrayList();
         for (int i = 0; i < inputFiles.size(); ++i) {
             final String inputFile = inputFiles.get(i);

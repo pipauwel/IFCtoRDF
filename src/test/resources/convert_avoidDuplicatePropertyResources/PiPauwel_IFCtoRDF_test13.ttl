@@ -6,67 +6,67 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-inst:IfcLengthMeasure_List_List_S00thC6_jBoAY_jNY72EE5NqWtbUz97P65lxOvlqlMs
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List_List> ;
-        list:hasContents  inst:IfcLengthMeasure_List_RlurudSMWqvtcf_3iJ5SOHiXiaaWT0qyx7TuffMlUr8 .
+inst:IfcLengthMeasure_P9JDCkZjZsTOSfgnipfBfZAdTXp4-ZjA1iBJeFc2rcU
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "150.0"^^xsd:double .
 
-inst:IfcLengthMeasure_4IXe4Ar2Uf90Wgzcej88EpvWAVfEn_wa4m5fatrTLek
+inst:IfcLengthMeasure_ZQTCNKTj5Gs4072Bu85e3D2v6tFFBd1TDy3eehq5YTg
         rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
         express:hasDouble  "-300.0"^^xsd:double .
 
-inst:IfcLengthMeasure_List_zu3rxRh2kxhsXQ7x1RbJt3f2Xb8okUQLXus40VlYK4U
+inst:IfcLengthMeasure_List_ZLdwgZykBLYzzG0CoNExn__j93mqAaPasTLUdETCv64
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_z1D3pGwBTbFhK2ZNP7JTck9Y1zmbdoQCLV52hcdWlCM .
+        list:hasContents  inst:IfcLengthMeasure_ZQTCNKTj5Gs4072Bu85e3D2v6tFFBd1TDy3eehq5YTg ;
+        list:hasNext      inst:IfcLengthMeasure_List_23Oqip6wmsrqdnmClh_xsdfZS63HYYxZLWnT97DGTzY .
 
-inst:IfcLengthMeasure_List_JZ8OCZqcNUfvMC5HSrhfrBwV3Q7dvLM8lVRiRhCxJ0g
+inst:IfcLengthMeasure_List_osF3h0xQr2DKH0Y4fP6nTPHV2d_CcltlZmXaxtSkiZs
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_z1D3pGwBTbFhK2ZNP7JTck9Y1zmbdoQCLV52hcdWlCM .
+        list:hasContents  inst:IfcLengthMeasure_X0HAk0IJgowtIzHEqZQEswdM_Mzi5m553Yc88-Y9VmA .
 
 inst:IfcCartesianPointList3D_200
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPointList3D> ;
         <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#coordList_IfcCartesianPointList3D>
-                inst:IfcLengthMeasure_List_List_mY-LNPXtUcm_9p35WOflIFX5YKoIqma1qJjCDbhpbMI .
+                inst:IfcLengthMeasure_List_List_6MrIAC3hVpbmA8iPlYjLd3BPLZbTIofajYQwcPss6lA .
 
-inst:IfcLengthMeasure_List_jTsXTBqkb4uyvikCgzMbBjCOIma3-23xYh47_dQlicQ
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_4IXe4Ar2Uf90Wgzcej88EpvWAVfEn_wa4m5fatrTLek ;
-        list:hasNext      inst:IfcLengthMeasure_List_aeIFIGVxczqr0THptvC7ovOFaA6K8-fwRfZDZ8VtZuQ .
+inst:IfcLengthMeasure_ipHqAbzrSa2Z7EfA54Gfm1XASvpE1Q100pJY162ydSc
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "202.771984"^^xsd:double .
 
-inst:IfcLengthMeasure_List_List_mY-LNPXtUcm_9p35WOflIFX5YKoIqma1qJjCDbhpbMI
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List_List> ;
-        list:hasContents  inst:IfcLengthMeasure_List_jTsXTBqkb4uyvikCgzMbBjCOIma3-23xYh47_dQlicQ ;
-        list:hasNext      inst:IfcLengthMeasure_List_List_vZa6agqzq3vQKDVtY2PdbAFiQR_Rv48xMaNzqw7-nHE .
-
-inst:IfcLengthMeasure_CtIp8eNcWFPJgPy9vTqo2go42pf2QRe3TUAIcLGBNVo
+inst:IfcLengthMeasure_zcV81zn3qqshYFfYjQXhvuJpc_gc0BRjTJLA2HfRbDI
         rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
         express:hasDouble  "-260.012578"^^xsd:double .
 
-inst:IfcLengthMeasure_SH0j7qEUHDyNw3y10xvr-Y7wmNPzUcTN2wUt3jYjPgE
-        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
-        express:hasDouble  "150.0"^^xsd:double .
+inst:IfcLengthMeasure_List_R6HyK4rsiBc211WqpVtOqDTHV_RTZYfCu8gb1oUhsbI
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  inst:IfcLengthMeasure_X0HAk0IJgowtIzHEqZQEswdM_Mzi5m553Yc88-Y9VmA .
 
-inst:IfcLengthMeasure_z1D3pGwBTbFhK2ZNP7JTck9Y1zmbdoQCLV52hcdWlCM
+inst:IfcLengthMeasure_List_List_6MrIAC3hVpbmA8iPlYjLd3BPLZbTIofajYQwcPss6lA
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List_List> ;
+        list:hasContents  inst:IfcLengthMeasure_List_ZLdwgZykBLYzzG0CoNExn__j93mqAaPasTLUdETCv64 ;
+        list:hasNext      inst:IfcLengthMeasure_List_List_iJhgtIftWkN2saOyb22MOcPY__fohpJSwlMxWb7WYh4 .
+
+inst:IfcLengthMeasure_X0HAk0IJgowtIzHEqZQEswdM_Mzi5m553Yc88-Y9VmA
         rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
         express:hasDouble  "0.0"^^xsd:double .
+
+inst:IfcLengthMeasure_List_23Oqip6wmsrqdnmClh_xsdfZS63HYYxZLWnT97DGTzY
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  inst:IfcLengthMeasure_P9JDCkZjZsTOSfgnipfBfZAdTXp4-ZjA1iBJeFc2rcU ;
+        list:hasNext      inst:IfcLengthMeasure_List_R6HyK4rsiBc211WqpVtOqDTHV_RTZYfCu8gb1oUhsbI .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
 
-inst:IfcLengthMeasure_List_aeIFIGVxczqr0THptvC7ovOFaA6K8-fwRfZDZ8VtZuQ
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_SH0j7qEUHDyNw3y10xvr-Y7wmNPzUcTN2wUt3jYjPgE ;
-        list:hasNext      inst:IfcLengthMeasure_List_JZ8OCZqcNUfvMC5HSrhfrBwV3Q7dvLM8lVRiRhCxJ0g .
+inst:IfcLengthMeasure_List_List_4VaFxsfFpe6alsAiCj6KSZik55Al521SHRb16RCERhk
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List_List> ;
+        list:hasContents  inst:IfcLengthMeasure_List_gxtf45o88qMlJRAfpTxHDmpjf3Uos9PX0xdypatoelE .
 
-inst:IfcLengthMeasure_NXm4NdiCMfwgOUcEs-I-0PZRZxeYJeBXN5Uzy-bBSyE
-        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
-        express:hasDouble  "202.771984"^^xsd:double .
-
-inst:IfcLengthMeasure_List_4heRK8n9crNXbtDSioRbeF1CyVqGxg3AjdZ1BgFMvMM
+inst:IfcLengthMeasure_List_5ELLwlcJj4mBdpWrVKaQair00p2jIypSswVG0EiPBiQ
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_NXm4NdiCMfwgOUcEs-I-0PZRZxeYJeBXN5Uzy-bBSyE ;
-        list:hasNext      inst:IfcLengthMeasure_List_zu3rxRh2kxhsXQ7x1RbJt3f2Xb8okUQLXus40VlYK4U .
+        list:hasContents  inst:IfcLengthMeasure_ipHqAbzrSa2Z7EfA54Gfm1XASvpE1Q100pJY162ydSc ;
+        list:hasNext      inst:IfcLengthMeasure_List_osF3h0xQr2DKH0Y4fP6nTPHV2d_CcltlZmXaxtSkiZs .
 
-inst:IfcLengthMeasure_List_RlurudSMWqvtcf_3iJ5SOHiXiaaWT0qyx7TuffMlUr8
+inst:IfcLengthMeasure_List_gxtf45o88qMlJRAfpTxHDmpjf3Uos9PX0xdypatoelE
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
-        list:hasContents  inst:IfcLengthMeasure_CtIp8eNcWFPJgPy9vTqo2go42pf2QRe3TUAIcLGBNVo ;
-        list:hasNext      inst:IfcLengthMeasure_List_4heRK8n9crNXbtDSioRbeF1CyVqGxg3AjdZ1BgFMvMM .
+        list:hasContents  inst:IfcLengthMeasure_zcV81zn3qqshYFfYjQXhvuJpc_gc0BRjTJLA2HfRbDI ;
+        list:hasNext      inst:IfcLengthMeasure_List_5ELLwlcJj4mBdpWrVKaQair00p2jIypSswVG0EiPBiQ .

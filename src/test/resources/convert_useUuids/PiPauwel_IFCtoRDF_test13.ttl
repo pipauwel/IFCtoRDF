@@ -1,0 +1,76 @@
+@prefix express: <https://w3id.org/express#> .
+@prefix ifc:     <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
+@prefix inst:    <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list:    <https://w3id.org/list#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:uuid:65f4889c-9ab4-38c1-8aeb-8b77a2b0d318>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  <urn:uuid:4ba1dd7f-5a59-399a-b7ea-fc63ee86ad8d> .
+
+<urn:uuid:8afae922-c476-3bb3-85ef-b47a4e5badcf>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List_List> ;
+        list:hasContents  <urn:uuid:f1e3f17e-c9d8-307d-b40f-4d1ed987e110> ;
+        list:hasNext      <urn:uuid:8d11db26-87e6-311c-8fc2-6fa45953fdba> .
+
+<urn:uuid:31ff5c61-2ec4-3713-9986-05cac1d1614e>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  <urn:uuid:2b06439d-0514-32c3-8328-409788229a6c> ;
+        list:hasNext      <urn:uuid:355acc5d-6784-3df9-9b93-4b6267874c9b> .
+
+<urn:uuid:99de4d59-76d9-3561-af10-4342ea2c9021>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List_List> ;
+        list:hasContents  <urn:uuid:31ff5c61-2ec4-3713-9986-05cac1d1614e> .
+
+<urn:uuid:123b5788-6046-3216-b757-794fc534cc0a>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  <urn:uuid:8a9ce341-70e1-3a87-84a7-932b466afd2c> ;
+        list:hasNext      <urn:uuid:65f4889c-9ab4-38c1-8aeb-8b77a2b0d318> .
+
+<urn:uuid:ea96310c-e6f3-3b27-bcd6-b11ec48e4a7d>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  <urn:uuid:6bc2344d-a282-3eaa-84a8-69d03fce74d4> .
+
+<urn:uuid:f0d50d23-3e56-3770-968e-9b5f5baa9bd6>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcCartesianPointList3D> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#coordList_IfcCartesianPointList3D>
+                <urn:uuid:8afae922-c476-3bb3-85ef-b47a4e5badcf> .
+
+<urn:uuid:6bc2344d-a282-3eaa-84a8-69d03fce74d4>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "0.0"^^xsd:double .
+
+<urn:uuid:586ccc78-71a7-39e4-bc44-b245de977ab4>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "202.771984"^^xsd:double .
+
+<urn:uuid:2b06439d-0514-32c3-8328-409788229a6c>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "-260.012578"^^xsd:double .
+
+<urn:uuid:68d64383-5d1b-3750-9cd2-8016da520b98>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "-300.0"^^xsd:double .
+
+<urn:uuid:f1e3f17e-c9d8-307d-b40f-4d1ed987e110>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  <urn:uuid:68d64383-5d1b-3750-9cd2-8016da520b98> ;
+        list:hasNext      <urn:uuid:123b5788-6046-3216-b757-794fc534cc0a> .
+
+<urn:uuid:4ba1dd7f-5a59-399a-b7ea-fc63ee86ad8d>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "0.0"^^xsd:double .
+
+inst:   rdf:type     owl:Ontology ;
+        owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+<urn:uuid:8a9ce341-70e1-3a87-84a7-932b466afd2c>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure> ;
+        express:hasDouble  "150.0"^^xsd:double .
+
+<urn:uuid:355acc5d-6784-3df9-9b93-4b6267874c9b>
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLengthMeasure_List> ;
+        list:hasContents  <urn:uuid:586ccc78-71a7-39e4-bc44-b245de977ab4> ;
+        list:hasNext      <urn:uuid:ea96310c-e6f3-3b27-bcd6-b11ec48e4a7d> .

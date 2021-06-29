@@ -6,30 +6,30 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-inst:IfcRecurrencePattern_788
-        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcRecurrencePattern> ;
-        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#weekdayComponent_IfcRecurrencePattern>
-                inst:IfcDayInWeekNumber_ZFurHvdCVUEWogtGNal5N5ysjjsiBidhslVoMIrWO54 , inst:IfcDayInWeekNumber_GhrRHcHAxiM6twf18UpYUwjVBkqx1CEo6uObHcUJtc0 , inst:IfcDayInWeekNumber_VcMp_1Nvo19M0qLMhAb1zH5Wm1yDXlQ55mdzpZXg2fQ , inst:IfcDayInWeekNumber_kLueSwxwF3GCQSxJCqIJZzjE-cFG38gjF5b_WL1dOZs , inst:IfcDayInWeekNumber_TYFIUETMIx9w2_h8B0ux12MeUdXZ_1pVgPrIq3ckiiY .
-
-inst:IfcDayInWeekNumber_VcMp_1Nvo19M0qLMhAb1zH5Wm1yDXlQ55mdzpZXg2fQ
-        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
-        express:hasInteger  3 .
-
-inst:IfcDayInWeekNumber_GhrRHcHAxiM6twf18UpYUwjVBkqx1CEo6uObHcUJtc0
-        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
-        express:hasInteger  4 .
-
-inst:IfcDayInWeekNumber_kLueSwxwF3GCQSxJCqIJZzjE-cFG38gjF5b_WL1dOZs
+inst:IfcDayInWeekNumber_9Y7NglV_WU3-O9hC2s5n5QsX7lvAA85nHEUpdxT5EIY
         rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
         express:hasInteger  2 .
 
-inst:IfcDayInWeekNumber_ZFurHvdCVUEWogtGNal5N5ysjjsiBidhslVoMIrWO54
+inst:IfcRecurrencePattern_788
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcRecurrencePattern> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#weekdayComponent_IfcRecurrencePattern>
+                inst:IfcDayInWeekNumber_ouUTVddgpOavmJRkYdd6U9E5VpVMAXt3-HtIRkomic8 , inst:IfcDayInWeekNumber_FlvGk384gFp1ALZ0m8sOkLUiU2e1msA0gnobIFj70dA , inst:IfcDayInWeekNumber_t544E6qB_LBnfxjU1QeB7Jvq6ib00BxwKzTP_EctGas , inst:IfcDayInWeekNumber_9Y7NglV_WU3-O9hC2s5n5QsX7lvAA85nHEUpdxT5EIY , inst:IfcDayInWeekNumber_6iT98AlcApezDGJE5-ZLjr_Ck5fN7QF0oFVbR8DKfcA .
+
+inst:IfcDayInWeekNumber_t544E6qB_LBnfxjU1QeB7Jvq6ib00BxwKzTP_EctGas
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  3 .
+
+inst:IfcDayInWeekNumber_ouUTVddgpOavmJRkYdd6U9E5VpVMAXt3-HtIRkomic8
         rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
         express:hasInteger  5 .
 
-inst:IfcDayInWeekNumber_TYFIUETMIx9w2_h8B0ux12MeUdXZ_1pVgPrIq3ckiiY
+inst:IfcDayInWeekNumber_FlvGk384gFp1ALZ0m8sOkLUiU2e1msA0gnobIFj70dA
         rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
-        express:hasInteger  1 .
+        express:hasInteger  4 .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+inst:IfcDayInWeekNumber_6iT98AlcApezDGJE5-ZLjr_Ck5fN7QF0oFVbR8DKfcA
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcDayInWeekNumber> ;
+        express:hasInteger  1 .

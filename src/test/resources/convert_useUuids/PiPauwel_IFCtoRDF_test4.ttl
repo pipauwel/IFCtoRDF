@@ -9,11 +9,10 @@
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
 
-inst:IfcLabel_FDH1uhrML9Ck3JKBFY95J5MD4mxjFGwVyMG1QoCEhVY
-        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLabel> ;
-        express:hasString  "Ghent University" .
+<urn:uuid:523303eb-2d5d-33c0-9cc7-a669aa40214a>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcConversionBasedUnit> .
 
-inst:IfcOrganization_2
-        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcOrganization> ;
-        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#name_IfcOrganization>
-                inst:IfcLabel_FDH1uhrML9Ck3JKBFY95J5MD4mxjFGwVyMG1QoCEhVY .
+<urn:uuid:ae83cd1a-4001-375d-abc2-40ace6f54fcb>
+        rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcUnitAssignment> ;
+        <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#units_IfcUnitAssignment>
+                <urn:uuid:523303eb-2d5d-33c0-9cc7-a669aa40214a> .

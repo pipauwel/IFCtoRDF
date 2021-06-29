@@ -6,58 +6,58 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-inst:IfcPositiveInteger_wALi9_ynG16spWwLXd-ztLpCRypNoqCp38UyCDK-Lxs
+inst:IfcLineIndex_tyhV9EEERLagAGQye5Pc_reT1BEicCnB92hrSCaMJRQ
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLineIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_tzMWv8DmIDLzF0ADGXTvPiUrLW_2Zq20B1tofweUm14 .
+
+inst:IfcArcIndex_rfj623F2p_kwwkVGmlscYku8IelCMcbzHgVITj0hjQA
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_Yui7ZqmcOS56uWuG5UGKQIlZ9WLyB6MaRezUfkz5tKg .
+
+inst:IfcArcIndex_SQ61jZX7X4m2hNPLvcRVmyeOot4VKBfzic3ozQ42B-Y
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_tzMWv8DmIDLzF0ADGXTvPiUrLW_2Zq20B1tofweUm14 ;
+        list:hasNext      inst:IfcArcIndex_2qurHzZ7Ci27qVaIgD-_A3PhEP5zysKOl_zRC-G2HeM .
+
+inst:IfcPositiveInteger_bujGH3Mt1rYutIVT_RgzpuD5K6FlSdyzdqqw2zh8qsU
         rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
         express:hasInteger  3 .
 
-inst:IfcSegmentIndexSelect_List_LvDjfkpXRbVp3EDl20iyEy7OpTLXkJ28zA0Q-o9pkns
+inst:IfcSegmentIndexSelect_List_RF9p4GXkVHKoYxdvFJPWmWCAavvFpLYDPdgcWsb2vNk
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcSegmentIndexSelect_List> ;
-        list:hasContents  inst:IfcLineIndex_fuBBM4ojdrUgsxN-TiWZ-CVvxMX_B_V8Gy_-MohqeRw ;
-        list:hasNext      inst:IfcSegmentIndexSelect_List_gM2XMGjjxEZNp96dOnvh5roINaEqyiScDPDpHUGbOzk .
+        list:hasContents  inst:IfcLineIndex_3U0BtVipTP198VLqrbD3FP__0HbiyfbIYOYjfsCMQhQ ;
+        list:hasNext      inst:IfcSegmentIndexSelect_List_s-G5hUpHDPy_1uI69fWpbGBEzC071DDfQMhMJ0JWpfc .
 
-inst:IfcPositiveInteger_Ngd5z68-QJKrFSpsGHy0z35a40YXncRAtCsQDaPTwHI
+inst:IfcArcIndex_2qurHzZ7Ci27qVaIgD-_A3PhEP5zysKOl_zRC-G2HeM
+        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
+        list:hasContents  inst:IfcPositiveInteger_bujGH3Mt1rYutIVT_RgzpuD5K6FlSdyzdqqw2zh8qsU ;
+        list:hasNext      inst:IfcArcIndex_rfj623F2p_kwwkVGmlscYku8IelCMcbzHgVITj0hjQA .
+
+inst:IfcPositiveInteger_HycpVUD3WL7EOrq9QQ-6LdBm_66pNFNN6saXk742yIk
         rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
-        express:hasInteger  4 .
+        express:hasInteger  1 .
 
-inst:IfcPositiveInteger_AY9JGH8R1TdAwSDhF0LeSw5hoSAH45-OCMlWxSjDgSk
-        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
-        express:hasInteger  2 .
-
-inst:IfcSegmentIndexSelect_List_09U9MLytH-a24mY938pU0y2UcJivvYlVu4FWPdCHRA4
+inst:IfcSegmentIndexSelect_List_KCsIR34Oe9KdHt3-rxNYV8sGNLyq0FjPfUOHUzA5Vj8
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcSegmentIndexSelect_List> ;
-        list:hasContents  inst:IfcArcIndex_xMwne4XNPgbb7Nx1hXr4WyEDK9FklBNpAmpJkvV7PVI .
-
-inst:IfcArcIndex_n-Wmn6OZWG9ycBh4OI8xYIipewYCQuCH7mH6weIeXl4
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
-        list:hasContents  inst:IfcPositiveInteger_Ngd5z68-QJKrFSpsGHy0z35a40YXncRAtCsQDaPTwHI .
-
-inst:IfcArcIndex_bnyuYbaVfrHmniI_zdEFWjNHLTy4sIgUNLkDC_4KPTo
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
-        list:hasContents  inst:IfcPositiveInteger_wALi9_ynG16spWwLXd-ztLpCRypNoqCp38UyCDK-Lxs ;
-        list:hasNext      inst:IfcArcIndex_n-Wmn6OZWG9ycBh4OI8xYIipewYCQuCH7mH6weIeXl4 .
-
-inst:IfcLineIndex_-9n5RSWDGaO2OVmir4uS3ZID7ZsvM678KDg8zdFgh2k
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLineIndex> ;
-        list:hasContents  inst:IfcPositiveInteger_AY9JGH8R1TdAwSDhF0LeSw5hoSAH45-OCMlWxSjDgSk .
-
-inst:IfcArcIndex_xMwne4XNPgbb7Nx1hXr4WyEDK9FklBNpAmpJkvV7PVI
-        rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcArcIndex> ;
-        list:hasContents  inst:IfcPositiveInteger_AY9JGH8R1TdAwSDhF0LeSw5hoSAH45-OCMlWxSjDgSk ;
-        list:hasNext      inst:IfcArcIndex_bnyuYbaVfrHmniI_zdEFWjNHLTy4sIgUNLkDC_4KPTo .
+        list:hasContents  inst:IfcArcIndex_SQ61jZX7X4m2hNPLvcRVmyeOot4VKBfzic3ozQ42B-Y .
 
 inst:IfcIndexedPolyCurve_205
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcIndexedPolyCurve> ;
         <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#segments_IfcIndexedPolyCurve>
-                inst:IfcSegmentIndexSelect_List_LvDjfkpXRbVp3EDl20iyEy7OpTLXkJ28zA0Q-o9pkns .
+                inst:IfcSegmentIndexSelect_List_RF9p4GXkVHKoYxdvFJPWmWCAavvFpLYDPdgcWsb2vNk .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
 
-inst:IfcPositiveInteger_FVmWzJSKmoMyM68vUskLbJDYGg2sQBfdbn4NrOPAkbw
+inst:IfcPositiveInteger_tzMWv8DmIDLzF0ADGXTvPiUrLW_2Zq20B1tofweUm14
         rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
-        express:hasInteger  1 .
+        express:hasInteger  2 .
 
-inst:IfcLineIndex_fuBBM4ojdrUgsxN-TiWZ-CVvxMX_B_V8Gy_-MohqeRw
+inst:IfcPositiveInteger_Yui7ZqmcOS56uWuG5UGKQIlZ9WLyB6MaRezUfkz5tKg
+        rdf:type            <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveInteger> ;
+        express:hasInteger  4 .
+
+inst:IfcLineIndex_3U0BtVipTP198VLqrbD3FP__0HbiyfbIYOYjfsCMQhQ
         rdf:type          <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcLineIndex> ;
-        list:hasContents  inst:IfcPositiveInteger_FVmWzJSKmoMyM68vUskLbJDYGg2sQBfdbn4NrOPAkbw ;
-        list:hasNext      inst:IfcLineIndex_-9n5RSWDGaO2OVmir4uS3ZID7ZsvM678KDg8zdFgh2k .
+        list:hasContents  inst:IfcPositiveInteger_HycpVUD3WL7EOrq9QQ-6LdBm_66pNFNN6saXk742yIk ;
+        list:hasNext      inst:IfcLineIndex_tyhV9EEERLagAGQye5Pc_reT1BEicCnB92hrSCaMJRQ .

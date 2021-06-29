@@ -6,14 +6,14 @@
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-inst:IfcPositiveLengthMeasure_e-RtXMIIWCa9Lw2ibBAEzktwu31pIBwrZQ_of9pKkKA
-        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveLengthMeasure> ;
-        express:hasDouble  "12."^^xsd:double .
-
-inst:IfcPropertySingleValue_302
+<urn:uuid:3d653de1-6499-3297-b7bb-ebc533e99317>
         rdf:type  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPropertySingleValue> ;
         <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#nominalValue_IfcPropertySingleValue>
-                inst:IfcPositiveLengthMeasure_e-RtXMIIWCa9Lw2ibBAEzktwu31pIBwrZQ_of9pKkKA .
+                <urn:uuid:70c9690b-de10-3dd1-a6fa-75e2c9e46232> .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+
+<urn:uuid:70c9690b-de10-3dd1-a6fa-75e2c9e46232>
+        rdf:type           <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#IfcPositiveLengthMeasure> ;
+        express:hasDouble  "12."^^xsd:double .

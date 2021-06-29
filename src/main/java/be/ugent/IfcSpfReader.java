@@ -58,6 +58,7 @@ public class IfcSpfReader {
 
     private boolean removeDuplicates = false;
     private boolean avoidDuplicatePropertyResources = false;
+    private boolean useUuidsForGeneratedResources = false;
     private static final int FLAG_BASEURI = 0;
     private static final int FLAG_DIR = 1;
     private static final int FLAG_KEEP_DUPLICATES = 2;
@@ -341,6 +342,7 @@ public class IfcSpfReader {
             RDFWriter conv = new RDFWriter(om, new File(ifcFile), baseURI, ent, typ, ontURI);
             conv.setProgressListener(progressListener);
             conv.setRemoveDuplicates(removeDuplicates);
+            conv.setUseUuidsForGeneratedResources(useUuidsForGeneratedResources);
             conv.setAvoidDuplicatePropertyResources(avoidDuplicatePropertyResources);
             LOG.info("Started parsing stream");
             handler.accept(conv);
@@ -396,6 +398,10 @@ public class IfcSpfReader {
 
     public void setAvoidDuplicatePropertyResources(boolean avoidDuplicatePropertyResources) {
         this.avoidDuplicatePropertyResources = avoidDuplicatePropertyResources;
+    }
+
+    public void setUseUuidsForGeneratedResources(boolean useUuidsForGeneratedResources) {
+        this.useUuidsForGeneratedResources = useUuidsForGeneratedResources;
     }
 
     public Map<String, EntityVO> getEntityMap() {
