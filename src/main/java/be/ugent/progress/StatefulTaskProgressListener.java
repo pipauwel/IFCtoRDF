@@ -12,17 +12,21 @@ public abstract class StatefulTaskProgressListener implements TaskProgressListen
 
     @Override
     final public void notifyProgress(String task, String message, float level) {
-        TaskProgress progress = new TaskProgress(task, message, level);
-        TaskProgress prev = latestTaskProgress.put(task, progress);
-        if (prev != null) {
-            progress.firstMessageTimestamp = prev.firstMessageTimestamp;
-        }
+        updateLatestTaskProgress(task, message, level);
         doNotifyProgress(task, message, level);
     }
 
     @Override public void notifyFinished(String task) {
-        latestTaskProgress.put(task, new TaskProgress(task, "finished", 1));
+        updateLatestTaskProgress(task, "finished", 1f);
         doNotifyFinished(task);
+    }
+
+    private void updateLatestTaskProgress(String task, String message, float i) {
+        TaskProgress progress = new TaskProgress(task, message, i);
+        TaskProgress prev = latestTaskProgress.put(task, progress);
+        if (prev != null) {
+            progress.firstMessageTimestamp = prev.firstMessageTimestamp;
+        }
     }
 
     public TaskProgress getTaskProgress(String task) {
@@ -30,7 +34,7 @@ public abstract class StatefulTaskProgressListener implements TaskProgressListen
     }
 
     public Set<String> getTaskNames(){
-        return new HashSet(latestTaskProgress.keySet());
+        return new HashSet<>(latestTaskProgress.keySet());
     }
 
     abstract public void doNotifyProgress(String task, String message, float level);
