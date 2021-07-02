@@ -1,11 +1,11 @@
 /*
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,15 +14,31 @@
  */
 package be.ugent;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.jena.ext.com.google.common.collect.Streams;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphMatcher;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.sparql.graph.GraphFactory;
+import org.apache.jena.sparql.graph.GraphOps;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * @author lewismc
@@ -40,7 +56,7 @@ public class TestIfcSpfReader {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         reader = new IfcSpfReader();
     }
@@ -48,7 +64,7 @@ public class TestIfcSpfReader {
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterEach
     public void tearDown() {
         reader = null;
     }
@@ -71,7 +87,7 @@ public class TestIfcSpfReader {
       sb.append(s);
       sb.append(", ");
     }
-    Assert.assertEquals(
+    Assertions.assertEquals(
             "20160414office_model_CV2_fordesign.ifc, 20160414office_model_CV2_fordesign.ttl, Barcelona_Pavilion.ifc, Barcelona_Pavilion.ttl, ootest.txt, ",
             sb.toString());
   }
@@ -93,25 +109,57 @@ public class TestIfcSpfReader {
      *             if there is an error executing
      *             {@link TestIfcSpfReader#compareFileContents(String, String)}
      */
-    
-    //TODO The files need to be created once more.  They are missing  @base tags etc.
-    //@Test
-    public final void testConvertIFCFileToOutputTTL() throws IOException {
-        final List<String> inputFiles;
-        inputFiles = showAllFiles(getClass().getClassLoader().getResource("convertIFCFileToOutputTTL").getFile());
+    @ParameterizedTest
+    @MethodSource
+    public final void testConvertIFCFileToOutputTTL(File input, File expectedOutput) throws IOException {
 
+        Graph expected = GraphFactory.createGraphMem();
+        RDFDataMgr.read(expected, new FileInputStream(expectedOutput), Lang.TTL);
+        reader.setup(input.getAbsolutePath());
+        Graph actual = reader.convert(input.getAbsolutePath(), "http://linkedbuildingdata.net/ifc/resources/");
+        if (!expected.isIsomorphicWith(actual)){
+            int expectedSize = expected.size();
+            int actualSize = actual.size();
+            Graph intersection = GraphFactory.createGraphMem();
+            GraphOps.addAll(intersection, expected.stream().filter(actual::contains).iterator());
+            int intersectionSize = intersection.size();
+            GraphOps.deleteAll(expected, intersection.find());
+            GraphOps.deleteAll(actual, intersection.find());
+            StringWriter intersectionAsTTl = new StringWriter();
+            RDFDataMgr.write(intersectionAsTTl, intersection, Lang.TTL);
+            StringWriter actualAsTTl = new StringWriter();
+            RDFDataMgr.write(actualAsTTl, actual, Lang.TTL);
+            StringWriter expectedAsTTl = new StringWriter();
+            RDFDataMgr.write(expectedAsTTl, expected, Lang.TTL);
+            String message = String.format(
+                            "Test Failed!\n"
+                            + "  Input: %s\n"
+                            + "  Expected output: %s\n"
+                            + "  Expected size: %d\n"
+                            + "  Actual size: %d\n"
+                            + "  Intersection size: %d\n"
+                            + "  In expected and actual:\n%s\n"
+                            + "  Only in expected:\n%s\n"
+                            + "  Only in actual:\n%s\n",
+                            input.getName(), expectedOutput.getName(), expectedSize, actualSize, intersectionSize,
+                            intersectionAsTTl.toString(), expectedAsTTl.toString(), actualAsTTl.toString());
+            Assertions.fail(message);
+        }
+    }
+
+    public static Stream<Arguments> testConvertIFCFileToOutputTTL() {
+        final List<String> inputFiles;
+        inputFiles = showAllFiles(TestIfcSpfReader.class.getClassLoader().getResource("convertIFCFileToOutputTTL").getFile());
+        List<Arguments> result = new ArrayList();
         for (int i = 0; i < inputFiles.size(); ++i) {
             final String inputFile = inputFiles.get(i);
-            final String outputFileBase;
-            final String outputFileNew;
+            final String outputFile;
             if (inputFile.endsWith(".ifc")) {
-                outputFileBase = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
-                outputFileNew = "target" + outputFileBase.split("convertIFCFileToOutputTTL")[1];
-                reader.setup(inputFile);
-                reader.convert(inputFile, outputFileNew, "http://linkedbuildingdata.net/ifc/resources/");
-                Assert.assertTrue(compareFileContents(outputFileBase, outputFileNew));
+                outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
+                result.add(Arguments.of(new File(inputFile), new File(outputFile)));
             }
         }
+        return result.stream();
     }
 
     /**
@@ -126,29 +174,33 @@ public class TestIfcSpfReader {
      *             if there is an error loading method parameters
      * @throws URISyntaxException
      */
-    private boolean compareFileContents(String testInputTTL, String testOutputTTL) throws IOException {
+    private void compareFileContents(String testInputTTL, String testOutputTTL) throws IOException {
         FileInputStream finInput = new FileInputStream(testInputTTL);
-        @SuppressWarnings("resource")
-        BufferedReader brInput = new BufferedReader(new InputStreamReader(finInput));
-        StringBuilder sbInput = new StringBuilder();
-        String lineInput;
-        while ((lineInput = brInput.readLine()) != null) {
-            sbInput.append(lineInput);
-        }
-
         FileInputStream finOutput = new FileInputStream(testOutputTTL);
-        @SuppressWarnings("resource")
+        BufferedReader brInput = new BufferedReader(new InputStreamReader(finInput));
         BufferedReader brOutput = new BufferedReader(new InputStreamReader(finOutput));
-        StringBuilder sbOutput = new StringBuilder();
+        String lineInput;
         String lineOutput;
-        while ((lineOutput = brOutput.readLine()) != null) {
-            sbOutput.append(lineOutput);
+        int line = 0;
+        boolean reading = true;
+        while (reading) {
+            lineInput = brInput.readLine().trim();
+            lineOutput = brOutput.readLine().trim();
+            failForDifferentFileLength(lineInput, lineOutput);
+            line++;
+            if (!lineInput.equals(lineOutput)) {
+                Assertions.fail(String.format("Actual output differs from expected output:\n" + "  input: file %s\n" + "  expected output file: %s\n" + "  difference at line %d\n"
+                                + "  expected line:%s\n" + "    actual line:%s", testInputTTL, testOutputTTL, line, lineInput, lineOutput));
+            }
         }
+    }
 
-        if (sbInput.toString().equals(sbOutput.toString())) {
-            return true;
-        } else {
-            return false;
+    private void failForDifferentFileLength(String lineInput, String lineOutput) {
+        if (lineInput == null && lineOutput != null) {
+            Assertions.fail("actual ouput file is longer than expected output file");
+        }
+        if (lineInput != null && lineOutput == null) {
+            Assertions.fail("actual ouput file is shorter than expected output file");
         }
     }
 

@@ -329,9 +329,9 @@
         <!-- Dependencies -->
         <commons-io.version>2.4</commons-io.version>
         <slf4j-api.version>1.7.7</slf4j-api.version>
-        <junit.version>4.13.1</junit.version>
+        <org.junit.jupiter.version>5.7.2</org.junit.jupiter.version>
         <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
-        <jena.version>3.16.0</jena.version>
+        <jena.version>4.1.0</jena.version>
         <expresstoowl.version>0.4</expresstoowl.version>
         <!-- Maven Plugin Dependencies -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -396,9 +396,9 @@
         </dependency>
         <!-- Test dependencies -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${org.junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

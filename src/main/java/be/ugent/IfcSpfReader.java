@@ -29,12 +29,16 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.jena.graph.Graph;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.web.HttpOp;
+import org.apache.jena.sparql.graph.GraphFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -236,9 +240,8 @@ public class IfcSpfReader {
         exp = getExpressSchema(ifcFile);
 
         // check if we are able to convert this: only four schemas are supported
-        if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2_TC1")
-				&& !exp.equalsIgnoreCase("IFC4_ADD2") && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4")
-                        && !exp.equalsIgnoreCase("IFC4x1") && !exp.equalsIgnoreCase("IFC4x3_RC1")) {
+        if (!exp.equalsIgnoreCase("IFC2X3_Final") && !exp.equalsIgnoreCase("IFC2X3_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2_TC1") && !exp.equalsIgnoreCase("IFC4_ADD2")
+                        && !exp.equalsIgnoreCase("IFC4_ADD1") && !exp.equalsIgnoreCase("IFC4") && !exp.equalsIgnoreCase("IFC4x1") && !exp.equalsIgnoreCase("IFC4x3_RC1")) {
             LOG.error("Unrecognised EXPRESS schema: " + exp + ". File should be in IFC4x3_RC1, IFC4X1, IFC4, IFC4_ADD1, IFC4_ADD2, IFC4_ADD2_TC1 or IFC2X3 schema. Quitting." + "\r\n");
         }
 
@@ -305,39 +308,72 @@ public class IfcSpfReader {
 
     @SuppressWarnings("unchecked")
 	public void convert(String ifcFile, String outputFile, String baseURI) throws IOException {
-		// CONVERSION
-		OntModel om = null;
+    	convert(ifcFile, baseURI, writer -> {
+			try (FileOutputStream out = new FileOutputStream(outputFile)) {
+				String s = "# baseURI: " + baseURI;
+				s += "\r\n# imports: " + ontURI + "\r\n\r\n";
+				out.write(s.getBytes());
+				LOG.info("Started parsing stream");
+				writer.parseModelToOutputStream(out);
+				LOG.info("Finished!!");
+			} catch (Exception e) {
+				throw new RuntimeException(String.format("Could not write output %s: %s", outputFile, e.getMessage() ));
+			}
+		});
+	}
 
+	public void convert(String ifcFile, String baseURI, Consumer<RDFWriter> handler){
+		// CONVERSION
+		OntModel om = readOntology();
+		try (InputStream in = new FileInputStream(ifcFile)){
+			RDFWriter conv = new RDFWriter(om, in, baseURI, ent, typ, ontURI);
+			conv.setRemoveDuplicates(removeDuplicates);
+			LOG.info("Started parsing stream");
+			handler.accept(conv);
+			LOG.info("Finished!!");
+		} catch (Exception e) {
+			throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()));
+		}
+	}
+
+
+	public Graph convert(String ifcFile, String baseURI) throws IOException {
+		Graph graph = GraphFactory.createGraphMem();
+		convert(ifcFile, graph, baseURI);
+		return graph;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void convert(String ifcFile, Graph toGraph, String baseURI) throws IOException {
+		convert(ifcFile, baseURI, writer -> {
+			try {
+				writer.parseModelToGraph(toGraph);
+			} catch (Exception e) {
+				throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()));
+			}
+		});
+	}
+
+	public void convert(String ifcFile, StreamRDF streamRDF, String baseURI) throws IOException {
+		convert(ifcFile, baseURI, writer -> {
+			try {
+				writer.parseModelToStreamRdf(streamRDF);
+			} catch (Exception e) {
+				throw new RuntimeException(String.format("Error converting file %s: %s", ifcFile, e.getMessage()));
+			}
+		});
+	}
+
+	private OntModel readOntology() {
+		OntModel om = null;
 		in = null;
 		HttpOp.setDefaultHttpClient(HttpClientBuilder.create().useSystemProperties().build());
 		om = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
 		in = IfcSpfReader.class.getResourceAsStream("/" + exp + ".ttl");
 		if (in == null)
 			in = IfcSpfReader.class.getResourceAsStream("/resources/" + exp + ".ttl");  // Eclipse FIX
-		
 		om.read(in, null, "TTL");
-
-		try {
-			RDFWriter conv = new RDFWriter(om, new FileInputStream(ifcFile), baseURI, ent, typ, ontURI);
-			conv.setRemoveDuplicates(removeDuplicates);
-			conv.setIfcReader(this);
-			try (FileOutputStream out = new FileOutputStream(outputFile)) {
-				String s = "# baseURI: " + baseURI;
-				s += "\r\n# imports: " + ontURI + "\r\n\r\n";
-				out.write(s.getBytes());
-				LOG.info("Started parsing stream");
-				conv.parseModel2Stream(out);
-				LOG.info("Finished!!");
-			}
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} finally {
-			try {
-				in.close();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		}
+		return om;
 	}
 
     public void setRemoveDuplicates(boolean val) {
