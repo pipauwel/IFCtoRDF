@@ -1,6 +1,9 @@
 # IFCtoRDF Change Log
 
 ## Current Development 0.5-SNAPSHOT
+- optionally produce in-memory RDF graph
+- upgraded jena, junit, java versions (jena 4.1, java JDK11)
+- improved unit tests by comparing isomorphism of output graphs with test graphs (@fkleedorfer)
 - bugfix for IFC4_ADD2_TC1
 
 ## Release 0.4 (2020-08-29)

@@ -1,13 +1,14 @@
 # baseURI: http://linkedbuildingdata.net/ifc/resources/
-# imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL
+# imports: http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL
 
-@prefix ifc:  <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD1/OWL#> .
-@prefix inst:  <http://linkedbuildingdata.net/ifc/resources/> .
-@prefix list:  <https://w3id.org/list#> .
-@prefix express:  <https://w3id.org/express#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@base          <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC4/ADD2_TC1/OWL#> .
+@prefix inst: <http://linkedbuildingdata.net/ifc/resources/> .
+@prefix list: <https://w3id.org/list#> .
+@prefix express: <https://w3id.org/express#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 
 inst:   rdf:type     owl:Ontology ;
         owl:imports  ifc: .
@@ -15,9 +16,9 @@ inst:   rdf:type     owl:Ontology ;
 inst:IfcPropertySingleValue_302
         rdf:type  ifc:IfcPropertySingleValue .
 
-inst:IfcPositiveLengthMeasure_1
+inst:IfcPositiveLengthMeasure_303
         rdf:type           ifc:IfcPositiveLengthMeasure ;
         express:hasDouble  "12."^^xsd:double .
 
 inst:IfcPropertySingleValue_302
-        ifc:nominalValue_IfcPropertySingleValue  inst:IfcPositiveLengthMeasure_1 .
+        ifc:nominalValue_IfcPropertySingleValue  inst:IfcPositiveLengthMeasure_303 .

@@ -17,7 +17,7 @@ public class IfcSpfParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(RDFWriter.class);
 
-    public IfcSpfParser(InputStream inputStream){
+    public IfcSpfParser(InputStream inputStream) {
         this.inputStream = inputStream;
     }
 
@@ -47,8 +47,9 @@ public class IfcSpfParser {
                     }
                 }
             } finally {
-                if(lineNumMax > idCounter)
+                if (lineNumMax > idCounter) {
                     idCounter = (int) lineNumMax;
+                }
                 br.close();
             }
         } catch (IOException e) {
@@ -70,7 +71,7 @@ public class IfcSpfParser {
                 case 0:
                     if (ch == '=') {
                         ifcvo.setLineNum(toLong(sb.toString()));
-                        if(toLong(sb.toString()) > lineNumMax)
+                        if (toLong(sb.toString()) > lineNumMax)
                             lineNumMax = toLong(sb.toString());
                         sb.setLength(0);
                         state++;
