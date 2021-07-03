@@ -110,10 +110,9 @@ public class TestIfcSpfReader {
             if (inputFile.endsWith(".ifc")) {
                 outputFile = inputFile.substring(0, inputFile.length() - 4) + ".ttl";
                 //result.add(Arguments.of(new File(inputFile), new File(outputFile)));
-            }
-            if(outputFile!="") {
+
                 Graph expected = GraphFactory.createGraphMem();
-                RDFDataMgr.read(expected, new FileInputStream(new File(outputFile)), Lang.TTL);
+                RDFDataMgr.read(expected, new FileInputStream(new File(outputFile).getAbsolutePath()), Lang.TTL);
                 reader.setup(new File(inputFile).getAbsolutePath());
                 Graph actual = reader.convert(new File(inputFile).getAbsolutePath(), "http://linkedbuildingdata.net/ifc/resources/");
                 if (!expected.isIsomorphicWith(actual)) {
