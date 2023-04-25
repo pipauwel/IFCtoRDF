@@ -1,3 +1,7 @@
+***Note: this project is no longer actively maintained. For more information about IFC, please contact BuildingSMART International.***
+
+
+
 # IFCtoRDF
 IFCtoRDF is a set of reusable Java components that allows to parse IFC-SPF files and convert them into [RDF](https://www.w3.org/standards/techs/rdf#w3c_all) graphs. This library supports the conversion of ifc-spf files according to the schemas available at https://technical.buildingsmart.org/standards/ifc/ifc-schema-specifications/, namely:
 
