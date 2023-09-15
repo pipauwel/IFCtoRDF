@@ -1,10 +1,6 @@
-***Note: this project is no longer actively maintained. For more information about IFC, please contact BuildingSMART International.***
+***Note: this project is no longer actively maintained. It is archived and read-only. For more information about IFC, please contact BuildingSMART International.***
 
-***Note: this project is no longer actively maintained. For more information about IFC, please contact BuildingSMART International.***
 
-***Note: this project is no longer actively maintained. For more information about IFC, please contact BuildingSMART International.***
-
-***Note: this project is no longer actively maintained. For more information about IFC, please contact BuildingSMART International.***
 
 
 
