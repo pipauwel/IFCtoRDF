@@ -332,7 +332,7 @@
         <slf4j-api.version>1.7.7</slf4j-api.version>
         <org.junit.jupiter.version>5.7.2</org.junit.jupiter.version>
         <slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
-        <jena.version>4.1.0</jena.version>
+        <jena.version>4.2.0</jena.version>
         <expresstoowl.version>0.4</expresstoowl.version>
         <!-- Maven Plugin Dependencies -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
